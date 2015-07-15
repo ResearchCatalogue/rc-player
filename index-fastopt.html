@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>rc-player</title>
+    <link href="test.css" rel="stylesheet">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"></script>
+</head>
+<body>
+<div id="player"></div>
+<!-- Include Scala.js compiled code -->
+<script type="text/javascript" src="./target/scala-2.11/rc-player-fastopt.js"></script>
+<!-- Run main app -->
+<script type="text/javascript">
+      net.researchcatalogue.Main().main();
+    </script>
+</body>
+</html>
