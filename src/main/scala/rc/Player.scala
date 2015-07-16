@@ -27,10 +27,10 @@ object Player extends js.JSApp {
     $("#player").append(but.render)
 
     implicit val as = new AudioSystem
-    val noise = new WhiteNoise
-    val gain  = new Gain(0.05)
     val dac   = new DAC
-    noise ---> gain ---> dac
+//    val noise = new WhiteNoise
+//    val gain  = new Gain(0.05)
+//    noise ---> gain ---> dac
 
     $("#sound-file")(0) match {
       case m: HTMLMediaElement =>
@@ -42,12 +42,14 @@ object Player extends js.JSApp {
         val meter = new Meter
         disk ---> meter
 
-        $("#meter").click { e: JQueryEventObject =>
-          val peak = meter.peak
-          val rms  = meter.rms
-          meter.reset()
-          println(s"peak = $peak, rms = $rms")
-        }
+        $("#meter").append(meter.render)
+
+//        $("#meter").click { e: JQueryEventObject =>
+//          val peak = meter.peak
+//          val rms  = meter.rms
+//          meter.reset()
+//          println(s"peak = $peak, rms = $rms")
+//        }
 
       case _ =>
         // XXX TODO --- emit warning
