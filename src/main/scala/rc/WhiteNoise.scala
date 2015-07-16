@@ -10,7 +10,7 @@ class WhiteNoise(implicit system: AudioSystem) extends Generator {
     private val map = mutable.Set.empty[AudioSink]
 
     val node: AudioNode = {
-      val res = system.context.createScriptProcessor(4096, 1, 1)
+      val res = system.context.createScriptProcessor(4096, 0, 1)
       res.onaudioprocess = { e: AudioProcessingEvent =>
         // e.playbackTime
         val output = e.outputBuffer.getChannelData(0)

@@ -42,7 +42,7 @@ class Meter(implicit system: AudioSystem) extends HasIn with Widget { meter =>
     // val squared = context.createGain()
 
     // val isFirefox = navigator.userAgent.toLowerCase.indexOf("firefox") > -1
-    val blockSize = 0 // if (isFirefox) 512 else 0  // Chrome doesn't accept any blockSize by default (4096)
+    val blockSize = 512 // 0 // if (isFirefox) 512 else 0  // Chrome doesn't accept any blockSize by default (4096)
     val analyze = system.context.createScriptProcessor(blockSize, 1, 1)
     analyze.onaudioprocess = { e: AudioProcessingEvent =>
       // if (paintCount == 0) println("IN AUDIO LOOP")
