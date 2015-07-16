@@ -12,6 +12,7 @@ class WhiteNoise(implicit system: AudioSystem) extends Generator {
     val node: AudioNode = {
       val res = system.context.createScriptProcessor(4096, 1, 1)
       res.onaudioprocess = { e: AudioProcessingEvent =>
+        // e.playbackTime
         val output = e.outputBuffer.getChannelData(0)
         var i = 0; while (i < 4096) {
           output(i) = js.Math.random().toFloat * 2 - 1

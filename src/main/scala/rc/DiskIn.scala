@@ -7,6 +7,10 @@ import org.scalajs.jquery.{jQuery => $}
 import scala.collection.mutable
 
 class DiskIn(elem: HTMLMediaElement)(implicit system: AudioSystem) extends Generator {
+  def play(): Unit = {
+    elem.play()
+  }
+
   object out extends AudioSource {
     private val map = mutable.Set.empty[AudioSink]
 

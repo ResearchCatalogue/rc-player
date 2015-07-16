@@ -15,7 +15,7 @@
 package rc
 
 import org.scalajs.dom.raw.HTMLMediaElement
-import org.scalajs.jquery.{jQuery => $}
+import org.scalajs.jquery.{jQuery => $, JQueryEventObject}
 
 import scala.scalajs.js
 
@@ -38,6 +38,16 @@ object Player extends js.JSApp {
         disk ---> dac
 
         m.play()
+
+        val meter = new Meter
+        disk ---> meter
+
+        $("#meter").click { e: JQueryEventObject =>
+          val peak = meter.peak
+          val rms  = meter.rms
+          meter.reset()
+          println(s"peak = $peak, rms = $rms")
+        }
 
       case _ =>
         // XXX TODO --- emit warning
