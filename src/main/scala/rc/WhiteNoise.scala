@@ -1,12 +1,12 @@
-package net.researchcatalogue
+package rc
 
 import org.scalajs.dom.AudioNode
 
 import scala.collection.mutable
 import scala.scalajs.js
 
-class WhiteNoise(implicit system: AudioSystem) {
-  object out_~ extends AudioSource {
+class WhiteNoise(implicit system: AudioSystem) extends Generator {
+  object out extends AudioSource {
     private val map = mutable.Set.empty[AudioSink]
 
     val node: AudioNode = {
@@ -21,7 +21,14 @@ class WhiteNoise(implicit system: AudioSystem) {
       res
     }
 
-    def add   (sink: AudioSink): Unit = if (map.add   (sink)) sink.add   (this)
-    def remove(sink: AudioSink): Unit = if (map.remove(sink)) sink.remove(this)
+    def --->(sink: AudioSink): AudioSink = {
+      if (map.add   (sink)) sink.add   (this)
+      sink
+    }
+
+    def -/->(sink: AudioSink): AudioSink = {
+      if (map.remove(sink)) sink.remove(this)
+      sink
+    }
   }
 }

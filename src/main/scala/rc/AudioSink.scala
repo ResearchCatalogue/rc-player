@@ -1,4 +1,4 @@
-package net.researchcatalogue
+package rc
 
 import org.scalajs.dom.AudioNode
 
@@ -12,6 +12,6 @@ trait AudioSink extends AudioPort {
 }
 
 trait AudioSource extends AudioPort {
-  def add   (sink: AudioSink): Unit
-  def remove(sink: AudioSink): Unit
+  def ---> (sink: AudioSink): AudioSink
+  def -/-> (sink: AudioSink): AudioSink
 }

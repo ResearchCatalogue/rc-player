@@ -1,4 +1,4 @@
-package net.researchcatalogue
+package rc
 
 trait Obj {
   def id: String

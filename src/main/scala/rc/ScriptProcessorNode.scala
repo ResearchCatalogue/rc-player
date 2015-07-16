@@ -1,4 +1,4 @@
-package net.researchcatalogue
+package rc
 
 import org.scalajs.dom.{AudioBuffer, Event}
 import org.scalajs.dom.raw.AudioNode

@@ -1,5 +1,5 @@
 /*
- *  Main.scala
+ *  Player.scala
  *  (rc-player)
  *
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
@@ -12,13 +12,14 @@
  *	contact@sciss.de
  */
 
-package net.researchcatalogue
+package rc
 
+import org.scalajs.dom.raw.HTMLMediaElement
 import org.scalajs.jquery.{jQuery => $}
 
 import scala.scalajs.js
 
-object Main extends js.JSApp {
+object Player extends js.JSApp {
   def main(): Unit = $(documentLoaded _)
 
   private def documentLoaded(): Unit = {
@@ -27,7 +28,19 @@ object Main extends js.JSApp {
 
     implicit val as = new AudioSystem
     val noise = new WhiteNoise
+    val gain  = new Gain(0.05)
     val dac   = new DAC
-    noise.out_~ add dac.in_~
+    noise ---> gain ---> dac
+
+    $("#sound-file")(0) match {
+      case m: HTMLMediaElement =>
+        val disk = new DiskIn(m)
+        disk ---> dac
+
+        m.play()
+
+      case _ =>
+        // XXX TODO --- emit warning
+    }
   }
 }
