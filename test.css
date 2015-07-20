@@ -43,3 +43,22 @@ input.edit-obj {
     background: transparent;
     font: 14px Inconsolata;
 }
+
+div.incomplete {
+    border-style: dashed;
+}
+
+div.port {
+    position: relative;
+    background: rgb(80, 80, 128);
+    width: 8px;
+    height: 3px;
+}
+
+div.inlet {
+    top: -50%;
+}
+
+div.outlet {
+    top: 50%;
+}
