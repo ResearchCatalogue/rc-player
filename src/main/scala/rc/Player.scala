@@ -37,7 +37,7 @@ object Player extends js.JSApp {
         val disk = new DiskIn(m)
         disk ---> dac
 
-        m.play()
+        // m.play()
 
         val meter = new Meter
         disk ---> meter

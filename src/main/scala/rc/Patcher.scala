@@ -31,8 +31,9 @@ class Patcher extends Widget /* with js.Any */ { patcher =>
     var lastMouseY = 0.0
 
     elem.onmousemove = { e: MouseEvent =>
-      lastMouseX = e.pageX // - elem.offsetLeft
-      lastMouseY = e.pageY // - elem.offsetTop
+      lastMouseX = e.pageX - elem.offsetLeft
+      lastMouseY = e.pageY - elem.offsetTop
+      // println(s"x = $lastMouseX, y = $lastMouseY")
     }
 
     elem.onkeydown = { e: KeyboardEvent =>
@@ -42,12 +43,11 @@ class Patcher extends Widget /* with js.Any */ { patcher =>
           if (e.key == "1") {
             val x = lastMouseX.toInt
             val y = lastMouseY.toInt
-            val childTree = div(cls := "obj incomplete", style := s"left: ${x}px; top:${y}px") {
-              input(cls := "edit-obj")
-            }
+            val in = input(cls := "edit-obj").render
+            val childTree = div(cls := "obj incomplete", style := s"left:${x}px; top:${y}px")(in)
             val child = childTree.render
             elem.appendChild(child)
-            // child.focus()
+            in.focus()
             e.preventDefault()
           }
         }
