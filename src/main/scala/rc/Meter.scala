@@ -2,12 +2,13 @@ package rc
 
 import org.scalajs.dom._
 import org.scalajs.dom.html.Canvas
+import rc.AudioSystem.context
 
 import scala.collection.mutable
 import scala.scalajs.js
 import scalatags.JsDom.all._
 
-class Meter(implicit system: AudioSystem) extends HasIn with Widget { meter =>
+class Meter extends HasIn with Widget { meter =>
   private var lastPeak  = 0.0
   private var lastRMS   = 0.0
   private var sqrSum    = 0.0f
@@ -37,13 +38,12 @@ class Meter(implicit system: AudioSystem) extends HasIn with Widget { meter =>
 
   private val node: AudioNode = {
     // println("INIT METER NODE")
-    import system.context
     // val inNode  = context.createGain()
     // val squared = context.createGain()
 
     // val isFirefox = navigator.userAgent.toLowerCase.indexOf("firefox") > -1
     val blockSize = 512 // 0 // if (isFirefox) 512 else 0  // Chrome doesn't accept any blockSize by default (4096)
-    val analyze = system.context.createScriptProcessor(blockSize, 1, 1)
+    val analyze = context.createScriptProcessor(blockSize, 1, 1)
     analyze.onaudioprocess = { e: AudioProcessingEvent =>
       // if (paintCount == 0) println("IN AUDIO LOOP")
       val input = e.inputBuffer.getChannelData(0)

@@ -1,3 +1,7 @@
+body {
+    background: gray;
+}
+
 button.play {
     width: 36px;
     height: 36px;
@@ -7,4 +11,22 @@ button.play {
 .meter {
     width: 160px;
     height: 20px;
+}
+
+div.patcher {
+    width: 400px;
+    height: 400px;
+    background: white;
+    border: 1px black;
+}
+
+div.obj {
+    min-width: 24px;
+    height: 18px;
+    background: rgb(246, 248, 248);
+    position: absolute;
+}
+
+input.edit-obj {
+    background: rgb(246, 248, 248);
 }

@@ -26,8 +26,8 @@ object Player extends js.JSApp {
     val but = new PlayButton
     $("#player").append(but.render)
 
-    implicit val as = new AudioSystem
-    val dac   = new DAC
+    // implicit val as = new AudioSystem
+    val dac = new PhysicalOut
 //    val noise = new WhiteNoise
 //    val gain  = new Gain(0.05)
 //    noise ---> gain ---> dac
@@ -54,5 +54,7 @@ object Player extends js.JSApp {
       case _ =>
         // XXX TODO --- emit warning
     }
+
+    $("body").append((new Patcher).render)
   }
 }

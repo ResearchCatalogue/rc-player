@@ -1,3 +1,4 @@
+import org.scalajs.dom
 import org.scalajs.dom.AudioContext
 
 import scala.language.implicitConversions
@@ -16,4 +17,6 @@ package object rc {
   implicit final class SourceOps(private val source: AudioSource) extends AnyVal {
     def ---> [B <: HasIn](target: B): target.type = { source ---> target.in; target }
   }
+
+  val isMac: Boolean = dom.navigator.platform.startsWith("Mac")
 }

@@ -1,16 +1,14 @@
 package rc
 
 import org.scalajs.dom.AudioNode
+import rc.AudioSystem.context
 
-import scala.collection.mutable
 import scala.scalajs.js
 
-class WhiteNoise(implicit system: AudioSystem) extends Generator {
-  object out extends AudioSource {
-    private val map = mutable.Set.empty[AudioSink]
-
+class WhiteNoise extends Generator {
+  object out extends AudioSourceImpl {
     val node: AudioNode = {
-      val res = system.context.createScriptProcessor(4096, 0, 1)
+      val res = context.createScriptProcessor(4096, 0, 1)
       res.onaudioprocess = { e: AudioProcessingEvent =>
         // e.playbackTime
         val output = e.outputBuffer.getChannelData(0)
@@ -20,16 +18,6 @@ class WhiteNoise(implicit system: AudioSystem) extends Generator {
         }
       }
       res
-    }
-
-    def --->(sink: AudioSink): AudioSink = {
-      if (map.add   (sink)) sink.add   (this)
-      sink
-    }
-
-    def -/->(sink: AudioSink): AudioSink = {
-      if (map.remove(sink)) sink.remove(this)
-      sink
     }
   }
 }
