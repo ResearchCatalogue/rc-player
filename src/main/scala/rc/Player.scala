@@ -15,7 +15,7 @@
 package rc
 
 import org.scalajs.dom.raw.HTMLMediaElement
-import org.scalajs.jquery.{jQuery => $, JQueryEventObject}
+import org.scalajs.jquery.{jQuery => $}
 
 import scala.scalajs.js
 
@@ -55,6 +55,6 @@ object Player extends js.JSApp {
         // XXX TODO --- emit warning
     }
 
-    $("body").append((new Patcher).render)
+    $("body").append(Patcher().render)
   }
 }
