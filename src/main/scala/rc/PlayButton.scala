@@ -1,11 +1,11 @@
 package rc
 
-import org.scalajs.dom.Element
+import org.scalajs.dom
 
 import scalatags.JsDom.all._
 
 class PlayButton extends Widget {
-  def render: Element = {
+  def render: dom.html.Element = {
     button(cls := "play").render
   }
 }

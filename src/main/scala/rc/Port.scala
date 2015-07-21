@@ -1,5 +1,5 @@
 /*
- *  Box.scala
+ *  Port.scala
  *  (rc-player)
  *
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
@@ -14,19 +14,16 @@
 
 package rc
 
-import rc.impl.BoxImpl
+import rc.impl.PortImpl
 
-object Box {
-  def apply(patcher: Patcher): Box = new BoxImpl(patcher)
+object Port {
+  def apply(box: Box, isInlet: Boolean, index: Int): Port = new PortImpl(box = box, isInlet = isInlet, index = index)
 }
-trait Box extends Widget {
-  def patcher: Patcher
+trait Port extends Widget {
+  def box: Box
+  def isInlet: Boolean
+  def index: Int
 
-  var location: IntPoint2D
+  def location: IntPoint2D
   def size: IntSize2D
-
-  def focus(): Unit
-
-  def numInlets : Int
-  def numOutlets: Int
 }

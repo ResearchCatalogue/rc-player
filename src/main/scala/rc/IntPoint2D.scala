@@ -14,4 +14,8 @@
 
 package rc
 
-case class IntPoint2D(x: Int, y: Int)
+case class IntPoint2D(x: Int, y: Int) {
+  def + (that: IntPoint2D): IntPoint2D = IntPoint2D(this.x + that.x, this.y + that.y)
+}
+
+case class IntSize2D(width: Int, height: Int)

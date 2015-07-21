@@ -1,33 +1,33 @@
 package rc
 package impl
 
-import org.scalajs.dom.{svg => _, _}
-import org.scalajs.jquery.{jQuery => $}
-
+import org.scalajs.dom
 import scalatags.JsDom.all._
 import scalatags.JsDom.svgTags.svg
 
 class PatcherImpl extends Patcher {
-  private val svgElem = svg(cls := "cables").render
-  private val divElem = div(cls := "patcher", tabindex := 0)(svgElem).render
+  val cableElement    = svg(cls := "cables").render
+  private val divElem = div(cls := "patcher", tabindex := 0)(cableElement).render
   private var lastMouseX = 0.0
   private var lastMouseY = 0.0
 
-  def render: Element = divElem
-
   init()
+
+  def render: dom.html.Element = divElem
+
+  def size: IntSize2D  = IntSize2D(divElem.clientWidth, divElem.clientHeight)
 
   private def putObject(): Unit = {
     val x         = lastMouseX.toInt
     val y         = lastMouseY.toInt
-    val box       = Box()
-    box.loc       = IntPoint2D(x, y)
+    val box       = Box(this)
+    box.location  = IntPoint2D(x, y)
     divElem.appendChild(box.render)
     box.focus()
   }
 
   private def init(): Unit = {
-    divElem.onmousedown = { e: MouseEvent =>
+    divElem.onmousedown = { e: dom.MouseEvent =>
       if (!e.defaultPrevented) {
         if (e.button == 0) {
           divElem.focus()
@@ -39,13 +39,13 @@ class PatcherImpl extends Patcher {
       }
     }
 
-    divElem.onmousemove = { e: MouseEvent =>
+    divElem.onmousemove = { e: dom.MouseEvent =>
       lastMouseX = e.pageX - divElem.offsetLeft
       lastMouseY = e.pageY - divElem.offsetTop
       // println(s"x = $lastMouseX, y = $lastMouseY")
     }
 
-    divElem.onkeydown = { e: KeyboardEvent =>
+    divElem.onkeydown = { e: dom.KeyboardEvent =>
       if (!e.defaultPrevented) {
         val isMenu = if (isMac) e.metaKey else e.ctrlKey
         if (isMenu) {
