@@ -17,6 +17,7 @@ package rc
 import rc.view.View
 
 sealed trait Elem {
+  def parent: Patcher
   def dispose(): Unit
   def view(): View
 }
@@ -66,6 +67,9 @@ trait Outlet extends Port {
   def tpe: Type
 }
 
+object Message {
+  val Bang = Message("bang")
+}
 case class Message(atoms: Any*)
 
 sealed trait Type

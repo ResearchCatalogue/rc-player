@@ -1,7 +1,6 @@
 package rc.sandbox
 
 import org.scalajs.jquery.{jQuery => $}
-import rc.sandbox.Box
 
 import scala.collection.immutable.{Seq => ISeq}
 import scala.collection.mutable

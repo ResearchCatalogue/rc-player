@@ -25,3 +25,25 @@ trait InletImpl extends PortImpl with Inlet {
     dispatch(Port.CordAdded(this, cord))
   }
 }
+
+trait OutletImpl extends PortImpl with Outlet {
+  def addCord(cord: Cord): Unit = {
+    if (this.tpe != cord.tpe) throw new Exception(s"Cannot connect a cord of type ${cord.tpe} to this port ($this)")
+    if (_cords.contains(cord)) throw new Exception(s"Cannot connect cord ($cord) twice to the same port ($this)")
+
+    _cords ::= cord
+    dispatch(Port.CordAdded(this, cord))
+  }
+}
+
+trait MessageInletImpl extends InletImpl {
+  def accepts(tpe: Type): Boolean = tpe == MessageType
+}
+
+class MessageOutletImpl(val node: Node, val description: String) extends OutletImpl {
+  def tpe: Type = MessageType
+
+  def dispatch(message: Message): Unit = _cords.foreach { cord =>
+    cord.sink ! message
+  }
+}
