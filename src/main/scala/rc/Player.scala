@@ -16,6 +16,7 @@ package rc
 
 import org.scalajs.dom.raw.HTMLMediaElement
 import org.scalajs.jquery.{jQuery => $}
+import rc.sandbox.{PhysicalOut, PlayButton, PatcherOLD, Meter, DiskIn}
 
 import scala.scalajs.js
 
@@ -55,6 +56,6 @@ object Player extends js.JSApp {
         // XXX TODO --- emit warning
     }
 
-    $("body").append(Patcher().render)
+    $("body").append(PatcherOLD().render)
   }
 }

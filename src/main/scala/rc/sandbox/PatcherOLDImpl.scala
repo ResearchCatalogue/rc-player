@@ -1,12 +1,14 @@
 package rc
-package impl
+package sandbox
 
 import org.scalajs.dom
+import rc.view.{IntPoint2D, IntSize2D}
+
 import scala.scalajs.js
 import scalatags.JsDom.all._
 import scalatags.JsDom.svgTags.svg
 
-class PatcherImpl extends Patcher {
+class PatcherOLDImpl extends PatcherOLD {
   val cableElement    = svg(cls := "cables").render
   private val divElem = div(cls := "patcher", tabindex := 0)(cableElement).render
   private var lastMouseX = 0.0

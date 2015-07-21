@@ -1,4 +1,6 @@
-package rc
+package rc.sandbox
+
+import rc.sandbox.Box
 
 import scala.collection.immutable.{Seq => ISeq}
 import scala.scalajs.js

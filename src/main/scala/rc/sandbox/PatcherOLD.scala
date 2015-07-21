@@ -1,5 +1,5 @@
 /*
- *  Box.scala
+ *  Patcher.scala
  *  (rc-player)
  *
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
@@ -12,23 +12,18 @@
  *	contact@sciss.de
  */
 
-package rc
+package rc.sandbox
 
-import rc.impl.BoxImpl
+import org.scalajs.dom
+import rc.view.IntSize2D
 
-object Box {
-  def apply(patcher: Patcher): Box = new BoxImpl(patcher)
+object PatcherOLD {
+  def apply(): PatcherOLD = new PatcherOLDImpl
 }
-trait Box extends Widget {
-  def patcher: Patcher
+trait PatcherOLD extends Widget {
+  def cableElement: dom.svg.SVG
 
-  var location: IntPoint2D
   def size: IntSize2D
 
-  def focus(): Unit
-
-  def numInlets : Int
-  def numOutlets: Int
-
-  def dispose(): Unit
+  def selection: PatcherSelection
 }

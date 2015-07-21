@@ -12,10 +12,11 @@
  *	contact@sciss.de
  */
 
-package rc
-package impl
+package rc.sandbox
 
 import org.scalajs.dom
+import rc.sandbox.Box
+import rc.view.{IntPoint2D, IntSize2D}
 
 import scala.scalajs.js
 import scalatags.JsDom.all._
@@ -48,7 +49,7 @@ class PortOLDImpl(val box: Box, val isInlet: Boolean, val index: Int) extends Po
   }
 }
 
-private[impl] class DragConnection(port: PortOLD, e0: dom.MouseEvent) {
+private[sandbox] class DragConnection(port: PortOLD, e0: dom.MouseEvent) {
   // import port.{render => elem}
   private val box   = port.box
   private val elem  = box.patcher.render

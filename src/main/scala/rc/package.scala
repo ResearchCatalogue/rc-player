@@ -1,5 +1,7 @@
 import org.scalajs.dom
 import org.scalajs.dom.AudioContext
+import rc.audio.AudioContextExt
+import rc.sandbox.{AudioSource, AudioSink, HasOut, HasIn}
 
 import scala.language.implicitConversions
 

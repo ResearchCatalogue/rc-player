@@ -1,10 +1,8 @@
-package rc
+package rc.sandbox
 
 import org.scalajs.dom.AudioNode
 import org.scalajs.dom.raw.HTMLMediaElement
-import org.scalajs.jquery.{jQuery => $}
-
-import AudioSystem.context
+import rc.audio.AudioSystem.context
 
 class DiskIn(elem: HTMLMediaElement) extends Generator {
   def play(): Unit = {

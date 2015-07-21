@@ -12,15 +12,15 @@
  *	contact@sciss.de
  */
 
-package rc
-package impl
+package rc.sandbox
 
 import org.scalajs.dom
+import rc.view.{IntPoint2D, IntSize2D}
 
 import scala.scalajs.js
 import scalatags.JsDom.all._
 
-class BoxImpl(val patcher: Patcher) extends Box {
+class BoxImpl(val patcher: PatcherOLD) extends Box {
   private var _loc      = IntPoint2D(0, 0)
   private val _inlets   = js.Array[PortOLD]()
   private val _outlets  = js.Array[PortOLD]()
@@ -170,7 +170,7 @@ class BoxImpl(val patcher: Patcher) extends Box {
 }
 
 
-private[impl] class DragBox(box: Box, e0: dom.MouseEvent) {
+private[sandbox] class DragBox(box: Box, e0: dom.MouseEvent) {
   private val elem  = box.patcher.render
   private val loc0  = box.location
   private val dim   = box.size

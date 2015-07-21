@@ -1,13 +1,13 @@
-package rc
-package impl
+package rc.sandbox
 
 import org.scalajs.jquery.{jQuery => $}
+import rc.sandbox.Box
 
 import scala.collection.immutable.{Seq => ISeq}
 import scala.collection.mutable
 import scala.scalajs.js
 
-class PatcherSelectionImpl(patcher: Patcher) extends PatcherSelection {
+class PatcherSelectionImpl(patcher: PatcherOLD) extends PatcherSelection {
   import PatcherSelection.{Listener, Update}
 
   private val coll      = mutable.Set.empty[Box]

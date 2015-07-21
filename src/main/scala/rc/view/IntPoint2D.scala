@@ -1,5 +1,5 @@
 /*
- *  Patcher.scala
+ *  IntPoint2D.scala
  *  (rc-player)
  *
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
@@ -12,18 +12,10 @@
  *	contact@sciss.de
  */
 
-package rc
+package rc.view
 
-import org.scalajs.dom
-import rc.impl.PatcherImpl
-
-object Patcher {
-  def apply(): Patcher = new PatcherImpl
+case class IntPoint2D(x: Int, y: Int) {
+  def + (that: IntPoint2D): IntPoint2D = IntPoint2D(this.x + that.x, this.y + that.y)
 }
-trait Patcher extends Widget {
-  def cableElement: dom.svg.SVG
 
-  def size: IntSize2D
-
-  def selection: PatcherSelection
-}
+case class IntSize2D(width: Int, height: Int)

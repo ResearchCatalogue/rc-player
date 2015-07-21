@@ -1,7 +1,7 @@
-package rc
+package rc.sandbox
 
 import org.scalajs.dom._
-import rc.AudioSystem.context
+import rc.audio.AudioSystem.context
 
 class Gain(foo: Double) extends Filter { gain =>
   private val node: AudioNode = {

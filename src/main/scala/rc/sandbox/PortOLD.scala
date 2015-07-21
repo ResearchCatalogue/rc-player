@@ -12,9 +12,10 @@
  *	contact@sciss.de
  */
 
-package rc
+package rc.sandbox
 
-import rc.impl.PortOLDImpl
+import rc.sandbox.{Box, PortOLDImpl}
+import rc.view.{IntPoint2D, IntSize2D}
 
 object PortOLD {
   def apply(box: Box, isInlet: Boolean, index: Int): PortOLD = new PortOLDImpl(box = box, isInlet = isInlet, index = index)

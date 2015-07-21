@@ -1,7 +1,9 @@
 package rc
 
 import org.scalajs.dom.AudioNode
-import rc.AudioSystem.context
+import rc.audio.{AudioProcessingEvent, AudioSystem}
+import AudioSystem.context
+import rc.sandbox.{AudioSourceImpl, Generator}
 
 import scala.scalajs.js
 

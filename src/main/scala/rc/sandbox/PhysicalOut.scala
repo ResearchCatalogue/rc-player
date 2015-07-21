@@ -1,7 +1,8 @@
-package rc
+package rc.sandbox
 
 import org.scalajs.dom.AudioNode
-import rc.AudioSystem.context
+import rc.audio.AudioSystem
+import AudioSystem.context
 
 class PhysicalOut extends HasIn with Obj {
   def id = "dac~"

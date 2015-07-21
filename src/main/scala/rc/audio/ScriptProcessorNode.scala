@@ -1,7 +1,7 @@
-package rc
+package rc.audio
 
-import org.scalajs.dom.{AudioBuffer, Event}
 import org.scalajs.dom.raw.AudioNode
+import org.scalajs.dom.{AudioBuffer, Event}
 
 import scala.scalajs.js
 

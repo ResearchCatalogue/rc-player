@@ -1,8 +1,10 @@
 package rc
+package sandbox
 
 import org.scalajs.dom._
 import org.scalajs.dom.html.Canvas
-import rc.AudioSystem.context
+import rc.audio.AudioProcessingEvent
+import rc.audio.AudioSystem.context
 
 import scala.collection.mutable
 import scala.scalajs.js

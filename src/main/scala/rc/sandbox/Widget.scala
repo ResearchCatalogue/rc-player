@@ -1,4 +1,4 @@
-package rc
+package rc.sandbox
 
 import org.scalajs.dom
 

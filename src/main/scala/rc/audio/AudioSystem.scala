@@ -1,4 +1,4 @@
-package rc
+package rc.audio
 
 import org.scalajs.dom.raw.AudioContext
 

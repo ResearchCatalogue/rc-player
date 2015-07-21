@@ -1,4 +1,4 @@
-package rc
+package rc.sandbox
 
 trait HasIn {
   def in: AudioSink
