@@ -23,10 +23,9 @@ div.patcher {
 
 div.obj {
     position: absolute;
-    min-width: 24px;
-    height: 19px;
+    min-width: 30px;
+    height: 21px;
     background: rgb(246, 248, 248);
-    border: 1px solid rgb(192, 192, 192);
 }
 
 div.selected {
@@ -37,28 +36,29 @@ input.edit-obj {
     position: absolute;
     min-width: 24px;
     height: 19px;
-    border: none;
+    // border: none;
+    border: 1px solid rgb(192, 192, 192);
     padding: 0 2px 0 2px;
     margin: 0;
     background: transparent;
     font: 14px Inconsolata;
 }
 
-div.incomplete {
+input.incomplete {
     border-style: dashed;
 }
 
 div.port {
-    position: relative;
+    position: absolute;
     background: rgb(80, 80, 128);
     width: 8px;
     height: 3px;
 }
 
 div.inlet {
-    top: -50%;
+    top: 0%;
 }
 
 div.outlet {
-    top: 50%;
+    bottom: 0%;
 }

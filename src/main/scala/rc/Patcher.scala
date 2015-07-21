@@ -45,11 +45,11 @@ class Patcher extends Widget /* with js.Any */ { patcher =>
       val child     = childTree.render
 
       def updateWidth(len: Int): Unit = {
-        val width = len * 7 + 4
-        val ws    = s"${width}px"
+        val width = len * 7 + 2 // 4
         // println(s"New width = $width")
-        in   .style.width = ws
-        child.style.width = ws // this doesn't work: http://stackoverflow.com/questions/450903
+        // $(in).outerWidth()
+        in   .style.width = s"${width}px"
+        child.style.width = s"${width + 6}px" // this doesn't work: http://stackoverflow.com/questions/450903
       }
 
       val refreshWidth : js.Function0[Unit]         = () => updateWidth(in.value.length)
@@ -59,25 +59,28 @@ class Patcher extends Widget /* with js.Any */ { patcher =>
         val len0  = in.value.length
         val len   = e match {
           case k: KeyboardEvent =>
-            // println(s"KEY = '${k.key}'")
+            // println(s"KEY = '${k.keyCode}'")
             deferRefresh(e)
-            if (k.key == "Backspace" && k.key == "Del") len0 - 1 else len0 + 1
+            // if (k.key == "Backspace" && k.key == "Del") len0 - 1 else len0 + 1
+            len0 + 1 // if (k.keyCode == 8 || k.keyCode == 46) len0 - 1 else len0 + 1
           case _ => len0
         }
         updateWidth(len)
       }
 
       def mkPort(jChild: JQuery, idx: Int, num: Int, isInlet: Boolean): Unit = {
+        // println("mkPort")
         val x     = idx.toDouble / math.max(1, num - 1)
         val xp    = (x * 100).toInt
         val clz   = if (isInlet) "inlet" else "outlet"
-        val port  = div(cls := s"$clz port", style := s"left: ${xp - 50}%").render
+        val xps   = if (xp == 0) "left: 0%" else /* if (xp == 100) */ "right: 0%" // else ...?
+        val port  = div(cls := s"$clz port", style := xps).render
         jChild.append(port)
       }
 
       def mkObj(numInlets: Int, numOutlets: Int): Unit = {
         val jq = $(child)
-        jq.removeClass("incomplete")
+        $(in).removeClass("incomplete")
         jq.remove("#port")
         var i = 0
         while (i < numInlets) {
@@ -96,24 +99,27 @@ class Patcher extends Widget /* with js.Any */ { patcher =>
         in.value match {
           case "dac~" => mkObj(numInlets = 1, numOutlets = 0)
           case "osc~" => mkObj(numInlets = 2, numOutlets = 1)
-          case _ => $(child).addClass("incomplete")
+          case _ => $(in).addClass("incomplete")
         }
       }
 
       in.onchange = { e: Event =>
+        // println("onchange")
         // user committed content
         checkWidth(e)
         validate()
       }
-      in.onblur = { e: FocusEvent =>
-        // user left input field
-        checkWidth(e)
-        validate()
-      }
+//      in.onblur = { e: FocusEvent =>
+//        println("onblur")
+//        // user left input field
+//        checkWidth(e)
+//        validate()
+//      }
       in.oncut      = deferRefresh
       in.onpaste    = deferRefresh
-      in.onkeypress = checkWidth  // cf. http://stackoverflow.com/questions/8795283
+      in.onkeydown  = checkWidth  // cf. http://stackoverflow.com/questions/8795283
 
+      updateWidth(0)
       elem.appendChild(child)
       in.focus()
     }
@@ -122,7 +128,8 @@ class Patcher extends Widget /* with js.Any */ { patcher =>
       if (!e.defaultPrevented) {
         val isMenu = if (isMac) e.metaKey else e.ctrlKey
         if (isMenu) {
-          if (e.key == "1") {
+          // println(s"key = ${e.keyCode}")
+          if (e.keyCode == '1') {
             putObject()
             e.preventDefault()
           }
