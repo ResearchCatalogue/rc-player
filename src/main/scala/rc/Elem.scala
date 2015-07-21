@@ -46,8 +46,6 @@ object Port {
   case class CordRemoved(port: Port, cord: Cord) extends Update
 }
 sealed trait Port extends Model[Port.Update] {
-  def isInlet     : Boolean
-  def isOutlet    : Boolean
   def description : String
 
   def node: Node
@@ -56,26 +54,16 @@ sealed trait Port extends Model[Port.Update] {
 
   def addCord   (cord: Cord): Unit
   def removeCord(cord: Cord): Unit
-
-  /** Index in the list of inlets or outlets of the node. */
-  def index: Int
 }
 
 trait Inlet extends Port {
-  def acceptsMessages   : Boolean = accepts(MessageType)
-  def acceptsAudio      : Boolean = accepts(AudioType  )
-
   def accepts(tpe: Type): Boolean
-
-  def isInlet = true
 
   def ! (message: Message): Unit
 }
 
 trait Outlet extends Port {
   def tpe: Type
-
-  def isInlet = false
 }
 
 case class Message(atoms: Any*)

@@ -19,4 +19,23 @@ package object rc {
   }
 
   val isMac: Boolean = dom.navigator.platform.startsWith("Mac")
+
+  /////////////////////////////
+
+  implicit class PortOps(private val p: Port) extends AnyVal {
+    def isInlet   : Boolean = p.isInstanceOf[Inlet ]
+    def isOutlet  : Boolean = p.isInstanceOf[Outlet]
+
+    /** Index in the list of inlets or outlets of the node. */
+    def index     : Int     = {
+      val n     = p.node
+      val list  = if (isInlet) n.inlets else n.outlets
+      list.indexOf(p)
+    }
+  }
+
+  implicit class InletOps(private val i: Inlet) extends AnyVal {
+    def acceptsMessages   : Boolean = i.accepts(MessageType)
+    def acceptsAudio      : Boolean = i.accepts(AudioType  )
+  }
 }
