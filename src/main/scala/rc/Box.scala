@@ -29,4 +29,6 @@ trait Box extends Widget {
 
   def numInlets : Int
   def numOutlets: Int
+
+  def dispose(): Unit
 }

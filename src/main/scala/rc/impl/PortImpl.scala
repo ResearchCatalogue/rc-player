@@ -33,7 +33,9 @@ class PortImpl(val box: Box, val isInlet: Boolean, val index: Int) extends Port 
     IntPoint2D(elem.offsetLeft.toInt, elem.offsetTop.toInt)
   }
 
-  def size    : IntSize2D   = IntSize2D (elem.clientWidth, elem.clientHeight)
+  def size: IntSize2D = IntSize2D (elem.clientWidth, elem.clientHeight)
+
+  def dispose(): Unit = ()
 
   private def init(): Unit = {
     elem.onmousedown = { e: dom.MouseEvent =>

@@ -28,7 +28,7 @@ div.obj {
     background: rgb(246, 248, 248);
 }
 
-div.selected {
+div.selected > input.edit-obj {
     border-color: rgb(0, 0, 240)
 }
 

@@ -28,6 +28,8 @@ class BoxImpl(val patcher: Patcher) extends Box {
   private val inputElem = input(cls := "edit-obj").render
   private val divElem   = div(cls := "obj incomplete")(inputElem).render
 
+  init()
+
   def location: IntPoint2D = _loc
   def size    : IntSize2D  = IntSize2D(divElem.clientWidth, divElem.clientHeight)
 
@@ -45,7 +47,18 @@ class BoxImpl(val patcher: Patcher) extends Box {
 
   def focus(): Unit = inputElem.focus()
 
-  init()
+  def dispose(): Unit = {
+    disposePorts(_inlets )
+    disposePorts(_outlets)
+  }
+
+  private def disposePorts(coll: js.Array[Port]): Unit = {
+    coll.foreach { port =>
+      divElem.removeChild(port.render)
+      port.dispose()
+    }
+    coll.length = 0
+  }
 
   private def updateWidth(len: Int): Unit = {
     val width = len * 7 + 2 // 4
@@ -53,6 +66,41 @@ class BoxImpl(val patcher: Patcher) extends Box {
     // $(in).outerWidth()
     inputElem.style.width = s"${width}px"
     divElem  .style.width = s"${width + 6}px" // this doesn't work: http://stackoverflow.com/questions/450903
+  }
+
+  private def mkPort(index: Int, num: Int, isInlet: Boolean): Port = {
+    val port      = Port(this, isInlet = isInlet, index = index)
+    val portElem  = port.render
+    val x         = index.toDouble / math.max(1, num - 1)
+    val xp        = (x * 100).toInt
+    if (xp == 0) {
+      portElem.style.left = "0%"
+    } else {
+      portElem.style.right = "0%"
+    } // else ...?
+
+    divElem.appendChild(portElem)
+    port
+  }
+
+  private def mkPorts(num: Int, isInlet: Boolean): Unit = {
+    val coll = if (isInlet) _inlets else _outlets
+    disposePorts(coll)
+
+    coll.length = num
+    var i = 0
+    while (i < num) {
+      val port = mkPort(index = i, num = num, isInlet = isInlet)
+      coll(i) = port
+      divElem.appendChild(port.render)
+      i += 1
+    }
+  }
+
+  private def mkObj(numInlets: Int, numOutlets: Int): Unit = {
+    inputElem.classList.remove("incomplete")
+    mkPorts(num = numInlets , isInlet = true )
+    mkPorts(num = numOutlets, isInlet = false)
   }
 
   private def init(): Unit = {
@@ -70,46 +118,6 @@ class BoxImpl(val patcher: Patcher) extends Box {
         case _ => len0
       }
       updateWidth(len)
-    }
-
-    def mkPort(index: Int, num: Int, isInlet: Boolean): Port = {
-      val port      = Port(this, isInlet = isInlet, index = index)
-      val portElem  = port.render
-      val x         = index.toDouble / math.max(1, num - 1)
-      val xp        = (x * 100).toInt
-      if (xp == 0) {
-        portElem.style.left = "0%"
-      } else {
-        portElem.style.right = "0%"
-      } // else ...?
-
-      divElem.appendChild(portElem)
-      port
-    }
-
-    def mkPorts(num: Int, isInlet: Boolean): Unit = {
-      val coll = if (isInlet) _inlets else _outlets
-      var i = 0
-      while (i < coll.length) {
-        val oldElem = coll(i).render
-        divElem.removeChild(oldElem)
-        i += 1
-      }
-      coll.length = num
-
-      i = 0
-      while (i < num) {
-        val port = mkPort(index = i, num = num, isInlet = isInlet)
-        coll(i) = port
-        divElem.appendChild(port.render)
-        i += 1
-      }
-    }
-
-    def mkObj(numInlets: Int, numOutlets: Int): Unit = {
-      inputElem.classList.remove("incomplete")
-      mkPorts(num = numInlets , isInlet = true )
-      mkPorts(num = numOutlets, isInlet = false)
     }
 
     def validate(): Unit = {
@@ -148,6 +156,11 @@ class BoxImpl(val patcher: Patcher) extends Box {
 
     divElem.onmousedown = { e: dom.MouseEvent =>
       if (e.button == 0 && !e.defaultPrevented) {
+        val sel = patcher.selection
+        if (!sel.contains(this)) {
+          if (!e.shiftKey) sel.clear()
+          sel.add(this)
+        }
         new DragBox(this, e)
         // e.stopPropagation()
         e.preventDefault()

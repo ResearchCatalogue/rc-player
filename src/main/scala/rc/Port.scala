@@ -26,4 +26,6 @@ trait Port extends Widget {
 
   def location: IntPoint2D
   def size: IntSize2D
+
+  def dispose(): Unit
 }
