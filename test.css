@@ -65,3 +65,13 @@ div.outlet {
 
 canvas.cables {
 }
+
+svg.cables {
+    width: 400px;
+    height: 400px;
+}
+
+line.cord {
+    stroke: rgb(80, 80, 128);
+    stroke-width: 1.5px;
+}

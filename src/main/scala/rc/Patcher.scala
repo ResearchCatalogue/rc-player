@@ -2,20 +2,23 @@ package rc
 
 import org.scalajs.dom
 import org.scalajs.dom.raw.KeyboardEvent
-import org.scalajs.dom.{CanvasRenderingContext2D, DragEvent, FocusEvent, Event, MouseEvent, Element}
-import org.scalajs.jquery.{jQuery => $, JQuery}
-import org.w3c.dom.html.HTMLElement
+import org.scalajs.dom.{CanvasRenderingContext2D, Element, Event, FocusEvent, MouseEvent}
+import org.scalajs.jquery.{JQuery, jQuery => $}
 
 import scala.scalajs.js
 import scalatags.JsDom.all._
 
 class Patcher extends Widget /* with js.Any */ { patcher =>
   def render: Element = {
-    val tree = div(cls := "patcher", tabindex := 0)
+    import scalatags.JsDom.svgTags._
+    val svgTree = svg(cls := "cables")
+    val svgElem = svgTree.render
+    val divTree = div(cls := "patcher", tabindex := 0)(svgElem)
+
     // {
     //  div(style := "position: relative; left: 40px; top: 40px; width: 40px; height: 40px; background: #FF0000")
     // }
-    val elem = tree.render
+    val elem = divTree.render
     // $(elem).data(patcher)
     elem.onmousedown = { e: MouseEvent =>
       if (!e.defaultPrevented) {
@@ -164,6 +167,28 @@ class Patcher extends Widget /* with js.Any */ { patcher =>
   }
 
   private def patch(source: dom.html.Element, sink: dom.html.Element): Unit = {
+    val svgElem = $(".cables")(0).asInstanceOf[dom.svg.SVG]
+
+    val sourceP = source.offsetParent.asInstanceOf[dom.html.Element]
+    val sinkP   = sink  .offsetParent.asInstanceOf[dom.html.Element]
+
+    val sourceX   = source.offsetLeft + sourceP.offsetLeft + 4
+    val sourceY   = source.offsetTop  + sourceP.offsetTop  + 1.5
+    val sinkX     = sink  .offsetLeft + sinkP  .offsetLeft + 4
+    val sinkY     = sink  .offsetTop  + sinkP  .offsetTop  + 1.5
+
+    println(s"Patching ($sourceX, $sourceY) -> ($sinkX, $sinkY)")
+
+    import scalatags.JsDom.svgTags._
+    val lineElem = line(cls := "cord").render
+    lineElem.x1.baseVal.value = sourceX
+    lineElem.y1.baseVal.value = sourceY
+    lineElem.x2.baseVal.value = sinkX
+    lineElem.y2.baseVal.value = sinkY
+    svgElem.appendChild(lineElem)
+  }
+
+  private def patchOLD(source: dom.html.Element, sink: dom.html.Element): Unit = {
     // div(style := "position: absolute;")
     val c0 = $(".cables")
     val c  = if (c0.length > 0) c0.apply(0).asInstanceOf[dom.html.Canvas] else {
