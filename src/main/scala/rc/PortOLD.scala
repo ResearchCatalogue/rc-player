@@ -14,12 +14,12 @@
 
 package rc
 
-import rc.impl.PortImpl
+import rc.impl.PortOLDImpl
 
-object Port {
-  def apply(box: Box, isInlet: Boolean, index: Int): Port = new PortImpl(box = box, isInlet = isInlet, index = index)
+object PortOLD {
+  def apply(box: Box, isInlet: Boolean, index: Int): PortOLD = new PortOLDImpl(box = box, isInlet = isInlet, index = index)
 }
-trait Port extends Widget {
+trait PortOLD extends Widget {
   def box: Box
   def isInlet: Boolean
   def index: Int

@@ -21,7 +21,7 @@ import scala.scalajs.js
 import scalatags.JsDom.all._
 import scalatags.JsDom.svgTags.line
 
-class PortImpl(val box: Box, val isInlet: Boolean, val index: Int) extends Port {
+class PortOLDImpl(val box: Box, val isInlet: Boolean, val index: Int) extends PortOLD {
   private val elem = div(cls := s"port ${if (isInlet) "inlet" else "outlet"}").render
 
   init()
@@ -48,7 +48,7 @@ class PortImpl(val box: Box, val isInlet: Boolean, val index: Int) extends Port 
   }
 }
 
-private[impl] class DragConnection(port: Port, e0: dom.MouseEvent) {
+private[impl] class DragConnection(port: PortOLD, e0: dom.MouseEvent) {
   // import port.{render => elem}
   private val box   = port.box
   private val elem  = box.patcher.render

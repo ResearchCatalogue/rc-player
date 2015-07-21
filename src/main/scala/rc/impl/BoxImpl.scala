@@ -22,8 +22,8 @@ import scalatags.JsDom.all._
 
 class BoxImpl(val patcher: Patcher) extends Box {
   private var _loc      = IntPoint2D(0, 0)
-  private val _inlets   = js.Array[Port]()
-  private val _outlets  = js.Array[Port]()
+  private val _inlets   = js.Array[PortOLD]()
+  private val _outlets  = js.Array[PortOLD]()
 
   private val inputElem = input(cls := "edit-obj").render
   private val divElem   = div(cls := "obj incomplete")(inputElem).render
@@ -52,7 +52,7 @@ class BoxImpl(val patcher: Patcher) extends Box {
     disposePorts(_outlets)
   }
 
-  private def disposePorts(coll: js.Array[Port]): Unit = {
+  private def disposePorts(coll: js.Array[PortOLD]): Unit = {
     coll.foreach { port =>
       divElem.removeChild(port.render)
       port.dispose()
@@ -68,8 +68,8 @@ class BoxImpl(val patcher: Patcher) extends Box {
     divElem  .style.width = s"${width + 6}px" // this doesn't work: http://stackoverflow.com/questions/450903
   }
 
-  private def mkPort(index: Int, num: Int, isInlet: Boolean): Port = {
-    val port      = Port(this, isInlet = isInlet, index = index)
+  private def mkPort(index: Int, num: Int, isInlet: Boolean): PortOLD = {
+    val port      = PortOLD(this, isInlet = isInlet, index = index)
     val portElem  = port.render
     val x         = index.toDouble / math.max(1, num - 1)
     val xp        = (x * 100).toInt
