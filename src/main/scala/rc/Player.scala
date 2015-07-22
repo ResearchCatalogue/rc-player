@@ -26,19 +26,19 @@ object Player extends js.JSApp {
   private def documentLoaded(): Unit = {
     val patcher     = Patcher()
     val bang        = new objects.Bang(patcher)
-    bang.location   = (40, 40)
-    patcher.add(bang)
-    val random      = new objects.Random(patcher, 16 :: Nil)
-    random.location  = (40, 80)
-    patcher.add(random)
+    patcher add (40, 40) -> bang
+    val random      = new objects.Random(patcher, 128 :: Nil)
+    patcher add (40, 80) -> random
+    val mtof        = new objects.Mtof(patcher)
+    patcher add (40, 120) -> mtof
     val print       = new objects.Print(patcher)
-    print.location  = (40, 120)
-    patcher.add(print)
+    patcher add (40, 160) -> print
 
     $("body").append(patcher.view().container)
 
     bang  .outlet ---> random.inlet1
-    random.outlet ---> print .inlet
+    random.outlet ---> mtof  .inlet
+    mtof  .outlet ---> print .inlet
   }
 
   private def old(): Unit = {

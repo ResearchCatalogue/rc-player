@@ -15,13 +15,11 @@
 package rc
 package objects
 
-import rc.impl.{SingleOutlet, SingleInlet, ObjNodeImpl}
+import rc.impl.{NoArgs, SingleOutlet, SingleInlet, ObjNodeImpl}
 import rc.view.{BangView, NodeView, PatcherView}
 
-class Bang(val parent: Patcher) extends ObjNodeImpl("bang") with SingleInlet with SingleOutlet {
+class Bang(val parent: Patcher) extends ObjNodeImpl("bang") with SingleInlet with SingleOutlet with NoArgs {
   override def view(parentView: PatcherView): NodeView = BangView(parentView, this)
-
-  def args = Nil
 
   val outlet = this.messageOutlet("Bang Messages")
 

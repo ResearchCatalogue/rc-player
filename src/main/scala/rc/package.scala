@@ -72,6 +72,13 @@ package object rc {
       node.state.put(State.Location, value)
   }
 
+  implicit class PatcherOps(private val patcher: Patcher) extends AnyVal {
+    def add[A](tup: (A, Node))(implicit view: A => IntPoint2D): Unit = {
+      tup._2.location = tup._1
+      patcher.add(tup._2)
+    }
+  }
+
   implicit class DOMElementOps(private val elem: dom.Element) extends AnyVal {
     def mousePressed(fun: dom.MouseEvent => Unit): js.Function1[dom.MouseEvent, Unit] = {
       val jsf: js.Function1[dom.MouseEvent, Unit] = fun
