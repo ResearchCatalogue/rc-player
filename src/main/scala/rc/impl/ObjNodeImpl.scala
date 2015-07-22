@@ -22,4 +22,6 @@ abstract class ObjNodeImpl(val name: String) extends NodeImpl with ObjNode {
   def view(parentView: PatcherView): NodeView = NodeView(parentView, this)
 
   override def toString = s"$name@${hashCode.toHexString}"
+
+  def contents = if (args.isEmpty) name else (name :: args).mkString(" ")
 }

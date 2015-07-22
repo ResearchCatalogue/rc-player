@@ -16,7 +16,6 @@ package rc
 
 import org.scalajs.dom.raw.HTMLMediaElement
 import org.scalajs.jquery.{jQuery => $}
-import rc.objects.{Bang, Print}
 import rc.sandbox.{DiskIn, Meter, PatcherOLD, PhysicalOut, PlayButton}
 
 import scala.scalajs.js
@@ -26,16 +25,20 @@ object Player extends js.JSApp {
 
   private def documentLoaded(): Unit = {
     val patcher     = Patcher()
-    val bang        = new Bang(patcher)
+    val bang        = new objects.Bang(patcher)
     bang.location   = (40, 40)
     patcher.add(bang)
-    val print       = new Print(patcher)
-    print.location  = (40, 100)
+    val random      = new objects.Random(patcher, 16 :: Nil)
+    random.location  = (40, 80)
+    patcher.add(random)
+    val print       = new objects.Print(patcher)
+    print.location  = (40, 120)
     patcher.add(print)
 
     $("body").append(patcher.view().container)
 
-    bang.outlet ---> print.inlet
+    bang  .outlet ---> random.inlet1
+    random.outlet ---> print .inlet
   }
 
   private def old(): Unit = {

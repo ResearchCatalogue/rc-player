@@ -23,8 +23,9 @@ class ObjNodeViewImpl(val parentView: PatcherView, val elem: ObjNode) extends No
     import scalatags.JsDom.all.{width => _, height => _, _}
     import scalatags.JsDom.svgTags._
     import scalatags.JsDom.svgAttrs._
-    val textWidth = elem.name.length * 7 + 8 // 2 // 4
-    val textTree  = text(cls := "pat-node-name", x := 4, y := 15, elem.name)
+    val elemText  = elem.contents
+    val textWidth = elemText.length * 7 + 8 // 2 // 4
+    val textTree  = text(cls := "pat-node-name", x := 4, y := 15, elemText)
     val rectTree  = rect(cls := "pat-node", x := 0.5, y := 0.5, width := textWidth, height := 20)
     val loc       = elem.location
     val groupElem = g(cls := "pat-node", rectTree, textTree, transform := s"translate(${loc.x},${loc.y})").render

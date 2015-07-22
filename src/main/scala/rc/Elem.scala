@@ -26,6 +26,7 @@ sealed trait Node extends Elem {
   def inlets : List[Inlet ]
   def outlets: List[Outlet]
   def state  : State
+  def args   : List[Any]
 }
 
 trait MessageNode extends Node {
@@ -34,6 +35,7 @@ trait MessageNode extends Node {
 
 trait ObjNode extends Node {
   def name: String
+  def contents: String
 }
 
 object Cord {

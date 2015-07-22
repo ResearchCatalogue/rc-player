@@ -17,16 +17,14 @@ package objects
 
 import rc.impl.{NoOutlets, ObjNodeImpl, SingleInlet}
 
-class Print(val parent: Patcher, prefix: String) extends ObjNodeImpl("print") with SingleInlet with NoOutlets {
-  /** Default prefix is `"print"` */
-  def this(parent: Patcher) = this(parent, prefix = "print: ")
+class Print(val parent: Patcher, val args: List[Any] = Nil)
+  extends ObjNodeImpl("print") with SingleInlet with NoOutlets {
 
-  def this(parent: Patcher, args: List[String]) = this(parent, {
-    args match {
-      case "-n" :: Nil => ""
-      case _ => args.mkString("", " ", ": ")
-    }
-  })
+  private val prefix = args match {
+    case Nil => "print: "
+    case "-n" :: Nil => ""
+    case _ => args.mkString("", " ", ": ")
+  }
 
   val inlet = this.messageInlet("Messages to Print") { message =>
     val m = message.atoms.mkString(prefix, " ", "")

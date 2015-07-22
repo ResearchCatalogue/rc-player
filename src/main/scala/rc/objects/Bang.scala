@@ -21,6 +21,8 @@ import rc.view.{BangView, NodeView, PatcherView}
 class Bang(val parent: Patcher) extends ObjNodeImpl("bang") with SingleInlet with SingleOutlet {
   override def view(parentView: PatcherView): NodeView = BangView(parentView, this)
 
+  def args = Nil
+
   val outlet = this.messageOutlet("Bang Messages")
 
   val inlet = this.messageInlet("Any Message Triggers a Bang") { _ =>
