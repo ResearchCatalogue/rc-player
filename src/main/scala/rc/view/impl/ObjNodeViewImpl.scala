@@ -18,16 +18,16 @@ package impl
 
 import org.scalajs.dom
 
-import scalatags.JsDom.all._
-import scalatags.JsDom.svgTags
-
 class ObjNodeViewImpl(val parentView: PatcherView, val elem: ObjNode) extends NodeViewImpl {
   val peer: dom.svg.Element = {
-    import svgTags._
-    val textTree  = text(cls := "pat-node-name", elem.name)
-    val rectTree  = rect(cls := "pat-node")
+    import scalatags.JsDom.all.{width => _, height => _, _}
+    import scalatags.JsDom.svgTags._
+    import scalatags.JsDom.svgAttrs._
+    val textWidth = elem.name.length * 7 + 8 // 2 // 4
+    val textTree  = text(cls := "pat-node-name", x := 4, y := 15, elem.name)
+    val rectTree  = rect(cls := "pat-node", x := 0.5, y := 0.5, width := textWidth, height := 20)
     val loc       = elem.location
-    val groupElem = g(cls := "pat-node", textTree, rectTree, left := loc.x, top := loc.y).render
+    val groupElem = g(cls := "pat-node", rectTree, textTree, transform := s"translate(${loc.x},${loc.y})").render
     groupElem
   }
 

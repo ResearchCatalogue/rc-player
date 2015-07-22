@@ -28,3 +28,17 @@ circle.pat-bang {
 g.selected > circle.pat-bang {
     stroke: rgb(0, 0, 240)
 }
+
+text.pat-node-name {
+    font: 14px Inconsolata;
+}
+
+line.pat-message-cord {
+    stroke: rgb(80, 80, 80);
+    stroke-width: 1px;
+}
+
+line.pat-audio-cord {
+    stroke: rgb(80, 80, 128);
+    stroke-width: 1.5px;
+}

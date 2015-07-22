@@ -8,7 +8,7 @@ trait ViewImpl extends View {
   protected def init(): Unit = {
     // handle selection
     peer.onmousedown = { e: dom.MouseEvent =>
-      if (e.button == 0 && !e.defaultPrevented) {
+      if (e.button == 0 && !e.defaultPrevented && !isMenu(e)) {
         val sel = parentView.selection
         if (!sel.contains(this)) {
           if (!e.shiftKey) sel.clear()

@@ -32,9 +32,10 @@ object Player extends js.JSApp {
     val print       = new Print(patcher)
     print.location  = (40, 100)
     patcher.add(print)
-    bang.outlet ---> print.inlet
 
     $("body").append(patcher.view().container)
+
+    bang.outlet ---> print.inlet
   }
 
   private def old(): Unit = {
