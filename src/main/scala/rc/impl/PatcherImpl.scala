@@ -18,17 +18,26 @@ package impl
 import rc.view.PatcherView
 
 class PatcherImpl extends Patcher with ModelImpl[Patcher.Update] {
+
+  private var _elems = Vector.empty[Elem] // XXX TODO -- perhaps a Queue (fast append) would suffice
+
   def dispose(): Unit = remove(_elems: _*)
 
-  // {
-    // val xs  = _elems
-    // _elems  = Vector.empty
-    // xs.foreach(_.dispose())
-  // }
+  object dsp extends DSPStatus with ModelImpl[Boolean] {
+    private var _active = false
+
+    def active: Boolean = _active
+    def active_=(value: Boolean): Unit = if (_active != value) {
+      // important to store the new state before dispatching,
+      // because connecting nodes might reach out for those
+      // later in the listener sequence which in turn might
+      // query the status.
+      _active = value
+      dispatch(value)
+    }
+  }
 
   def view(): PatcherView = PatcherView(this)
-
-  private var _elems = Vector.empty[Elem]
 
   def elems: Seq[Elem] = _elems
 

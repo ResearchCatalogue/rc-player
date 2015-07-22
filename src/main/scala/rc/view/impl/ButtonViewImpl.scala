@@ -66,7 +66,7 @@ class ButtonViewImpl(val parentView: PatcherView, val elem: Button) extends Node
   override protected def init(): Unit = {
     super.init()
     peer.mousePressed { e =>
-      if (e.button == 0 && !e.defaultPrevented && isMenu(e)) {  // cause a bang
+      if (this.isClickAction(e)) {  // cause a bang
         elem.inlet ! Message.Bang
         e.preventDefault()
       }

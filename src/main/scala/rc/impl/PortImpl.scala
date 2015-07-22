@@ -15,6 +15,8 @@
 package rc
 package impl
 
+import org.scalajs.dom.AudioNode
+
 trait PortImpl extends ModelImpl[Port.Update] {
   _: Port =>
 
@@ -26,8 +28,11 @@ trait PortImpl extends ModelImpl[Port.Update] {
     val i = _cords.indexOf(cord)
     if (i < 0) throw new Exception(s"Trying to remove a cord ($cord) that was not connected to port ($this)")
     _cords = _cords.patch(i, Nil, 1)
+    cordRemoved(cord)
     dispatch(Port.CordRemoved(this, cord))
   }
+
+  protected def cordRemoved(cord: Cord): Unit = ()
 }
 
 trait InletImpl extends PortImpl with Inlet {
@@ -36,8 +41,11 @@ trait InletImpl extends PortImpl with Inlet {
     if (_cords.contains(cord)) throw new Exception(s"Cannot connect cord ($cord) twice to the same port ($this)")
 
     _cords ::= cord
+    cordAdded(cord)
     dispatch(Port.CordAdded(this, cord))
   }
+
+  protected def cordAdded(cord: Cord): Unit = ()
 }
 
 trait OutletImpl extends PortImpl with Outlet {
@@ -64,6 +72,8 @@ class MessageOutletImpl(val node: Node, val description: String) extends OutletI
   def apply(message: Message): Unit = _cords.foreach { cord =>
     cord.sink ! message
   }
+
+  def audio: AudioNode = throw new Exception("Not an audio outlet")
 }
 
 trait NoInlets {

@@ -49,7 +49,7 @@ class ToggleViewImpl(val parentView: PatcherView, val elem: Toggle) extends Node
   override protected def init(): Unit = {
     super.init()
     peer.mousePressed { e =>
-      if (e.button == 0 && !e.defaultPrevented && isMenu(e)) {  // cause a toggle
+      if (this.isClickAction(e)) {  // cause a toggle
         elem.inlet ! Message(elem.toggleValue)
         e.preventDefault()
       }

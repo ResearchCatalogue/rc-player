@@ -32,4 +32,10 @@ trait Patcher extends Model[Patcher.Update] {
   def remove(elems: Elem*): Unit
 
   def elems: Seq[Elem]
+
+  def dsp: DSPStatus
+}
+
+trait DSPStatus extends Model[Boolean] {
+  var active: Boolean
 }

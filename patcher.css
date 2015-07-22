@@ -1,3 +1,7 @@
+body {
+    background: gray;
+}
+
 div.pat {
     position: relative;
     width: 400px;
@@ -60,7 +64,14 @@ line.pat-message-cord {
     stroke-width: 1px;
 }
 
-line.pat-audio-cord {
-    stroke: rgb(80, 80, 128);
-    stroke-width: 1.5px;
+line.pat-audio-cord1 {
+    stroke: #DBFD8A;
+    stroke-width: 2.5px;
+    stroke-dasharray: 3, 3;
+}
+
+line.pat-audio-cord2 {
+    stroke: #363F22;
+    stroke-width: 2.5px;
+    stroke-dasharray: 0, 3, 3, 0;
 }

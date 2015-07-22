@@ -14,6 +14,8 @@
 
 package rc
 
+import org.scalajs.dom
+
 object Port {
   sealed trait Update { def port: Port }
   case class CordAdded  (port: Port, cord: Cord) extends Update
@@ -33,9 +35,13 @@ sealed trait Port extends Model[Port.Update] {
 trait Inlet extends Port {
   def accepts(tpe: Type): Boolean
 
+  /** Tries to send a message into this inlet. Throws an error if `MessageType` is not accepted. */
   def ! (message: Message): Unit
 }
 
 trait Outlet extends Port {
   def tpe: Type
+
+  /** Tries to retrieve the audio node whose output can be connected. Throws an error if `tpe` is not `AudioType`. */
+  def audio: dom.AudioNode
 }

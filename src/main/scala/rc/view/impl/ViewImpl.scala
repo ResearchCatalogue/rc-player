@@ -6,7 +6,7 @@ trait ViewImpl extends View {
   protected def init(): Unit = {
     // handle selection
     peer.mousePressed { e =>
-      if (e.button == 0 && !e.defaultPrevented && !isMenu(e)) {
+      if (e.button == 0 && !e.defaultPrevented && parentView.editing && !isMenu(e)) {
         val sel = parentView.selection
         if (!sel.contains(this)) {
           if (!e.shiftKey) sel.clear()
