@@ -33,15 +33,22 @@ object Player extends js.JSApp {
     patcher add (40, 120) -> mtof
     val print       = new objects.Print(patcher)
     patcher add (40, 160) -> print
+
     val toggle      = new objects.Toggle(patcher)
-    patcher add (160, 80) -> toggle
+    patcher add (280, 80) -> toggle
+    val dac         = new objects.Dac_~(patcher)
+    patcher add (280, 120) -> dac
+    val osc         = new objects.Osc_~(patcher, 1000 :: Nil)
+    patcher add (160, 160) -> osc
 
     $("body").append(patcher.view().container)
 
     bang  .outlet ---> random.inlet1
-    bang  .outlet ---> toggle.inlet
     random.outlet ---> mtof  .inlet
     mtof  .outlet ---> print .inlet
+    mtof  .outlet ---> osc   .inlet
+    osc   .outlet ---> dac   .inlet
+    toggle.outlet ---> dac   .inlet
   }
 
   private def old(): Unit = {
