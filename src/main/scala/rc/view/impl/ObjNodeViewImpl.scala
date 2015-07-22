@@ -31,5 +31,9 @@ class ObjNodeViewImpl(val parentView: PatcherView, val elem: ObjNode) extends No
     groupElem
   }
 
+  init()
+
+  override def toString = s"View of $elem"
+
   def dispose(): Unit = ()
 }

@@ -50,14 +50,36 @@ trait OutletImpl extends PortImpl with Outlet {
   }
 }
 
-trait MessageInletImpl extends InletImpl {
+class MessageInletImpl(val node: Node, val description: String, fun: Message => Unit)
+  extends InletImpl {
+
   def accepts(tpe: Type): Boolean = tpe == MessageType
+
+  def ! (message: Message): Unit = fun(message)
 }
 
-class MessageOutletImpl(val node: Node, val description: String) extends OutletImpl {
+class MessageOutletImpl(val node: Node, val description: String) extends OutletImpl with ((Message) => Unit) {
   def tpe: Type = MessageType
 
-  def dispatch(message: Message): Unit = _cords.foreach { cord =>
+  def apply(message: Message): Unit = _cords.foreach { cord =>
     cord.sink ! message
   }
+}
+
+trait NoInlets {
+  def inlets: List[Inlet] = Nil
+}
+
+trait NoOutlets {
+  def outlets: List[Outlet] = Nil
+}
+
+trait SingleInlet {
+  def inlets: List[Inlet] = inlet :: Nil
+  def inlet: Inlet
+}
+
+trait SingleOutlet {
+  def outlets: List[Outlet] = outlet :: Nil
+  def outlet: Outlet
 }

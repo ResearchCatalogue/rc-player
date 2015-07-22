@@ -74,7 +74,7 @@ class PatcherViewImpl(val patcher: Patcher)
   }
 
   private def init(): Unit = {
-    container.onmousedown = { e: dom.MouseEvent =>
+    container.mousePressed { e =>
       if (!e.defaultPrevented) {
         if (e.button == 0) {
           selection.clear()
@@ -87,13 +87,13 @@ class PatcherViewImpl(val patcher: Patcher)
       }
     }
 
-    container.onmousemove = { e: dom.MouseEvent =>
+    container.mouseMoved { e =>
       lastMouseX = (e.pageX - container.offsetLeft).toInt
       lastMouseY = (e.pageY - container.offsetTop ).toInt
       // println(s"x = $lastMouseX, y = $lastMouseY")
     }
 
-    container.onkeydown = { e: dom.KeyboardEvent =>
+    container.keyPressed { e =>
       if (!e.defaultPrevented) {
         val isMenu = if (isMac) e.metaKey else e.ctrlKey
         if (isMenu) {

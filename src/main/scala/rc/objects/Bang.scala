@@ -15,29 +15,15 @@
 package rc
 package objects
 
-import rc.impl.{MessageInletImpl, MessageOutletImpl, ObjNodeImpl}
+import rc.impl.{SingleOutlet, SingleInlet, ObjNodeImpl}
 import rc.view.{BangView, NodeView, PatcherView}
 
-class Bang(val parent: Patcher) extends ObjNodeImpl { obj =>
-  def name = "bang"
-
-  def inlets : List[Inlet ] = _inlet :: Nil
-  def outlets: List[Outlet] = _outlet :: Nil
-
-  def dispose(): Unit = ()
-
+class Bang(val parent: Patcher) extends ObjNodeImpl("bang") with SingleInlet with SingleOutlet {
   override def view(parentView: PatcherView): NodeView = BangView(parentView, this)
 
-  def inlet : Inlet   = _inlet
-  def outlet: Outlet  = _outlet
+  val outlet = this.messageOutlet("Bang Messages")
 
-  private object _inlet extends MessageInletImpl {
-    def description: String = "Any Message Triggers a Bang"
-
-    def node: Node = obj
-
-    def ! (message: Message): Unit = _outlet.dispatch(Message.Bang)
+  val inlet = this.messageInlet("Any Message Triggers a Bang") { _ =>
+    outlet.apply(Message.Bang)
   }
-
-  private val _outlet = new MessageOutletImpl(this, "Bang Messages")
 }

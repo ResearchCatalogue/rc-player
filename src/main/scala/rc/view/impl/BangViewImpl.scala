@@ -38,11 +38,11 @@ class BangViewImpl(val parentView: PatcherView, val elem: Bang) extends NodeView
 
   override protected def init(): Unit = {
     super.init()
-    peer.onmousedown = { e: dom.MouseEvent =>
+    peer.addEventListener("mousedown", { e: dom.MouseEvent =>
       if (e.button == 0 && !e.defaultPrevented && isMenu(e)) {  // cause a bang
         elem.inlet ! Message.Bang
         e.preventDefault()
       }
-    }
+    })
   }
 }

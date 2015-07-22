@@ -15,9 +15,9 @@
 package rc
 package objects
 
-import rc.impl.{InletImpl, ModelImpl, ObjNodeImpl}
+import rc.impl.{NoOutlets, ObjNodeImpl, SingleInlet}
 
-class Print(val parent: Patcher, prefix: String) extends ObjNodeImpl { obj =>
+class Print(val parent: Patcher, prefix: String) extends ObjNodeImpl("print") with SingleInlet with NoOutlets {
   /** Default prefix is `"print"` */
   def this(parent: Patcher) = this(parent, prefix = "print: ")
 
@@ -28,25 +28,8 @@ class Print(val parent: Patcher, prefix: String) extends ObjNodeImpl { obj =>
     }
   })
 
-  def name = "print"
-
-  def inlets : List[Inlet ] = _inlet :: Nil
-  def outlets: List[Outlet] = Nil
-
-  def inlet: Inlet = _inlet
-
-  def dispose(): Unit = ()
-
-  private object _inlet extends InletImpl with ModelImpl[Port.Update] {
-    def description: String = "Messages to Print"
-
-    def node: Node = obj
-
-    def accepts(tpe: Type): Boolean = tpe == MessageType
-
-    def ! (message: Message): Unit = {
-      val m = message.atoms.mkString(prefix, " ", "")
-      println(m)
-    }
+  val inlet = this.messageInlet("Messages to Print") { message =>
+    val m = message.atoms.mkString(prefix, " ", "")
+    println(m)
   }
 }

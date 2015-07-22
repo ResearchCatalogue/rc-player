@@ -18,6 +18,7 @@ import rc.audio.AudioContextExt
 import rc.view.IntPoint2D
 
 import scala.language.implicitConversions
+import scala.scalajs.js
 
 package object rc {
   implicit def AudioContextExt(context: AudioContext): AudioContextExt =
@@ -69,5 +70,31 @@ package object rc {
 
     def location_=(value: IntPoint2D): Unit =
       node.state.put(State.Location, value)
+  }
+
+  implicit class DOMElementOps(private val elem: dom.Element) extends AnyVal {
+    def mousePressed(fun: dom.MouseEvent => Unit): js.Function1[dom.MouseEvent, Unit] = {
+      val jsf: js.Function1[dom.MouseEvent, Unit] = fun
+      elem.addEventListener("mousedown", jsf)
+      jsf
+    }
+
+    def mouseMoved(fun: dom.MouseEvent => Unit): js.Function1[dom.MouseEvent, Unit] = {
+      val jsf: js.Function1[dom.MouseEvent, Unit] = fun
+      elem.addEventListener("mousemove", jsf)
+      jsf
+    }
+
+    def mouseReleased(fun: dom.MouseEvent => Unit): js.Function1[dom.MouseEvent, Unit] = {
+      val jsf: js.Function1[dom.MouseEvent, Unit] = fun
+      elem.addEventListener("mouseup", jsf)
+      jsf
+    }
+
+    def keyPressed(fun: dom.KeyboardEvent => Unit): js.Function1[dom.KeyboardEvent, Unit] = {
+      val jsf: js.Function1[dom.KeyboardEvent, Unit] = fun
+      elem.addEventListener("keydown", jsf)
+      jsf
+    }
   }
 }

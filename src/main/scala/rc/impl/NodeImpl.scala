@@ -37,4 +37,6 @@ trait NodeImpl {
         dispatch(State.Removed(node, key = key, value = oldValue))
       }
   }
+
+  def dispose(): Unit = ()
 }

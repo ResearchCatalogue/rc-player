@@ -26,8 +26,10 @@ class CordViewImpl(val parentView: PatcherView, val elem: Cord) extends View {
     case n: NodeView =>
       val loc     = n.portLocation(elem.source)
       val bounds  = n.peer.getBoundingClientRect()
-      val x       = bounds.left + loc.x
-      val y       = bounds.top  + loc.x
+      val pBounds = n.parentView.container.getBoundingClientRect()
+      // println(s"SOURCE BOUNDS (${bounds.left}, ${bounds.top}, ${bounds.width}, ${bounds.height})")
+      val x       = bounds.left - pBounds.left + loc.x + 0.5
+      val y       = bounds.top  - pBounds.top  + loc.y + 0.5
       peer.x1.baseVal.value = x
       peer.y1.baseVal.value = y
 
@@ -40,8 +42,9 @@ class CordViewImpl(val parentView: PatcherView, val elem: Cord) extends View {
     case n: NodeView =>
       val loc     = n.portLocation(elem.sink)
       val bounds  = n.peer.getBoundingClientRect()
-      val x       = bounds.left + loc.x
-      val y       = bounds.top  + loc.x
+      val pBounds = n.parentView.container.getBoundingClientRect()
+      val x       = bounds.left - pBounds.left + loc.x + 0.5
+      val y       = bounds.top  - pBounds.top  + loc.y + 0.5
       peer.x2.baseVal.value = x
       peer.y2.baseVal.value = y
 

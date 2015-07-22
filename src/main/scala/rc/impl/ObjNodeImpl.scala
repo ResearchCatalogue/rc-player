@@ -17,7 +17,9 @@ package rc.impl
 import rc.ObjNode
 import rc.view.{NodeView, PatcherView}
 
-trait ObjNodeImpl extends NodeImpl with ObjNode {
+abstract class ObjNodeImpl(val name: String) extends NodeImpl with ObjNode {
   /** The default implementation calls `View(this)` */
   def view(parentView: PatcherView): NodeView = NodeView(parentView, this)
+
+  override def toString = s"$name@${hashCode.toHexString}"
 }
