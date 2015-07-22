@@ -1,5 +1,5 @@
 /*
- *  package.scala
+ *  Message.scala
  *  (rc-player)
  *
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
@@ -14,9 +14,7 @@
 
 package rc
 
-import rc.objects.Bang
-import rc.view.impl.BangViewImpl
-
-package object view {
-  def BangView(bang: Bang): View = new BangViewImpl(bang)
+object Message {
+  val Bang = Message("bang")
 }
+case class Message(atoms: Any*)

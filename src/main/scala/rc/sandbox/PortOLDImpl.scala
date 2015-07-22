@@ -12,10 +12,10 @@
  *	contact@sciss.de
  */
 
-package rc.sandbox
+package rc
+package sandbox
 
 import org.scalajs.dom
-import rc.sandbox.Box
 import rc.view.{IntPoint2D, IntSize2D}
 
 import scala.scalajs.js
@@ -34,7 +34,7 @@ class PortOLDImpl(val box: Box, val isInlet: Boolean, val index: Int) extends Po
     IntPoint2D(elem.offsetLeft.toInt, elem.offsetTop.toInt)
   }
 
-  def size: IntSize2D = IntSize2D (elem.clientWidth, elem.clientHeight)
+  def size: IntSize2D = IntSize2D(elem.clientWidth, elem.clientHeight)
 
   def dispose(): Unit = ()
 

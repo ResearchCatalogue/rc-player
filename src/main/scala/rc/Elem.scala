@@ -16,15 +16,15 @@ package rc
 
 import rc.view.View
 
-sealed trait Elem {
+sealed trait Elem extends Disposable {
   def parent: Patcher
-  def dispose(): Unit
   def view(): View
 }
 
 sealed trait Node extends Elem {
   def inlets : List[Inlet ]
   def outlets: List[Outlet]
+  def state  : State
 }
 
 trait MessageNode extends Node {
@@ -40,38 +40,3 @@ trait Cord extends Elem {
   def sink  : Inlet
   def tpe   : Type
 }
-
-object Port {
-  sealed trait Update { def port: Port }
-  case class CordAdded  (port: Port, cord: Cord) extends Update
-  case class CordRemoved(port: Port, cord: Cord) extends Update
-}
-sealed trait Port extends Model[Port.Update] {
-  def description : String
-
-  def node: Node
-
-  def cords: List[Cord]
-
-  def addCord   (cord: Cord): Unit
-  def removeCord(cord: Cord): Unit
-}
-
-trait Inlet extends Port {
-  def accepts(tpe: Type): Boolean
-
-  def ! (message: Message): Unit
-}
-
-trait Outlet extends Port {
-  def tpe: Type
-}
-
-object Message {
-  val Bang = Message("bang")
-}
-case class Message(atoms: Any*)
-
-sealed trait Type
-case object AudioType   extends Type
-case object MessageType extends Type

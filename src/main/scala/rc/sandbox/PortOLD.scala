@@ -12,9 +12,9 @@
  *	contact@sciss.de
  */
 
-package rc.sandbox
+package rc
+package sandbox
 
-import rc.sandbox.{Box, PortOLDImpl}
 import rc.view.{IntPoint2D, IntSize2D}
 
 object PortOLD {

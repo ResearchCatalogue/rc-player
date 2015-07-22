@@ -1,0 +1,21 @@
+div.pat {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    background: white;
+    border: 1px black;
+}
+
+svg.pat {
+    width: 400px;
+    height: 400px;
+}
+
+rect.pat-node {
+    fill: rgb(246, 248, 248);
+    stroke: rgb(192, 192, 192);
+}
+circle.pat-bang {
+    fill: none;
+    stroke: rgb(124, 124, 124);
+}

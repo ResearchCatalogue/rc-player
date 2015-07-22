@@ -16,7 +16,9 @@ package rc
 
 import org.scalajs.dom.raw.HTMLMediaElement
 import org.scalajs.jquery.{jQuery => $}
+import rc.objects.Bang
 import rc.sandbox.{PhysicalOut, PlayButton, PatcherOLD, Meter, DiskIn}
+import rc.view.IntPoint2D
 
 import scala.scalajs.js
 
@@ -24,6 +26,15 @@ object Player extends js.JSApp {
   def main(): Unit = $(documentLoaded _)
 
   private def documentLoaded(): Unit = {
+    val patcher   = Patcher()
+    val patView   = patcher.view()
+    $("body").append(patView.container)
+    val bang      = new Bang(patcher)
+    bang.location = IntPoint2D(40, 40)
+    patcher.add(bang)
+  }
+
+  private def old(): Unit = {
     val but = new PlayButton
     $("#player").append(but.render)
 

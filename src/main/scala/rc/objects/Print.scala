@@ -1,10 +1,23 @@
+/*
+ *  Print.scala
+ *  (rc-player)
+ *
+ *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
+ *  Written by Hanns Holger Rutz.
+ *
+ *	This software is published under the GNU General Public License v3+
+ *
+ *
+ *	For further information, please contact Hanns Holger Rutz at
+ *	contact@sciss.de
+ */
+
 package rc
 package objects
 
-import rc.impl.{InletImpl, ModelImpl}
-import rc.view.View
+import rc.impl.{InletImpl, ModelImpl, ObjNodeImpl}
 
-class Print(val parent: Patcher, prefix: String) extends ObjNode { obj =>
+class Print(val parent: Patcher, prefix: String) extends ObjNodeImpl { obj =>
   /** Default prefix is `"print"` */
   def this(parent: Patcher) = this(parent, prefix = "print: ")
 
@@ -21,8 +34,6 @@ class Print(val parent: Patcher, prefix: String) extends ObjNode { obj =>
   def outlets: List[Outlet] = Nil
 
   def dispose(): Unit = ()
-
-  def view(): View = View(this)
 
   private object inlet extends InletImpl with ModelImpl[Port.Update] {
     def description: String = "Messages to Print"

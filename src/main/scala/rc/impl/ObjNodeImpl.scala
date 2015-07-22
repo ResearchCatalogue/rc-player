@@ -1,5 +1,5 @@
 /*
- *  package.scala
+ *  ObjNodeImpl.scala
  *  (rc-player)
  *
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
@@ -12,11 +12,12 @@
  *	contact@sciss.de
  */
 
-package rc
+package rc.impl
 
-import rc.objects.Bang
-import rc.view.impl.BangViewImpl
+import rc.ObjNode
+import rc.view.View
 
-package object view {
-  def BangView(bang: Bang): View = new BangViewImpl(bang)
+trait ObjNodeImpl extends NodeImpl with ObjNode {
+  /** The default implementation calls `View(this)` */
+  def view(): View = View(this)
 }
