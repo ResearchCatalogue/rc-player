@@ -25,7 +25,7 @@ object Player extends js.JSApp {
 
   private def documentLoaded(): Unit = {
     val patcher     = Patcher()
-    val bang        = new objects.Bang(patcher)
+    val bang        = new objects.Button(patcher)
     patcher add (40, 40) -> bang
     val random      = new objects.Random(patcher, 128 :: Nil)
     patcher add (40, 80) -> random
@@ -33,10 +33,13 @@ object Player extends js.JSApp {
     patcher add (40, 120) -> mtof
     val print       = new objects.Print(patcher)
     patcher add (40, 160) -> print
+    val toggle      = new objects.Toggle(patcher)
+    patcher add (160, 80) -> toggle
 
     $("body").append(patcher.view().container)
 
     bang  .outlet ---> random.inlet1
+    bang  .outlet ---> toggle.inlet
     random.outlet ---> mtof  .inlet
     mtof  .outlet ---> print .inlet
   }

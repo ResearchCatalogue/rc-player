@@ -18,7 +18,7 @@ package impl
 
 import org.scalajs.dom
 import rc.impl.ModelImpl
-import rc.objects.Bang
+import rc.objects.Button
 
 import scala.annotation.switch
 import scala.collection.{breakOut, mutable}
@@ -134,7 +134,7 @@ class PatcherViewImpl(val patcher: Patcher)
   }
 
   private def putBang(): Unit = {
-    val bang      = new Bang(patcher)
+    val bang      = new Button(patcher)
     bang.location = lastMouseLoc
     patcher.add(bang)
     createdNodeFromGUI(bang)

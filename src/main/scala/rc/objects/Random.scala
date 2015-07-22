@@ -3,17 +3,12 @@ package objects
 
 import rc.impl.{ObjNodeImpl, SingleOutlet}
 
-object Random {
-  private final val multiplier  = 0x5DEECE66DL
-  private final val mask        = (1L << 48) - 1
-  private final val addend      = 11L
-
-  private def initialScramble(seed: Long): Long = (seed ^ multiplier) & mask
-}
 class Random(val parent: Patcher, val args: List[Any] = Nil)
   extends ObjNodeImpl("random") with SingleOutlet {
 
-  import Random.{multiplier, addend, mask, initialScramble}
+  private final val multiplier  = 0x5DEECE66DL
+  private final val mask        = (1L << 48) - 1
+  private final val addend      = 11L
 
   private var seed : Long = _
   private var range: Int  = 1
@@ -32,6 +27,8 @@ class Random(val parent: Patcher, val args: List[Any] = Nil)
   }
 
   init()
+
+  private def initialScramble(seed: Long): Long = (seed ^ multiplier) & mask
 
   private def next(bits: Int): Int = {
     val oldSeed = seed

@@ -16,8 +16,12 @@ rect.pat-node {
     stroke: rgb(192, 192, 192);
 }
 
-circle.pat-bang {
+circle.pat-button {
     fill: none;
+    stroke: rgb(80, 80, 80);
+}
+
+line.pat-toggle {
     stroke: rgb(80, 80, 80);
 }
 
@@ -29,7 +33,11 @@ g.selected > rect.pat-node {
     stroke: rgb(0, 0, 240)
 }
 
-g.selected > circle.pat-bang {
+g.selected > circle.pat-button {
+    stroke: rgb(0, 0, 240)
+}
+
+g.selected > line.pat-toggle {
     stroke: rgb(0, 0, 240)
 }
 
