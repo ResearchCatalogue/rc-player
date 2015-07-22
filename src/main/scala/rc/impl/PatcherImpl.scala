@@ -30,6 +30,8 @@ class PatcherImpl extends Patcher with ModelImpl[Patcher.Update] {
 
   private var _elems = Vector.empty[Elem]
 
+  def elems: Seq[Elem] = _elems
+
   def add(elems: Elem*): Unit = {
     _elems ++= elems
     dispatch(Patcher.Added(this, elems: _*))

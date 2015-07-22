@@ -30,4 +30,6 @@ trait Patcher extends Model[Patcher.Update] {
 
   def add   (elems: Elem*): Unit
   def remove(elems: Elem*): Unit
+
+  def elems: Seq[Elem]
 }

@@ -15,9 +15,9 @@
 package rc.impl
 
 import rc.ObjNode
-import rc.view.View
+import rc.view.{NodeView, PatcherView}
 
 trait ObjNodeImpl extends NodeImpl with ObjNode {
   /** The default implementation calls `View(this)` */
-  def view(): View = View(this)
+  def view(parentView: PatcherView): NodeView = NodeView(parentView, this)
 }

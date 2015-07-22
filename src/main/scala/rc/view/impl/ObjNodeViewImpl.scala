@@ -21,7 +21,7 @@ import org.scalajs.dom
 import scalatags.JsDom.all._
 import scalatags.JsDom.svgTags
 
-class ObjNodeViewImpl(val elem: ObjNode) extends View {
+class ObjNodeViewImpl(val parentView: PatcherView, val elem: ObjNode) extends NodeViewImpl {
   val peer: dom.svg.Element = {
     import svgTags._
     val textTree  = text(cls := "pat-node-name", elem.name)

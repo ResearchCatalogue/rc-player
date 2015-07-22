@@ -33,4 +33,8 @@ trait PatcherView extends /* View with */ Model[PatcherView.Update] {
 
   /** Whether the view is in editing mode (`true`) or performance mode (`false`). */
   var editing: Boolean
+
+  def getView(elem: Elem): Option[View]
+
+  def selection: PatcherSelection
 }

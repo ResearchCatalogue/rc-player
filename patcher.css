@@ -15,7 +15,16 @@ rect.pat-node {
     fill: rgb(246, 248, 248);
     stroke: rgb(192, 192, 192);
 }
+
+g.selected > rect.pat-node {
+    stroke: rgb(0, 0, 240)
+}
+
 circle.pat-bang {
     fill: none;
     stroke: rgb(124, 124, 124);
+}
+
+g.selected > circle.pat-bang {
+    stroke: rgb(0, 0, 240)
 }

@@ -18,9 +18,10 @@ package impl
 
 import org.scalajs.dom
 import rc.impl.ModelImpl
+import rc.objects.Bang
 
 import scala.annotation.switch
-import scala.collection.mutable
+import scala.collection.{breakOut, mutable}
 import scalatags.JsDom.all._
 import scalatags.JsDom.svgTags._
 
@@ -32,14 +33,16 @@ class PatcherViewImpl(val patcher: Patcher)
 
   val selection: PatcherSelection = PatcherSelection(this)
 
-  private var lastMouseX = 0.0
-  private var lastMouseY = 0.0
+  private var lastMouseX = 0
+  private var lastMouseY = 0
   private var _editing = false
 
-  private val views     = mutable.Buffer.empty[View]
+  private val viewSeq   = mutable.Buffer.empty[View]
   private val viewMap   = mutable.Map.empty[Elem, View]
 
   init()
+
+  private def lastMouseLoc = IntPoint2D(lastMouseX, lastMouseY)
 
   def editing: Boolean = _editing
   def editing_=(value: Boolean): Unit = if (_editing != value) {
@@ -47,24 +50,27 @@ class PatcherViewImpl(val patcher: Patcher)
     dispatch(PatcherView.ModeChanged(this, editing = value))
   }
 
-  private def addViews(xs: Seq[View]): Unit = {
-    views ++= xs
-    xs.foreach { view =>
+  def getView(elem: Elem): Option[View] = viewMap.get(elem)
+
+  private def addViews(elems: Seq[Elem]): Unit = {
+    val views = elems.map(_.view(this))
+    viewSeq ++= views
+    views.foreach { view =>
       viewMap.put(view.elem, view)
       peer.appendChild(view.peer)
     }
-    dispatch(PatcherView.Added(this, xs: _*))
+    dispatch(PatcherView.Added(this, views: _*))
   }
 
-  private def removeViews(xs: Seq[View]): Unit = {
-    selection.remove(xs: _*)
-    views --= xs
-    xs.foreach { view =>
-      viewMap.remove(view.elem)
+  private def removeViews(elems: Seq[Elem]): Unit = {
+    val views = elems.flatMap(viewMap.remove)
+    selection.remove(views: _*)
+    viewSeq --= views
+    views.foreach { view =>
       peer.removeChild(view.peer)
     }
-    dispatch(PatcherView.Removed(this, xs: _*))
-    xs.foreach(_.dispose())
+    dispatch(PatcherView.Removed(this, views: _*))
+    views.foreach(_.dispose())
   }
 
   private def init(): Unit = {
@@ -82,8 +88,8 @@ class PatcherViewImpl(val patcher: Patcher)
     }
 
     container.onmousemove = { e: dom.MouseEvent =>
-      lastMouseX = e.pageX - container.offsetLeft
-      lastMouseY = e.pageY - container.offsetTop
+      lastMouseX = (e.pageX - container.offsetLeft).toInt
+      lastMouseY = (e.pageY - container.offsetTop ).toInt
       // println(s"x = $lastMouseX, y = $lastMouseY")
     }
 
@@ -108,8 +114,7 @@ class PatcherViewImpl(val patcher: Patcher)
             if (selection.nonEmpty) {
               val toRemove = selection.get
               selection.clear()
-              println("TODO: REMOVE")
-              // toRemove.foreach(deleteBox)
+              patcher.remove(toRemove.map(_.elem)(breakOut): _*)
             }
             e.preventDefault()
           }
@@ -120,14 +125,24 @@ class PatcherViewImpl(val patcher: Patcher)
 
     patcher.addListener {
       case Patcher.Added(_, elems @ _*) =>
-        val views = elems.map(_.view())
-        addViews(views)
+        addViews(elems)
       case Patcher.Removed(_, elems @ _*) =>
-        removeViews(views)
+        removeViews(elems)
     }
+
+    addViews(patcher.elems)
   }
 
   private def putBang(): Unit = {
-
+    val bang      = new Bang(patcher)
+    bang.location = lastMouseLoc
+    patcher.add(bang)
+    createdNodeFromGUI(bang)
   }
+
+  private def createdNodeFromGUI(n: Node): Unit =
+    viewMap.get(n).foreach { view =>
+      selection.clear()
+      selection.add(view)
+    }
 }

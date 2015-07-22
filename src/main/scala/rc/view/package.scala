@@ -15,8 +15,9 @@
 package rc
 
 import rc.objects.Bang
-import rc.view.impl.BangViewImpl
+import rc.view.impl.{CordViewImpl, BangViewImpl}
 
 package object view {
-  def BangView(bang: Bang): View = new BangViewImpl(bang)
+  def BangView(parentView: PatcherView, bang: Bang): NodeView = new BangViewImpl(parentView, bang)
+  def CordView(parentView: PatcherView, cord: Cord): View     = new CordViewImpl(parentView, cord)
 }

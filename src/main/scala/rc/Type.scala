@@ -14,6 +14,6 @@
 
 package rc
 
-sealed trait Type
-case object AudioType   extends Type
-case object MessageType extends Type
+sealed trait Type { def name: String }
+case object AudioType   extends Type { def name = "audio"   }
+case object MessageType extends Type { def name = "message" }

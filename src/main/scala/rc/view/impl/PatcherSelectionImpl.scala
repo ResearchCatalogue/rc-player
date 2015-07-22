@@ -20,27 +20,35 @@ import rc.impl.ModelImpl
 
 import scala.collection.mutable
 
-class PatcherSelectionImpl(patcher: PatcherView) extends PatcherSelection with ModelImpl[PatcherSelection.Update] {
-  import PatcherSelection.{Added, Removed}
+class PatcherSelectionImpl(patcherView: PatcherView) extends PatcherSelection with ModelImpl[PatcherSelection.Update] {
+  import PatcherSelection.{Update, Added, Removed}
 
   private val coll = mutable.Set.empty[View]
 
-  def contains(elem: View): Boolean = coll.contains(elem)
+  def contains(view: View): Boolean = coll.contains(view)
 
   def clear(): Unit = if (coll.nonEmpty) {
     val removed = coll.toList
     coll.clear()
-    dispatch(Removed(patcher, removed: _*))
+    updateAndDispatch(Removed(patcherView, removed: _*))
   }
 
-  def add(elems: View*): Unit = {
-    val added = elems.filter(coll.add)
-    if (added.nonEmpty) dispatch(Added(patcher, added: _*))
+  def add(views: View*): Unit = {
+    val added = views.filter(coll.add)
+    if (added.nonEmpty) updateAndDispatch(Added(patcherView, added: _*))
   }
 
-  def remove(elems: View*): Unit = {
-    val removed = elems.filter(coll.remove)
-    if (removed.nonEmpty) dispatch(Removed(patcher, removed: _*))
+  def remove(views: View*): Unit = {
+    val removed = views.filter(coll.remove)
+    if (removed.nonEmpty) updateAndDispatch(Removed(patcherView, removed: _*))
+  }
+  
+  private def updateAndDispatch(u: Update): Unit = {
+    u match {
+      case Removed(_, views @ _*) => views.foreach(_.peer.classList.remove("selected"))
+      case Added  (_, views @ _*) => views.foreach(_.peer.classList.add   ("selected"))
+    }
+    dispatch(u)
   }
 
   def size    : Int     = coll.size

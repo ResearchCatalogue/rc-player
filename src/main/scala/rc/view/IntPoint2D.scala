@@ -14,6 +14,11 @@
 
 package rc.view
 
+import scala.language.implicitConversions
+
+object IntPoint2D {
+  implicit def fromTuple(tup: (Int, Int)): IntPoint2D = IntPoint2D(tup._1, tup._2)
+}
 case class IntPoint2D(x: Int, y: Int) {
   def + (that: IntPoint2D): IntPoint2D = IntPoint2D(this.x + that.x, this.y + that.y)
 }

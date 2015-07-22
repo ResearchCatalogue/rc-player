@@ -30,12 +30,14 @@ class Print(val parent: Patcher, prefix: String) extends ObjNodeImpl { obj =>
 
   def name = "print"
 
-  def inlets : List[Inlet ] = inlet :: Nil
+  def inlets : List[Inlet ] = _inlet :: Nil
   def outlets: List[Outlet] = Nil
+
+  def inlet: Inlet = _inlet
 
   def dispose(): Unit = ()
 
-  private object inlet extends InletImpl with ModelImpl[Port.Update] {
+  private object _inlet extends InletImpl with ModelImpl[Port.Update] {
     def description: String = "Messages to Print"
 
     def node: Node = obj
