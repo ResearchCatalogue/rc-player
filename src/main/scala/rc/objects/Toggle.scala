@@ -15,10 +15,14 @@
 package rc
 package objects
 
-import rc.impl.{NoArgs, SingleOutlet, SingleInlet, ObjNodeImpl}
+import rc.impl.{ModelImpl, NoArgs, SingleOutlet, SingleInlet, ObjNodeImpl}
 import rc.view.{ToggleView, NodeView, PatcherView}
 
-class Toggle(val parent: Patcher) extends ObjNodeImpl("toggle") with SingleInlet with SingleOutlet with NoArgs {
+class Toggle(val parent: Patcher)
+  extends ObjNodeImpl("toggle")
+  with ModelImpl[Int]
+  with SingleInlet with SingleOutlet with NoArgs {
+
   override def view(parentView: PatcherView): NodeView = ToggleView(parentView, this)
 
   val outlet = this.messageOutlet("0 and 1, or Input Int")
@@ -26,21 +30,25 @@ class Toggle(val parent: Patcher) extends ObjNodeImpl("toggle") with SingleInlet
   private var _state = 0
 
   def value: Int = _state
+  def value_=(i: Int): Unit = if (_state != i) {
+    _state = i
+    dispatch(i)
+  }
 
   def toggleValue: Int = if (_state == 0) 1 else 0
 
   val inlet = this.messageInlet("Bang to toggle or Int to set state") {
     case Message.Bang =>
-      _state = toggleValue
+      value = toggleValue
       flush()
     case Message(i: Int) =>
-      _state = i
+      value = i
       flush()
     case Message(f: Float) =>
-      _state = f.toInt
+      value = f.toInt
       flush()
     case Message("set", i: Int) =>
-      _state = i
+      value = i
   }
 
   private def flush(): Unit = outlet(Message(_state))

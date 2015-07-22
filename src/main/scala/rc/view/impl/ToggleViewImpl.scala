@@ -27,15 +27,24 @@ class ToggleViewImpl(val parentView: PatcherView, val elem: Toggle) extends Node
     val loc         = elem.location
     // XXX TODO -- would be great if we could keep these size values in a CSS somehow
     val rectTree    = rect  (cls := "pat-node pat-toggle", x := 0.5, y := 0.5, width := 20, height := 20)
-    val line1Tree   = line  (cls := "pat-toggle", x1 := 3.5, y1 :=  3.5, x2 := 17.5, y2 := 17.5)
-    val line2Tree   = line  (cls := "pat-toggle", x1 := 3.5, y1 := 17.5, x2 := 17.5, y2 :=  3.5)
-    val groupElem   = g(cls := "pat-node", rectTree, line1Tree, line2Tree, transform := s"translate(${loc.x},${loc.y})").render
+    val line1Tree   = line  (cls := "pat-toggle", x1 := 4.5, y1 :=  4.5, x2 := 16.5, y2 := 16.5)
+    val line2Tree   = line  (cls := "pat-toggle", x1 := 4.5, y1 := 16.5, x2 := 16.5, y2 :=  4.5)
+    val groupElem   = g     (cls := "pat-node", rectTree, line1Tree, line2Tree,
+      transform := s"translate(${loc.x},${loc.y})").render
     groupElem
   }
 
   init()
 
-  def dispose(): Unit = ()
+  private val elemL = elem.addListener { case _ => updateState() }
+
+  private def updateState(): Unit = {
+    val selected = elem.value != 0
+    if (selected) peer.classList.add   ("pat-toggle-on")
+    else          peer.classList.remove("pat-toggle-on")
+  }
+
+  def dispose(): Unit = elem.removeListener(elemL)
 
   override protected def init(): Unit = {
     super.init()
@@ -45,5 +54,6 @@ class ToggleViewImpl(val parentView: PatcherView, val elem: Toggle) extends Node
         e.preventDefault()
       }
     }
+    updateState()
   }
 }

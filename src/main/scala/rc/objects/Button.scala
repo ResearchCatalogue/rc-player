@@ -15,15 +15,20 @@
 package rc
 package objects
 
-import rc.impl.{NoArgs, SingleOutlet, SingleInlet, ObjNodeImpl}
+import rc.impl.{ModelImpl, NoArgs, SingleOutlet, SingleInlet, ObjNodeImpl}
 import rc.view.{ButtonView, NodeView, PatcherView}
 
-class Button(val parent: Patcher) extends ObjNodeImpl("button") with SingleInlet with SingleOutlet with NoArgs {
+class Button(val parent: Patcher)
+  extends ObjNodeImpl("button")
+  with ModelImpl[Unit]
+  with SingleInlet with SingleOutlet with NoArgs {
+
   override def view(parentView: PatcherView): NodeView = ButtonView(parentView, this)
 
   val outlet = this.messageOutlet("Bang Messages")
 
   val inlet = this.messageInlet("Any Message Triggers a Bang") { _ =>
+    dispatch(())
     outlet.apply(Message.Bang)
   }
 }

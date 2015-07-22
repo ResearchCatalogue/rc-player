@@ -21,8 +21,18 @@ circle.pat-button {
     stroke: rgb(80, 80, 80);
 }
 
+g.pat-button-flash > circle.pat-button {
+    fill: rgb(80, 80, 80);
+}
+
 line.pat-toggle {
     stroke: rgb(80, 80, 80);
+    stroke-width: 2px;
+    visibility: hidden;
+}
+
+g.pat-toggle-on > line.pat-toggle {
+    visibility: visible;
 }
 
 text.pat-node-name {
