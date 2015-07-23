@@ -1,3 +1,17 @@
+/*
+ *  MessageViewImpl.scala
+ *  (rc-player)
+ *
+ *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
+ *  Written by Hanns Holger Rutz.
+ *
+ *	This software is published under the GNU General Public License v3+
+ *
+ *
+ *	For further information, please contact Hanns Holger Rutz at
+ *	contact@sciss.de
+ */
+
 package rc
 package view
 package impl
@@ -9,7 +23,7 @@ import scalatags.JsDom.all.{width => _, height => _, _}
 import scalatags.JsDom.svgAttrs._
 import scalatags.JsDom.svgTags._
 
-class MessageNodeViewImpl(val parentView: PatcherView, val elem: Message,
+class MessageViewImpl(val parentView: PatcherView, val elem: Message,
                           private var contents: String)
   extends NodeViewImpl {
 

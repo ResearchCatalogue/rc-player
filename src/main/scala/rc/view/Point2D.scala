@@ -1,5 +1,5 @@
 /*
- *  IntPoint2D.scala
+ *  Point2D.scala
  *  (rc-player)
  *
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
@@ -24,3 +24,5 @@ case class IntPoint2D(x: Int, y: Int) {
 }
 
 case class IntSize2D(width: Int, height: Int)
+
+case class DoublePoint2D(x: Double, y: Double)

@@ -1,24 +1,91 @@
+/*
+ *  Sfplay_~.scala
+ *  (rc-player)
+ *
+ *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
+ *  Written by Hanns Holger Rutz.
+ *
+ *	This software is published under the GNU General Public License v3+
+ *
+ *
+ *	For further information, please contact Hanns Holger Rutz at
+ *	contact@sciss.de
+ */
+
 package rc
 package objects
 
 import org.scalajs.dom
-import org.scalajs.dom.{MediaElementAudioSourceNode, AudioNode}
+import org.scalajs.dom.{AudioNode, MediaElementAudioSourceNode}
 import rc.audio.AudioSystem
 import rc.impl.{AudioNodeImpl, ObjNodeImpl, OutletImpl}
 
+import scala.scalajs.js
 import scalatags.JsDom
 import scalatags.JsDom.all._
 
-class Sfplay_~(val parent: Patcher, val args: List[Any])
+class Sfplay_~(val parent: Patcher, val args: List[Any] = Nil)
   extends ObjNodeImpl("sfplay~") with AudioNodeImpl { obj =>
 
-  private val mediaElem   = {
+  val outlet2 = this.messageOutlet
+
+  // tracks media updates and reports them to right outlet
+  private val funMedia: js.Function1[dom.Event, Unit] = { e: dom.Event =>
+    val msg = e.`type` match {
+      case "timeupdate"     => M("time"     , mediaElem.currentTime)
+      case "durationchange" => M("duration" , mediaElem.duration)
+
+      case "progress" =>
+        val ranges  = mediaElem.buffered
+        val num     = ranges.length
+        var b       = List.empty[Double]
+        var i = num - 1
+        val rangesJ = ranges.asInstanceOf[js.Dynamic]
+        while (i >= 0) {
+          // cf. https://github.com/scala-js/scala-js-dom/issues/137
+          // b ::= ranges.end  (i)
+          // b ::= ranges.start(i)
+          b ::= rangesJ.end  (i) .asInstanceOf[Double]
+          b ::= rangesJ.start(i) .asInstanceOf[Double]
+          i -= 1
+        }
+        M("buffered" :: b: _*)
+
+      case other => M(other)
+    }
+    outlet2(msg)
+    // println(s"EVENT. type = ${e.`type`}")
+  }
+
+  // In these we are interested
+  private val eventTypes = js.Array[String]("canplay", "durationchange", "emptied", "ended", "error",
+    /* "loadedmetadata", */ "loadstart", "progress", "timeupdate")
+
+  private val mediaElem = {
     val res = JsDom.tags.audio(cls := "pat-sf").render
-    // cf. http://stackoverflow.com/questions/31590108
-    res.preload  = "auto"   // needed for Firefox, default in Chromium
-    res.controls = true                   // XXX TODO -- testing
-    dom.document.body.appendChild(res)
+    // Needed for Firefox, default in Chromium. cf. http://stackoverflow.com/questions/31590108
+    res.preload = "auto"
+
+    // For testing purposes, uncommenting the following block
+    // will make the <audio> element visible in the browser
+
+    /*
+      res.controls = true
+      org.scalajs.dom.document.body.appendChild(res)
+     */
+
+    eventTypes.foreach(res.addEventListener(_, funMedia))
     res
+  }
+
+  override def dispose(): Unit = {
+    super.dispose()
+
+    mediaElem.removeEventListener("canplay", funMedia)
+    eventTypes.foreach(mediaElem.removeEventListener(_, funMedia))
+    // cf. http://stackoverflow.com/questions/3258587
+    mediaElem.src = ""
+    mediaElem.load()
   }
 
   private var mediaSource = Option.empty[MediaElementAudioSourceNode]
@@ -127,6 +194,4 @@ class Sfplay_~(val parent: Patcher, val args: List[Any])
       mediaSource.getOrElse(throw new Exception("DSP is not active"))
     }
   }
-
-  val outlet2 = this.messageOutlet
 }

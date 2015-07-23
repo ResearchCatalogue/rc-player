@@ -1,5 +1,5 @@
 /*
- *  Message.scala
+ *  M.scala
  *  (rc-player)
  *
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
@@ -15,6 +15,6 @@
 package rc
 
 object M {
-  val Bang = M("bang")
+  val Bang = M(rc.Bang)
 }
 case class M(atoms: Any*)

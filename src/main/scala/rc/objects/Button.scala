@@ -29,6 +29,6 @@ class Button(val parent: Patcher)
 
   val inlet = this.messageInlet { _ =>
     dispatch(())
-    outlet.apply(M.Bang)
+    outlet(M.Bang)
   }
 }
