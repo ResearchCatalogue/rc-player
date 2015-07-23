@@ -65,13 +65,13 @@ object Player extends js.JSApp {
     val mrTime      = new objects.Message(patcher, Nil)
     patcher add (240, 160) -> mrTime
     val msDur       = new objects.Message(patcher, "set" :: "$1" :: Nil)
-    patcher add (320, 120) -> msDur
+    patcher add (340, 120) -> msDur
     val mrDur       = new objects.Message(patcher, Nil)
-    patcher add (320, 160) -> mrDur
+    patcher add (340, 160) -> mrDur
     val bEnded      = new objects.Button(patcher)
-    patcher add (400, 120) -> bEnded
+    patcher add (420, 120) -> bEnded
     val printSf     = new objects.Print(patcher, "sfplay~" :: Nil)
-    patcher add (440, 120) -> printSf
+    patcher add (480, 120) -> printSf
 
     val tSfVol        = new objects.Toggle(patcher)
     patcher add (340, 240) -> tSfVol
@@ -107,6 +107,8 @@ object Player extends js.JSApp {
 
     route.outlets(3) ---> bEnded.inlet
     route.outlets(4) ---> printSf.inlet
+
+    // msTime.outlet    ---> printSf.inlet
   }
 
   private def old(): Unit = {

@@ -17,4 +17,6 @@ package rc
 object M {
   val Bang = M(rc.Bang)
 }
-case class M(atoms: Any*)
+case class M(atoms: Any*) {
+  override def toString = atoms.mkString(s"$productPrefix(", ", ", ")")
+}

@@ -71,7 +71,7 @@ class MessageViewImpl(val parentView: PatcherView, val elem: Message,
     flashHandle = Int.MinValue
   }
 
-  protected def boxWidth: Int = contents.length * 7 + 13 // + 8
+  protected def boxWidth: Int = js.Math.max(30, contents.length * 7 + 13) // + 8
 
   private def updatePoly(): Unit = {
     val pt  = polyElem.points

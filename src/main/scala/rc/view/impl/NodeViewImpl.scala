@@ -18,28 +18,45 @@ package impl
 
 import org.scalajs.dom
 
-import scalatags.JsDom.all.{width => _, height => _, _}
+import scala.collection.mutable
+import scalatags.JsDom.all.{height => _, width => _, _}
 import scalatags.JsDom.svgAttrs._
 import scalatags.JsDom.svgTags._
-
-import scala.collection.breakOut
 
 trait NodeViewImpl extends ViewImpl with NodeView {
   protected def boxWidth : Int
   protected def boxHeight: Int = 20
 
-  protected val ports: Map[Port, dom.svg.RectElement] = (elem.inlets ::: elem.outlets).map { port =>
-    val py  = if (port.isInlet) 0 else boxHeight - 1
+  private def mkPort(port: Port, isInlet: Boolean, idx: Int, num: Int): dom.svg.RectElement = {
+    val py  = if (isInlet) 0 else boxHeight - 1
     val idx = port.index
-    val px  = if (idx == 0) 0 else boxWidth - 7
-    val res = rect(cls := "pat-port", x := px, y := py, width := 8, height := 2).render
+    val px  =
+      if      (idx == 0)       0
+      else if (idx == num - 1) boxWidth - 7
+      else                     (idx.toDouble / (num - 1) * (boxWidth - 7)).toInt
 
-//    if (this.isInstanceOf[MessageNodeViewImpl]) {
-//      println(s"port $port, px = $px, py = $py, idx = $idx")
-//    }
+    rect(cls := "pat-port", x := px, y := py, width := 8, height := 2).render
+  }
 
-    (port, res)
-  } (breakOut)
+  private def mkPorts(b: mutable.Builder[(Port, dom.svg.RectElement), _], coll: List[Port], isInlet: Boolean): Unit = {
+    val num = coll.size
+    var idx = 0
+    var rem = coll
+    while (idx < num) {
+      val head :: tail = rem
+      val r = mkPort(head, isInlet = isInlet, idx = idx, num = num)
+      b += head -> r
+      idx += 1
+      rem = tail
+    }
+  }
+
+  protected val ports: Map[Port, dom.svg.RectElement] = {
+    val b = Map.newBuilder[Port, dom.svg.RectElement]
+    mkPorts(b, elem.inlets , isInlet = true )
+    mkPorts(b, elem.outlets, isInlet = false)
+    b.result()
+  }
 
   def portLocation(port: Port): DoublePoint2D = {
     val r = ports(port)

@@ -28,26 +28,36 @@ class Message(val parent: Patcher, var args: List[Any])
   private val _vars = js.Array[Any]()
   private var _message: M = null
 
+  private def clearVars(): Unit = {
+    var idx = 0
+    while (idx < 9) {
+      _vars(idx) = 0
+      idx += 1
+    }
+  }
+
+  // _vars.length = 9
+  clearVars()
+
   private def argsUpdated(): Unit = {
     _message  = null // invalidate
-    var idx = 0; while (idx < 9) { _vars(idx) = 0; idx += 1 }
+    clearVars()
     dispatch(contents)
   }
 
   private def updateMessage(): Unit = {
-    val b = List.newBuilder[Any]
-    args.foreach {
+    val argsOut = args.map {
       case arg: String if arg.length == 2 && arg.charAt(0) == '$' =>
         val c = arg.charAt(1)
-        if (c >= '0' && c <= '9') _vars(c - '0') else arg
-
-      case arg => b += arg
+        if (c >= '1' && c <= '9') _vars(c - '1') else arg
+      case arg => arg
     }
-    _message = M(b.result(): _*)
+    _message = M(argsOut: _*)
   }
 
   def message: M = {
     if (_message == null) updateMessage()
+    // println(s"MESSAGE = ${_message}")
     _message
   }
 
@@ -60,6 +70,7 @@ class Message(val parent: Patcher, var args: List[Any])
       outlet(message)
     case M("set", rest @ _*) =>
       args = rest.toList
+      // println(s"SET ARGS = $args")
       argsUpdated()
     case M("append", rest @ _*) =>
       args ++= rest
@@ -74,6 +85,7 @@ class Message(val parent: Patcher, var args: List[Any])
         _vars(idx) = it.next()
         idx += 1
       }
+      updateMessage()
       outlet(message)
   }
 

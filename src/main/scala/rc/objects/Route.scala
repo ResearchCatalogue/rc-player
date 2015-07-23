@@ -23,9 +23,12 @@ trait RouteLike extends ObjNode with SingleInlet {
 
   val inlet = this.messageInlet { m =>
     // XXX TODO -- an empty message is illogical; should forbid that case
-    val a = m.atoms
-    val i = args.indexOf(a.head)
-    if (i >= 0) outlets(i)(stripMatch(m)) else outRest(m)
+    val idx = args.indexOf(m.atoms.head)
+    if (idx >= 0) {
+      val ms = stripMatch(m)
+      // println(s"ROUTE AT $idx = $m -> $ms")
+      outlets(idx)(ms)
+    } else outRest(m)
   }
 
   protected def stripMatch(in: M): M
@@ -34,7 +37,7 @@ trait RouteLike extends ObjNode with SingleInlet {
 class Route(val parent: Patcher, val args: List[Any])
   extends ObjNodeImpl("route") with RouteLike {
 
-  protected def stripMatch(in: M): M = M(in.atoms.tail)
+  protected def stripMatch(in: M): M = M(in.atoms.tail: _*)
 }
 
 class RoutePass(val parent: Patcher, val args: List[Any])
