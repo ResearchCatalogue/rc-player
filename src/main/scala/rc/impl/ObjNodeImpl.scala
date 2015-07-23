@@ -23,5 +23,5 @@ abstract class ObjNodeImpl(val name: String) extends NodeImpl with ObjNode {
 
   override def toString = s"$name@${hashCode.toHexString}"
 
-  def contents = if (args.isEmpty) name else (name :: args).mkString(" ")
+  def contents: String = if (args.isEmpty) name else (name :: args).mkString(" ")
 }

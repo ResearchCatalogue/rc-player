@@ -20,6 +20,10 @@ rect.pat-node {
     stroke: rgb(192, 192, 192);
 }
 
+rect.pat-port {
+    fill: rgb(80, 80, 128);
+}
+
 circle.pat-button {
     fill: none;
     stroke: rgb(80, 80, 80);

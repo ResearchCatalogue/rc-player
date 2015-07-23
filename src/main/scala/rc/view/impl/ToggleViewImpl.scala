@@ -16,38 +16,29 @@ package rc
 package view
 package impl
 
-import org.scalajs.dom
 import rc.objects.Toggle
 
 class ToggleViewImpl(val parentView: PatcherView, val elem: Toggle) extends NodeViewImpl {
-  val peer: dom.svg.Element = {
-    import scalatags.JsDom.all.{width => _, height => _, _}
-    import scalatags.JsDom.svgTags._
-    import scalatags.JsDom.svgAttrs._
-    val loc         = elem.location
-    // XXX TODO -- would be great if we could keep these size values in a CSS somehow
-    val rectTree    = rect  (cls := "pat-node pat-toggle", x := 0.5, y := 0.5, width := 20, height := 20)
-    val line1Tree   = line  (cls := "pat-toggle", x1 := 4.5, y1 :=  4.5, x2 := 16.5, y2 := 16.5)
-    val line2Tree   = line  (cls := "pat-toggle", x1 := 4.5, y1 := 16.5, x2 := 16.5, y2 :=  4.5)
-    val groupElem   = g     (cls := "pat-node", rectTree, line1Tree, line2Tree,
-      transform := s"translate(${loc.x},${loc.y})").render
-    groupElem
-  }
-
-  init()
 
   private val elemL = elem.addListener { case _ => updateState() }
 
-  private def updateState(): Unit = {
-    val selected = elem.value != 0
-    if (selected) peer.classList.add   ("pat-toggle-on")
-    else          peer.classList.remove("pat-toggle-on")
-  }
+  init()
+
+  protected def boxWidth = 18
 
   def dispose(): Unit = elem.removeListener(elemL)
 
   override protected def init(): Unit = {
     super.init()
+
+    import scalatags.JsDom.all.{height => _, width => _, _}
+    import scalatags.JsDom.svgAttrs._
+    import scalatags.JsDom.svgTags._
+    val line1Elem = line  (cls := "pat-toggle", x1 := 4.5, y1 :=  5.5, x2 := 14.5, y2 := 15.5).render
+    val line2Elem = line  (cls := "pat-toggle", x1 := 4.5, y1 := 15.5, x2 := 14.5, y2 :=  5.5).render
+    peer.appendChild(line1Elem)
+    peer.appendChild(line2Elem)
+
     peer.mousePressed { e =>
       if (this.isClickAction(e)) {  // cause a toggle
         elem.inlet ! Message(elem.toggleValue)
@@ -55,5 +46,11 @@ class ToggleViewImpl(val parentView: PatcherView, val elem: Toggle) extends Node
       }
     }
     updateState()
+  }
+
+  private def updateState(): Unit = {
+    val selected = elem.value != 0
+    if (selected) peer.classList.add   ("pat-toggle-on")
+    else          peer.classList.remove("pat-toggle-on")
   }
 }

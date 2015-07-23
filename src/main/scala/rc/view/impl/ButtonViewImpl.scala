@@ -26,15 +26,7 @@ class ButtonViewImpl(val parentView: PatcherView, val elem: Button) extends Node
   import scalatags.JsDom.svgTags._
   import scalatags.JsDom.svgAttrs._
 
-
-  val peer: dom.svg.Element = {
-    val loc         = elem.location
-    // XXX TODO -- would be great if we could keep these size values in a CSS somehow
-    val rectTree    = rect  (cls := "pat-node pat-button", x := 0.5, y := 0.5, width := 20, height := 20)
-    val circleTree  = circle(cls := "pat-button", cx := 10.5, cy := 10.5, r := 7.5 /* 8.5 */)
-    val groupElem   = g(cls := "pat-node", rectTree, circleTree, transform := s"translate(${loc.x},${loc.y})").render
-    groupElem
-  }
+  protected def boxWidth = 18
 
   private val elemL = elem.addListener { case _ => flash() }
 
@@ -65,6 +57,9 @@ class ButtonViewImpl(val parentView: PatcherView, val elem: Button) extends Node
 
   override protected def init(): Unit = {
     super.init()
+    val circleElem = circle(cls := "pat-button", cx := 9.5, cy := 10.5, r := 6.5 /* 8.5 */).render
+    peer.appendChild(circleElem)
+
     peer.mousePressed { e =>
       if (this.isClickAction(e)) {  // cause a bang
         elem.inlet ! Message.Bang
