@@ -16,24 +16,22 @@ package rc
 package objects
 
 import org.scalajs.dom
-import org.scalajs.dom.AudioNode
-import rc.impl.{OutletImpl, AudioNodeImpl, ObjNodeImpl, SingleInlet, SingleOutlet}
 import rc.audio.AudioSystem
+import rc.impl.{AudioNodeImpl, ObjNodeImpl, OutletImpl, SingleInlet, SingleOutlet}
 
 class Osc_~(val parent: Patcher, val args: List[Any])
   extends ObjNodeImpl("osc~")
   with AudioNodeImpl
   with SingleInlet with SingleOutlet { obj =>
 
-  private var _freq: Float = args match {
-    case (i: Int  ) :: Nil => i
-    case (f: Float) :: Nil => f
+  private var _freq: Double = args match {
+    case (d: Double) :: Nil => d
     case Nil => 0
     case _ => throw new Exception(s"Illegal initial frequency parameter $args")
   }
 
-  def freq: Float = _freq
-  def freq_=(value: Float): Unit = if (_freq != value) {
+  def freq: Double = _freq
+  def freq_=(value: Double): Unit = if (_freq != value) {
     _freq = value
     oscillator.foreach { osc =>
       val time = AudioSystem.context.currentTime
@@ -64,16 +62,13 @@ class Osc_~(val parent: Patcher, val args: List[Any])
     def node        = obj
     def tpe         = AudioType
 
-    def audio: AudioNode = oscillator.getOrElse {
+    def audio: dom.AudioNode = oscillator.getOrElse {
       if (parent.dsp.active) dspStarted()
       oscillator.getOrElse(throw new Exception("DSP is not active"))
     }
   }
 
   val inlet = this.messageInlet("Frequency in Hertz") {
-    case Message(i: Int  ) =>
-      freq = i
-    case Message(f: Float) =>
-      freq = f
+    case Message(d: Double) => freq = d
   }
 }

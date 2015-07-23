@@ -41,11 +41,8 @@ class Toggle(val parent: Patcher)
     case Message.Bang =>
       value = toggleValue
       flush()
-    case Message(i: Int) =>
-      value = i
-      flush()
-    case Message(f: Float) =>
-      value = f.toInt
+    case Message(d: Double) =>
+      value = d.toInt
       flush()
     case Message("set", i: Int) =>
       value = i

@@ -13,8 +13,8 @@ import scalatags.JsDom.all._
 class Meter extends HasIn with Widget { meter =>
   private var lastPeak  = 0.0
   private var lastRMS   = 0.0
-  private var sqrSum    = 0.0f
-  private var sqrMax    = 0.0f
+  private var sqrSum    = 0.0
+  private var sqrMax    = 0.0
   private var count     = 0
 
   lazy val render: Canvas = {
@@ -33,8 +33,8 @@ class Meter extends HasIn with Widget { meter =>
   }
 
   def reset(): Unit = if (count > 0) {
-    sqrSum  = 0f
-    sqrMax  = 0f
+    sqrSum  = 0.0
+    sqrMax  = 0.0
     count   = 0
   }
 

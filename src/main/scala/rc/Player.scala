@@ -40,6 +40,8 @@ object Player extends js.JSApp {
     patcher add (280, 120) -> dac
     val osc         = new objects.Osc_~(patcher, 1000 :: Nil)
     patcher add (160, 160) -> osc
+    val gain        = new objects.Multiply_~(patcher, 0.2 :: Nil)
+    patcher add (160, 200) -> gain
 
     $("body").append(patcher.view().container)
 
@@ -47,7 +49,8 @@ object Player extends js.JSApp {
     random.outlet ---> mtof  .inlet
     mtof  .outlet ---> print .inlet
     mtof  .outlet ---> osc   .inlet
-    osc   .outlet ---> dac   .inlet
+    osc   .outlet ---> gain  .inlet1
+    gain  .outlet ---> dac   .inlet
     toggle.outlet ---> dac   .inlet
   }
 
