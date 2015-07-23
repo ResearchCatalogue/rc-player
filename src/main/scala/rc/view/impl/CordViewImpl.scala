@@ -19,11 +19,12 @@ trait CordViewImpl extends View {
 
   private def mkPoint(n: NodeView, port: Port): DoublePoint2D = {
     val loc     = n.portLocation(port)
-    val bounds  = n.peer.getBoundingClientRect()
-    val pBounds = n.parentView.container.getBoundingClientRect()
+    val eLoc    = n.elem.location
+    // val bounds  = n.peer.getBoundingClientRect()
+    // val pBounds = n.parentView.container.getBoundingClientRect()
     // println(s"SOURCE BOUNDS (${bounds.left}, ${bounds.top}, ${bounds.width}, ${bounds.height})")
-    val x       = bounds.left - pBounds.left + loc.x + 0.5
-    val y       = bounds.top  - pBounds.top  + loc.y + 0.5
+    val x       = eLoc.x + loc.x - 0.5
+    val y       = eLoc.y + loc.y - 0.5
     DoublePoint2D(x, y)
   }
 
