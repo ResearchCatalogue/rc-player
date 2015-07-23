@@ -14,7 +14,7 @@ class Mtof(val parent: Patcher)
     val freq = m.atoms.map {
       case d: Double => cpsmidi(d)
     }
-    outlet(Message(freq: _*))
+    outlet(M(freq: _*))
   }
 
   private def cpsmidi(in: Double): Double = base * math.pow(2, (in - 69) / 12)

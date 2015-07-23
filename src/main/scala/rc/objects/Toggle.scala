@@ -38,15 +38,15 @@ class Toggle(val parent: Patcher)
   def toggleValue: Int = if (_state == 0) 1 else 0
 
   val inlet = this.messageInlet {
-    case Message.Bang =>
+    case M.Bang =>
       value = toggleValue
       flush()
-    case Message(d: Double) =>
+    case M(d: Double) =>
       value = d.toInt
       flush()
-    case Message("set", i: Int) =>
+    case M("set", i: Int) =>
       value = i
   }
 
-  private def flush(): Unit = outlet(Message(_state))
+  private def flush(): Unit = outlet(M(_state))
 }

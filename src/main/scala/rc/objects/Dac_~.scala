@@ -47,9 +47,9 @@ class Dac_~(val parent: Patcher)
     def node: Node = obj
 
     /** Tries to send a message into this inlet. Throws an error if `MessageType` is not accepted. */
-    def ! (message: Message): Unit = message match {
-      case Message(0)      | Message("stop" ) => parent.dsp.active = false
-      case Message(_: Int) | Message("start") => parent.dsp.active = true
+    def ! (message: M): Unit = message match {
+      case M(0)      | M("stop" ) => parent.dsp.active = false
+      case M(_: Int) | M("start") => parent.dsp.active = true
     }
 
     override def cordAdded  (cord: Cord): Unit = if (cord.tpe == AudioType && parent.dsp.active) {

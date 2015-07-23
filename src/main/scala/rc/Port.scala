@@ -34,7 +34,7 @@ trait Inlet extends Port {
   def accepts(tpe: Type): Boolean
 
   /** Tries to send a message into this inlet. Throws an error if `MessageType` is not accepted. */
-  def ! (message: Message): Unit
+  def ! (message: M): Unit
 }
 
 trait Outlet extends Port {

@@ -62,7 +62,7 @@ class ButtonViewImpl(val parentView: PatcherView, val elem: Button) extends Rect
 
     peer.mousePressed { e =>
       if (this.isClickAction(e)) {  // cause a bang
-        elem.inlet ! Message.Bang
+        elem.inlet ! M.Bang
         e.preventDefault()
       }
     }

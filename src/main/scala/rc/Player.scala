@@ -43,7 +43,7 @@ object Player extends js.JSApp {
     val gain        = new objects.Multiply_~(patcher, 0.2 :: Nil)
     patcher add (160, 200) -> gain
 
-    val m441        = MessageNode(patcher, 448 :: Nil)
+    val m441        = new objects.Message(patcher, 448 :: Nil)
     patcher add (160, 120) -> m441
 
     $("body").append(patcher.view().container)

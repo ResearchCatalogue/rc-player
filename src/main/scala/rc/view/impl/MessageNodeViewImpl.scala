@@ -9,7 +9,7 @@ import scalatags.JsDom.all.{width => _, height => _, _}
 import scalatags.JsDom.svgAttrs._
 import scalatags.JsDom.svgTags._
 
-class MessageNodeViewImpl(val parentView: PatcherView, val elem: MessageNode,
+class MessageNodeViewImpl(val parentView: PatcherView, val elem: Message,
                           private var contents: String)
   extends NodeViewImpl {
 
@@ -75,7 +75,7 @@ class MessageNodeViewImpl(val parentView: PatcherView, val elem: MessageNode,
 
     peer.mousePressed { e =>
       if (this.isClickAction(e)) {  // cause a bang
-        elem.inlet ! Message.Bang
+        elem.inlet ! M.Bang
         flash()
         e.preventDefault()
       }

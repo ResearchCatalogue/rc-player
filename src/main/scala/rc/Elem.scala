@@ -14,7 +14,7 @@
 
 package rc
 
-import rc.impl.{SingleInlet, SingleOutlet, MessageNodeImpl, CordImpl}
+import rc.impl.{SingleInlet, SingleOutlet, CordImpl}
 import rc.view.{PatcherView, View}
 
 sealed trait Elem extends Disposable {
@@ -30,11 +30,8 @@ sealed trait Node extends Elem {
   def contents: String
 }
 
-object MessageNode {
-  def apply(patcher: Patcher, args: List[Any]): MessageNode = new MessageNodeImpl(patcher, args)
-}
-trait MessageNode extends Node with Model[String] with SingleInlet with SingleOutlet {
-  def message: Message
+trait Message extends Node with Model[String] with SingleInlet with SingleOutlet {
+  def message: M
 }
 
 trait ObjNode extends Node {

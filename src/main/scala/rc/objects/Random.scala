@@ -16,12 +16,12 @@ class Random(val parent: Patcher, val args: List[Any] = Nil)
   val outlet = this.messageOutlet
 
   val inlet1 = this.messageInlet {
-    case Message.Bang => outlet(Message(nextInt(range)))
-    case Message("seed", value: Int) => seed = initialScramble(value)
+    case M.Bang => outlet(M(nextInt(range)))
+    case M("seed", value: Int) => seed = initialScramble(value)
   }
 
   val inlet2 = this.messageInlet {
-    case Message(value: Int) =>
+    case M(value: Int) =>
       require(range > 0, "range must be positive")
       range = value
   }

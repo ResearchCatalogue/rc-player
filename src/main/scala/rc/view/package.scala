@@ -26,7 +26,7 @@ package object view {
     if (cord.tpe == MessageType) new MessageCordViewImpl(parentView, cord)
     else                         new AudioCordViewImpl  (parentView, cord)
 
-  def MessageNodeView(parentView: PatcherView, view: MessageNode): NodeView =
+  def MessageNodeView(parentView: PatcherView, view: Message): NodeView =
     new MessageNodeViewImpl(parentView, view, view.contents)
 
   def isMenu(e: ModifierKeyEvent): Boolean = if (isMac) e.metaKey else e.ctrlKey

@@ -68,6 +68,6 @@ class Osc_~(val parent: Patcher, val args: List[Any])
   }
 
   val inlet = this.messageInlet {
-    case Message(d: Double) => freq = d
+    case M(d: Double) => freq = d
   }
 }

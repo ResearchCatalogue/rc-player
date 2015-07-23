@@ -1,17 +1,18 @@
-package rc
-package impl
+package rc.objects
 
-import rc.view.{View, PatcherView, MessageNodeView}
+import rc.{M, Patcher}
+import rc.impl.{ModelImpl, NodeImpl, NodeImplOps}
+import rc.view.{MessageNodeView, PatcherView, View}
 
 import scala.scalajs.js
 
-class MessageNodeImpl(val parent: Patcher, var args: List[Any])
+class Message(val parent: Patcher, var args: List[Any])
   extends NodeImpl
-  with MessageNode
+  with rc.Message
   with ModelImpl[String] {
 
   private val _vars = js.Array[Any]()
-  private var _message: Message = null
+  private var _message: M = null
 
   private def argsUpdated(): Unit = {
     _message  = null // invalidate
@@ -28,10 +29,10 @@ class MessageNodeImpl(val parent: Patcher, var args: List[Any])
 
       case arg => b += arg
     }
-    _message = Message(b.result(): _*)
+    _message = M(b.result(): _*)
   }
 
-  def message: Message = {
+  def message: M = {
     if (_message == null) updateMessage()
     _message
   }
@@ -41,15 +42,15 @@ class MessageNodeImpl(val parent: Patcher, var args: List[Any])
   val outlet = this.messageOutlet
 
   val inlet = this.messageInlet {
-    case Message.Bang =>
+    case M.Bang =>
       outlet(message)
-    case Message("set", rest @ _*) =>
+    case M("set", rest @ _*) =>
       args = rest.toList
       argsUpdated()
-    case Message("append", rest @ _*) =>
+    case M("append", rest @ _*) =>
       args ++= rest
       argsUpdated()
-    case Message("prepend", rest @ _*) =>
+    case M("prepend", rest @ _*) =>
       args :::= rest.toList
       argsUpdated()
     case other =>

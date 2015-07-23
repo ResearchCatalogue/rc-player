@@ -14,7 +14,7 @@
 
 package rc
 
-object Message {
-  val Bang = Message("bang")
+object M {
+  val Bang = M("bang")
 }
-case class Message(atoms: Any*)
+case class M(atoms: Any*)

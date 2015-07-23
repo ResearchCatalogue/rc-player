@@ -41,7 +41,7 @@ class ToggleViewImpl(val parentView: PatcherView, val elem: Toggle) extends Rect
 
     peer.mousePressed { e =>
       if (this.isClickAction(e)) {  // cause a toggle
-        elem.inlet ! Message(elem.toggleValue)
+        elem.inlet ! M(elem.toggleValue)
         e.preventDefault()
       }
     }

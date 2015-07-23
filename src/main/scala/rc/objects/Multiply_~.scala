@@ -74,7 +74,7 @@ class Multiply_~(val parent: Patcher, val args: List[Any])
 
     def node: Node = obj
 
-    def ! (message: Message): Unit = throw new Exception("Does not accept messages")
+    def ! (message: M): Unit = throw new Exception("Does not accept messages")
 
     override def cordAdded  (cord: Cord): Unit = gain.foreach { g =>
       val audioNode = cord.source.audio
@@ -90,7 +90,7 @@ class Multiply_~(val parent: Patcher, val args: List[Any])
   }
 
   val inlet2 = this.messageInlet {
-    case Message(d: Double) => mul = d
+    case M(d: Double) => mul = d
   }
 
   def inlets: List[Inlet] = inlet1 :: inlet2 :: Nil
