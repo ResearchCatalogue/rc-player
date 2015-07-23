@@ -43,6 +43,9 @@ object Player extends js.JSApp {
     val gain        = new objects.Multiply_~(patcher, 0.2 :: Nil)
     patcher add (160, 200) -> gain
 
+    val m441        = MessageNode(patcher, 448 :: Nil)
+    patcher add (160, 120) -> m441
+
     $("body").append(patcher.view().container)
 
     bang  .outlet ---> random.inlet1
@@ -52,6 +55,7 @@ object Player extends js.JSApp {
     osc   .outlet ---> gain  .inlet1
     gain  .outlet ---> dac   .inlet
     toggle.outlet ---> dac   .inlet
+    m441  .outlet ---> osc   .inlet
   }
 
   private def old(): Unit = {

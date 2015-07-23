@@ -16,7 +16,7 @@ package rc
 
 import org.scalajs.dom
 import org.scalajs.dom.ModifierKeyEvent
-import rc.view.impl.{AudioCordViewImpl, ButtonViewImpl, MessageCordViewImpl, ToggleViewImpl}
+import rc.view.impl.{MessageNodeViewImpl, AudioCordViewImpl, ButtonViewImpl, MessageCordViewImpl, ToggleViewImpl}
 
 package object view {
   def ButtonView(parentView: PatcherView, button: objects.Button): NodeView = new ButtonViewImpl(parentView, button)
@@ -25,6 +25,9 @@ package object view {
   def CordView(parentView: PatcherView, cord: Cord): View =
     if (cord.tpe == MessageType) new MessageCordViewImpl(parentView, cord)
     else                         new AudioCordViewImpl  (parentView, cord)
+
+  def MessageNodeView(parentView: PatcherView, view: MessageNode): NodeView =
+    new MessageNodeViewImpl(parentView, view, view.contents)
 
   def isMenu(e: ModifierKeyEvent): Boolean = if (isMac) e.metaKey else e.ctrlKey
 

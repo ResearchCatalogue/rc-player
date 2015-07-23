@@ -20,6 +20,16 @@ rect.pat-node {
     stroke: rgb(192, 192, 192);
 }
 
+polygon.pat-msg {
+    fill: rgb(246, 248, 248);
+    stroke: rgb(192, 192, 192);
+}
+
+g.pat-flash > polygon.pat-msg {
+    stroke: rgb(80, 80, 80);
+    stroke-width: 2px;
+}
+
 rect.pat-port {
     fill: rgb(80, 80, 128);
 }
@@ -29,7 +39,7 @@ circle.pat-button {
     stroke: rgb(80, 80, 80);
 }
 
-g.pat-button-flash > circle.pat-button {
+g.pat-flash > circle.pat-button {
     fill: rgb(80, 80, 80);
 }
 

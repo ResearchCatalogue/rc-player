@@ -8,9 +8,9 @@ class Mtof(val parent: Patcher)
 
   private val /* var */ base = 440.0
 
-  val outlet = this.messageOutlet("Frequency in Hertz")
+  val outlet = this.messageOutlet
 
-  val inlet = this.messageInlet("MIDI note number(s)") { m =>
+  val inlet = this.messageInlet { m =>
     val freq = m.atoms.map {
       case d: Double => cpsmidi(d)
     }

@@ -18,7 +18,7 @@ package impl
 
 import rc.objects.Toggle
 
-class ToggleViewImpl(val parentView: PatcherView, val elem: Toggle) extends NodeViewImpl {
+class ToggleViewImpl(val parentView: PatcherView, val elem: Toggle) extends RectNodeViewImpl {
 
   private val elemL = elem.addListener { case _ => updateState() }
 

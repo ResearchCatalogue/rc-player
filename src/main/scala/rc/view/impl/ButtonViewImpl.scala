@@ -21,7 +21,7 @@ import rc.objects.Button
 
 import scala.scalajs.js
 
-class ButtonViewImpl(val parentView: PatcherView, val elem: Button) extends NodeViewImpl {
+class ButtonViewImpl(val parentView: PatcherView, val elem: Button) extends RectNodeViewImpl {
   import scalatags.JsDom.all.{width => _, height => _, _}
   import scalatags.JsDom.svgTags._
   import scalatags.JsDom.svgAttrs._
@@ -36,12 +36,12 @@ class ButtonViewImpl(val parentView: PatcherView, val elem: Button) extends Node
 
   private val stopFlash: js.Function0[Any] = () => {
     flashHandle = Int.MinValue
-    peer.classList.remove("pat-button-flash")
+    peer.classList.remove("pat-flash")
   }
 
   private def flash(): Unit = {
     cancelFlash()
-    peer.classList.add("pat-button-flash")
+    peer.classList.add("pat-flash")
     flashHandle = dom.window.setTimeout(stopFlash, 150)
   }
 

@@ -13,14 +13,14 @@ class Random(val parent: Patcher, val args: List[Any] = Nil)
   private var seed : Long = _
   private var range: Int  = 1
 
-  val outlet = this.messageOutlet("Random Numbers between 0 and range-1")
+  val outlet = this.messageOutlet
 
-  val inlet1 = this.messageInlet("Bang to Generate Number") {
+  val inlet1 = this.messageInlet {
     case Message.Bang => outlet(Message(nextInt(range)))
     case Message("seed", value: Int) => seed = initialScramble(value)
   }
 
-  val inlet2 = this.messageInlet("Sets Range") {
+  val inlet2 = this.messageInlet {
     case Message(value: Int) =>
       require(range > 0, "range must be positive")
       range = value

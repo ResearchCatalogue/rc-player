@@ -25,9 +25,9 @@ class Button(val parent: Patcher)
 
   override def view(parentView: PatcherView): NodeView = ButtonView(parentView, this)
 
-  val outlet = this.messageOutlet("Bang Messages")
+  val outlet = this.messageOutlet
 
-  val inlet = this.messageInlet("Any Message Triggers a Bang") { _ =>
+  val inlet = this.messageInlet { _ =>
     dispatch(())
     outlet.apply(Message.Bang)
   }

@@ -22,8 +22,6 @@ object Port {
   case class CordRemoved(port: Port, cord: Cord) extends Update
 }
 sealed trait Port extends Model[Port.Update] {
-  def description : String
-
   def node: Node
 
   def cords: List[Cord]

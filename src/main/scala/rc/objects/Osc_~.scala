@@ -58,7 +58,6 @@ class Osc_~(val parent: Patcher, val args: List[Any])
   }
 
   object outlet extends OutletImpl {
-    def description = "Oscillator signal"
     def node        = obj
     def tpe         = AudioType
 
@@ -68,7 +67,7 @@ class Osc_~(val parent: Patcher, val args: List[Any])
     }
   }
 
-  val inlet = this.messageInlet("Frequency in Hertz") {
+  val inlet = this.messageInlet {
     case Message(d: Double) => freq = d
   }
 }

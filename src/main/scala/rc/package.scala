@@ -33,7 +33,7 @@ package object rc {
     def isOutlet  : Boolean = port.isInstanceOf[Outlet]
 
     /** Index in the list of inlets or outlets of the node. */
-    def index     : Int     = {
+    def index: Int = {
       val n     = port.node
       val list  = if (isInlet) n.inlets else n.outlets
       list.indexOf(port)

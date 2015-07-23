@@ -26,7 +26,7 @@ class Print(val parent: Patcher, val args: List[Any] = Nil)
     case _ => args.mkString("", " ", ": ")
   }
 
-  val inlet = this.messageInlet("Messages to Print") { message =>
+  val inlet = this.messageInlet { message =>
     val m = message.atoms.mkString(prefix, " ", "")
     println(m)
   }

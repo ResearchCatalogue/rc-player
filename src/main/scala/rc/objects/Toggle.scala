@@ -25,7 +25,7 @@ class Toggle(val parent: Patcher)
 
   override def view(parentView: PatcherView): NodeView = ToggleView(parentView, this)
 
-  val outlet = this.messageOutlet("0 and 1, or Input Int")
+  val outlet = this.messageOutlet
 
   private var _state = 0
 
@@ -37,7 +37,7 @@ class Toggle(val parent: Patcher)
 
   def toggleValue: Int = if (_state == 0) 1 else 0
 
-  val inlet = this.messageInlet("Bang to toggle or Int to set state") {
+  val inlet = this.messageInlet {
     case Message.Bang =>
       value = toggleValue
       flush()

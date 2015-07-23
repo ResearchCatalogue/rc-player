@@ -42,8 +42,6 @@ class Dac_~(val parent: Patcher)
   }
 
   object inlet extends InletImpl {
-    def description = "1 or 0, start or stop, and signal input"
-
     def accepts(tpe: Type) = true
 
     def node: Node = obj

@@ -17,7 +17,7 @@ package view
 package impl
 
 class ObjNodeViewImpl(val parentView: PatcherView, val elem: ObjNode, elemText: String)
-  extends NodeViewImpl {
+  extends RectNodeViewImpl {
 
   init()
 

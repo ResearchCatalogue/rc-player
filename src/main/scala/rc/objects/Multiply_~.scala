@@ -35,7 +35,6 @@ class Multiply_~(val parent: Patcher, val args: List[Any])
   }
 
   object outlet extends OutletImpl {
-    def description = "Multiplied signal"
     def node        = obj
     def tpe         = AudioType
 
@@ -71,8 +70,6 @@ class Multiply_~(val parent: Patcher, val args: List[Any])
   }
 
   object inlet1 extends InletImpl {
-    def description = "Left operand (audio)"
-
     def accepts(tpe: Type) = tpe == AudioType
 
     def node: Node = obj
@@ -92,7 +89,7 @@ class Multiply_~(val parent: Patcher, val args: List[Any])
     }
   }
 
-  val inlet2 = this.messageInlet("Right operand (audio or message)") {
+  val inlet2 = this.messageInlet {
     case Message(d: Double) => mul = d
   }
 
