@@ -4,15 +4,15 @@ body {
 
 div.pat {
     position: relative;
-    width: 400px;
-    height: 400px;
+    width: 480px;
+    height: 480px;
     background: white;
     border: 1px black;
 }
 
 svg.pat {
-    width: 400px;
-    height: 400px;
+    width: 480px;
+    height: 480px;
 }
 
 rect.pat-node {

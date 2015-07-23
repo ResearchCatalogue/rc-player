@@ -26,7 +26,7 @@ class Multiply_~(val parent: Patcher, val args: List[Any])
 
   private var audioNodes = List.empty[dom.AudioNode]
 
-  private var gain = Option.empty[dom.GainNode]
+  private var gainElem = Option.empty[dom.GainNode]
 
   private var _mul: Double = args match {
     case (d: Double) :: Nil => d
@@ -38,35 +38,44 @@ class Multiply_~(val parent: Patcher, val args: List[Any])
     def node        = obj
     def tpe         = AudioType
 
-    def audio: dom.AudioNode = gain.getOrElse {
+    def audio: dom.AudioNode = gainElem.getOrElse {
       if (parent.dsp.active) dspStarted()
-      gain.getOrElse(throw new Exception("DSP is not active"))
+      gainElem.getOrElse(throw new Exception("DSP is not active"))
     }
   }
 
   def mul: Double = _mul
   def mul_=(value: Double): Unit = if (_mul != value) {
     _mul = value
-    gain.foreach { g =>
-      val time = AudioSystem.context.currentTime
-      g.gain.cancelScheduledValues(time)
+    gainElem.foreach { g =>
+      val time = g.context.currentTime // AudioSystem.context.currentTime
+      // g.gain.cancelScheduledValues(time)
       g.gain.setValueAtTime(value, time)
+      // g.gain.value = value
+      // println(s"SETTING MUL TO $value AT $time @${g.hashCode().toHexString}")
       // osc.frequency.value = value
     }
   }
 
-  protected def dspStarted(): Unit = {
+  protected def dspStarted(): Unit = if (gainElem.isEmpty) {
     val g = AudioSystem.context.createGain()
     g.gain.value = _mul
     audioNodes = inlet1.cords.map(_.source.audio)
-    audioNodes.foreach(_.connect(g))
-    gain = Some(g)
+    audioNodes.foreach { n =>
+      // println(s"[A] CONNECTING TO ${g.hashCode.toHexString}")
+      n.connect(g)
+    }
+    // println("SETTING GAIN")
+    gainElem = Some(g)
   }
 
-  protected def dspStopped(): Unit = gain.foreach { g =>
-    audioNodes.foreach(_.disconnect(g))
+  protected def dspStopped(): Unit = gainElem.foreach { g =>
+    audioNodes.foreach { n =>
+      // println(s"[A] DISCONNECTING FROM ${g.hashCode.toHexString}")
+      n.disconnect(g)
+    }
     audioNodes = Nil
-    gain = None
+    gainElem = None
   }
 
   object inlet1 extends InletImpl {
@@ -76,15 +85,17 @@ class Multiply_~(val parent: Patcher, val args: List[Any])
 
     def ! (message: M): Unit = throw new Exception("Does not accept messages")
 
-    override def cordAdded  (cord: Cord): Unit = gain.foreach { g =>
+    override def cordAdded  (cord: Cord): Unit = gainElem.foreach { g =>
       val audioNode = cord.source.audio
       audioNodes ::= audioNode
+      // println(s"[B] CONNECTING TO ${g.hashCode.toHexString}")
       audioNode.connect(g)
     }
 
-    override def cordRemoved(cord: Cord): Unit = gain.foreach { g =>
+    override def cordRemoved(cord: Cord): Unit = gainElem.foreach { g =>
       val audioNode = cord.source.audio
       audioNodes = audioNodes.diff(audioNode :: Nil)
+      // println(s"[B] DISCONNECTING FROM ${g.hashCode.toHexString}")
       audioNode.disconnect(g)
     }
   }
