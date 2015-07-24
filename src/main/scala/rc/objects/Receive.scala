@@ -27,7 +27,7 @@ class Receive(val parent: Patcher, val args: List[Any])
 
   val outlet = this.messageOutlet
 
-  private val inlet = Registry.addReceive(portName) { m: M => outlet(m) }
+  private val inlet = Registry.addReceive(portName, { m: M => outlet(m) })
 
   override def dispose(): Unit = {
     super.dispose()

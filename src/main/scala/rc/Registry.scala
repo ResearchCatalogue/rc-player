@@ -17,7 +17,7 @@ package rc
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 
-@JSExport
+@JSExport("rc.Registry")
 object Registry {
   type Fun = js.Function1[M, Unit]
   
@@ -59,7 +59,8 @@ object Registry {
     fun
   }
 
-  def addReceive(name: String)(fun: Fun): fun.type = {
+  @JSExport
+  def addReceive(name: String, fun: Fun): fun.type = {
     add(name, fun, receivers)
     fun
   }
