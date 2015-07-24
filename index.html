@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <title>rc-player</title>
     <link href='http://fonts.googleapis.com/css?family=Inconsolata:700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Dosis:600' rel='stylesheet' type='text/css'>
+    <link href="widgets.css" rel="stylesheet">
     <link href="patcher.css" rel="stylesheet">
     <script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"></script>
+    <!-- Include Scala.js compiled code -->
+    <script type="text/javascript" src="./target/scala-2.11/rc-player-opt.js"></script>
+    <script type="text/javascript" src="widgets/TimeDisplay.js"></script>
 </head>
 <body>
 <div id="player"></div>
-<!-- Include Scala.js compiled code -->
-<script type="text/javascript" src="./target/scala-2.11/rc-player-opt.js"></script>
 <!-- Run main app -->
 <script type="text/javascript">
   rc.Player().main();

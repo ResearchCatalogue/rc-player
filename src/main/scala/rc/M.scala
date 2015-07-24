@@ -14,9 +14,16 @@
 
 package rc
 
+import scala.annotation.meta.field
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSExport
+
 object M {
   val Bang = M(rc.Bang)
 }
+@JSExport("rc.M")
 case class M(atoms: Any*) {
+  @JSExport("atoms") def toArray: js.Array[Any] = atoms.to[js.Array]
+
   override def toString = atoms.mkString(s"$productPrefix(", ", ", ")")
 }

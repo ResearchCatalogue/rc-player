@@ -37,6 +37,8 @@ class PatcherImpl extends Patcher with ModelImpl[Patcher.Update] {
     }
   }
 
+  def loadBang(): Unit = dispatch(Patcher.Loaded(this))
+
   def view(): PatcherView = PatcherView(this)
 
   def elems: Seq[Elem] = _elems

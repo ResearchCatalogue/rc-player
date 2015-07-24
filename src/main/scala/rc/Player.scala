@@ -25,6 +25,8 @@ object Player extends js.JSApp {
 
   private def documentLoaded(): Unit = {
     val patcher     = Patcher()
+
+/*
     val bRandom     = new objects.Button(patcher)
     patcher add (40, 40) -> bRandom
     val random      = new objects.Random(patcher, 128 :: Nil)
@@ -33,22 +35,22 @@ object Player extends js.JSApp {
     patcher add (40, 240) -> mtof
     val print       = new objects.Print(patcher)
     patcher add (40, 280) -> print
-
+*/
     val tDac        = new objects.Toggle(patcher)
     patcher add (340, 280) -> tDac
     val dac         = new objects.Dac_~(patcher)
     patcher add (280, 280) -> dac
-    val osc         = new objects.Osc_~(patcher, 1000 :: Nil)
-    patcher add (160, 280) -> osc
-    val gain        = new objects.Multiply_~(patcher, 0.2 :: Nil)
-    patcher add (160, 320) -> gain
-    val mGain0      = new objects.Message(patcher, 0.0 :: Nil)
-    patcher add (240, 320) -> mGain0
-    val mGain02     = new objects.Message(patcher, 0.2 :: Nil)
-    patcher add (280, 320) -> mGain02
+//    val osc         = new objects.Osc_~(patcher, 1000 :: Nil)
+//    patcher add (160, 280) -> osc
+//    val gain        = new objects.Multiply_~(patcher, 0.2 :: Nil)
+//    patcher add (160, 320) -> gain
+//    val mGain0      = new objects.Message(patcher, 0.0 :: Nil)
+//    patcher add (240, 320) -> mGain0
+//    val mGain02     = new objects.Message(patcher, 0.2 :: Nil)
+//    patcher add (280, 320) -> mGain02
 
-    val m441        = new objects.Message(patcher, 448 :: Nil)
-    patcher add (160, 240) -> m441
+//    val m441        = new objects.Message(patcher, 448 :: Nil)
+//    patcher add (160, 240) -> m441
 
     val sf          = new objects.Sfplay_~(patcher)
     patcher add (160, 80) -> sf
@@ -66,8 +68,8 @@ object Player extends js.JSApp {
     patcher add (340, 160) -> mrDur
     val bEnded      = new objects.Button(patcher)
     patcher add (420, 120) -> bEnded
-    val printSf     = new objects.Print(patcher, "sfplay~" :: Nil)
-    patcher add (480, 120) -> printSf
+//    val printSf     = new objects.Print(patcher, "sfplay~" :: Nil)
+//    patcher add (480, 120) -> printSf
 
     val timeSend    = new objects.Send(patcher, "time" :: Nil)
     patcher add (240, 120) -> timeSend
@@ -83,18 +85,21 @@ object Player extends js.JSApp {
     val gainSf        = new objects.Multiply_~(patcher, 1 :: Nil)
     patcher add (280, 240) -> gainSf
 
+    val lb            = new objects.LoadBang(patcher)
+    patcher add (40, 120) -> lb
+
     $("body").append(patcher.view().container)
 
-    bRandom .outlet   ---> random .inlet1
-    random  .outlet   ---> mtof   .inlet
-    mtof    .outlet   ---> print  .inlet
-    mtof    .outlet   ---> osc    .inlet
-    osc     .outlet   ---> gain   .inlet1
-    gain    .outlet   ---> dac    .inlet
+//    bRandom .outlet   ---> random .inlet1
+//    random  .outlet   ---> mtof   .inlet
+//    mtof    .outlet   ---> print  .inlet
+//    mtof    .outlet   ---> osc    .inlet
+//    osc     .outlet   ---> gain   .inlet1
+//    gain    .outlet   ---> dac    .inlet
     tDac    .outlet   ---> dac    .inlet
-    m441    .outlet   ---> osc    .inlet
-    mGain0  .outlet   ---> gain   .inlet2
-    mGain02 .outlet   ---> gain   .inlet2
+//    m441    .outlet   ---> osc    .inlet
+//    mGain0  .outlet   ---> gain   .inlet2
+//    mGain02 .outlet   ---> gain   .inlet2
 
     mOpen   .outlet   ---> sf     .inlet1
     tSf     .outlet   ---> sf     .inlet1
@@ -111,9 +116,15 @@ object Player extends js.JSApp {
     msDur.outlet     ---> mrDur.inlet
 
     route.outlets(3) ---> bEnded.inlet
-    route.outlets(4) ---> printSf.inlet
+//    route.outlets(4) ---> printSf.inlet
 
     timeRcv.outlet   ---> msTime.inlet
+
+    lb.outlet ---> tDac .inlet
+    lb.outlet ---> mOpen.inlet
+    lb.outlet ---> tSf  .inlet
+
+    patcher.loadBang()
 
     // msTime.outlet    ---> printSf.inlet
   }

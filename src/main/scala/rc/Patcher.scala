@@ -21,6 +21,7 @@ object Patcher {
   sealed trait Update { def patcher: Patcher }
   case class Added  (patcher: Patcher, elems: Elem*) extends Update
   case class Removed(patcher: Patcher, elems: Elem*) extends Update
+  case class Loaded (patcher: Patcher) extends Update
 
   def apply(): Patcher = new PatcherImpl
 }
@@ -34,6 +35,8 @@ trait Patcher extends Model[Patcher.Update] {
   def elems: Seq[Elem]
 
   def dsp: DSPStatus
+
+  def loadBang(): Unit
 }
 
 trait DSPStatus extends Model[Boolean] {
