@@ -5,7 +5,7 @@
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
  *  Written by Hanns Holger Rutz.
  *
- *	This software is published under the GNU General Public License v3+
+ *	This software is published under a BSD 2-Clause License.
  *
  *
  *	For further information, please contact Hanns Holger Rutz at

@@ -5,7 +5,7 @@
  *  Copyright (c) 2015 Society of Artistic Research (SAR). All rights reserved.
  *  Written by Hanns Holger Rutz.
  *
- *	This software is published under the GNU General Public License v3+
+ *	This software is published under a BSD 2-Clause License.
  *
  *
  *	For further information, please contact Hanns Holger Rutz at
@@ -60,10 +60,6 @@ object Player extends js.JSApp {
     patcher add (160, 40) -> mDebug
     val route       = new objects.Route(patcher, "time" :: "buffered" :: "duration" :: "ended" :: Nil)
     patcher add (240, 80) -> route
-    val msTime      = new objects.Message(patcher, "set" :: "$1" :: Nil)
-    patcher add (240, 120) -> msTime
-    val mrTime      = new objects.Message(patcher, Nil)
-    patcher add (240, 160) -> mrTime
     val msDur       = new objects.Message(patcher, "set" :: "$1" :: Nil)
     patcher add (340, 120) -> msDur
     val mrDur       = new objects.Message(patcher, Nil)
@@ -72,6 +68,15 @@ object Player extends js.JSApp {
     patcher add (420, 120) -> bEnded
     val printSf     = new objects.Print(patcher, "sfplay~" :: Nil)
     patcher add (480, 120) -> printSf
+
+    val timeSend    = new objects.Send(patcher, "time" :: Nil)
+    patcher add (240, 120) -> timeSend
+    val timeRcv     = new objects.Receive(patcher, "time" :: Nil)
+    patcher add (420, 240) -> timeRcv
+    val msTime      = new objects.Message(patcher, "set" :: "$1" :: Nil)
+    patcher add (420, 280) -> msTime
+    val mrTime      = new objects.Message(patcher, Nil)
+    patcher add (420, 320) -> mrTime
 
     val tSfVol        = new objects.Toggle(patcher)
     patcher add (340, 240) -> tSfVol
@@ -99,7 +104,7 @@ object Player extends js.JSApp {
     gainSf  .outlet   ---> dac    .inlet
     tSfVol  .outlet   ---> gainSf .inlet2
 
-    route.outlets(0) ---> msTime.inlet
+    route.outlets(0) ---> timeSend.inlet
     msTime.outlet    ---> mrTime.inlet
 
     route.outlets(2) ---> msDur.inlet
@@ -107,6 +112,8 @@ object Player extends js.JSApp {
 
     route.outlets(3) ---> bEnded.inlet
     route.outlets(4) ---> printSf.inlet
+
+    timeRcv.outlet   ---> msTime.inlet
 
     // msTime.outlet    ---> printSf.inlet
   }
