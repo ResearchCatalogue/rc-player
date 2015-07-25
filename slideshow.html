@@ -11,21 +11,58 @@
     <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="lib/AudioContextMonkeyPatch.js"></script>
+    <script src="src/Player.js"></script>
     <script src="src/Slideshow.js"></script>
     <script>
         $(function() {
-            var myOptions = {
-                left: 64, top: 64, width: 320, height: 320,
+            var opt = {
                 slides: [
-                    { url: "images/slide1.png" },
-                    { url: "images/slide2.png" },
-                    { url: "images/slide3.png" }
+                    {
+                        image: "images/slide1.png",
+                        sound: {
+                            src: "sounds/203066.mp3",
+                            start: 3.7
+                        }
+                    },
+                    {
+                        image: "images/slide2.png",
+                    },
+                    {
+                        image: "images/slide3.png",
+                        sound: {
+                            src: "sounds/123718.mp3",
+                            gain: +6,
+                            fadein: {
+                                duration: 5.0
+                            },
+                            fadeout: {
+                                duration: 5.0
+                            }
+                        }
+                    }
                 ],
-                loop: true,
-                autoPlay: 'on'
+                style: {
+                    position: {
+                        left: 100, top: 100, width: 320, height: 320
+                    }
+                },
+                options: {
+                    settings: {
+                        loop: true,
+                        navigation: true
+                    },
+                    automate: {
+                        autoplay: "no"
+                    },
+                    audio: {
+                        crossfade: 4.0
+                    }
+                }
             };
+            $("#my-slides").Slideshow(opt);
 
-            $("#my-slides").Slideshow(myOptions);
+            // console.log(window.AudioContext);
         });
     </script>
 </head>

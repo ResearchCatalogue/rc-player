@@ -8,18 +8,39 @@ $.widget("rc.Slideshow", function() {
             var div = $('<div class="rc-slideshow">');
             var opt = self.options;
 
-            div.css("left"  , opt.left  );
-            div.css("top"   , opt.top   );
-            div.css("width" , opt.width );
-            div.css("height", opt.height);
+            if (opt.style) {
+                var style = opt.style
+                if (style.position) {
+                    var pos = style.position
+                    div.css("left"  , pos.left  );
+                    div.css("top"   , pos.top   );
+                    div.css("width" , pos.width );
+                    div.css("height", pos.height);
+                }
+                // TODO: padding, border, etc. goes here
+            }
 
-            // TODO: padding, border, etc. goes here
-
-            var img = $('<img class="rc-slide">')
-            img.attr("src", opt.slides[0].url);
+            var img = $('<img class="rc-slide">');
             div.append(img);
             self._img = img;
             self._slideIdx = 0;
+
+            if (!opt.options) opt.options = {};
+            var optOpt = opt.options;
+            if (!optOpt.settings) optOpt.settings = {};
+            if (!optOpt.automate) optOpt.automate = {};
+            if (!optOpt.audio   ) optOpt.audio    = {};
+
+            this._sounds = [];
+
+            var slides      = opt.slides;
+            var numSlides   = slides.length;
+            for (var i = 0; i < numSlides; i++) {
+                var slide = slides[i];
+                // console.log(slide.sound !== undefined);
+                if (slide.sound) this._sounds[i] = rc.AudioRegion(slide.sound);
+                // console.log(this._sounds[i]);
+            }
 
             self.setSlide();
 
@@ -27,7 +48,7 @@ $.widget("rc.Slideshow", function() {
                 self.nextSlide();
             });
 
-            if (opt.autoPlay == 'on') {
+            if (optOpt.automate.autoplay == 'on') {
                 self.play()
             };
 
@@ -40,10 +61,11 @@ $.widget("rc.Slideshow", function() {
             var numSlides   = slides.length;
             var idx         = self._slideIdx;
             var nextIdx     = idx + 1;
-            if (nextIdx < numSlides || opt.loop) {
+            var optOpt      = opt.options;
+            if (nextIdx < numSlides || optOpt.settings.loop) {
                 var slide   = slides[idx];
                 var delay   = slide.duration;
-                if (delay == undefined) delay = opt.duration;
+                if (delay == undefined) delay = optOpt.automate.duration;
                 if (delay == undefined) delay = 4.0;
                 window.setTimeout(self.nextSlide, delay * 1000);
             }
@@ -54,11 +76,12 @@ $.widget("rc.Slideshow", function() {
             var slides      = opt.slides;
             var numSlides   = slides.length;
             var idx         = self._slideIdx + 1;
-            if (idx < numSlides || opt.loop) {
+            var optOpt      = opt.options;
+            if (idx < numSlides || optOpt.settings.loop) {
                 idx = idx % numSlides;
                 self._slideIdx  = idx;
                 self.setSlide();
-                if (opt.autoPlay == 'on') self.play();
+                if (optOpt.automate.autoplay == 'on') self.play();
             }
         },
 
@@ -66,7 +89,11 @@ $.widget("rc.Slideshow", function() {
             var idx     = self._slideIdx;
             var opt     = self.options;
             var slides  = opt.slides;
-            self._img.attr("src", slides[idx].url);
+            var url     = slides[idx].image;
+            // console.log("setting " + url);
+            self._img.attr("src", url);
+            var sound   = this._sounds[idx];
+            if (sound) sound.play();
             // $.trigger()
         }
     }
