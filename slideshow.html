@@ -5,7 +5,7 @@
     <title>slideshow</title>
     <!--<link href='http://fonts.googleapis.com/css?family=Inconsolata:700' rel='stylesheet' type='text/css'>-->
     <!--<link href='http://fonts.googleapis.com/css?family=Dosis:600' rel='stylesheet' type='text/css'>-->
-    <!--<link href="widgets.css" rel="stylesheet">-->
+    <link href="widgets.css" rel="stylesheet">
     <!--<link href="patcher.css" rel="stylesheet">-->
     <!--<link href="http://code.jquery.com/ui/1.8.16/themes/ui-lightness/jquery-ui.css" rel="stylesheet">-->
     <!--<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"></script>-->
@@ -13,36 +13,24 @@
     <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="widgets/Slideshow.js"></script>
     <script>
-        $.widget("foo.myButton", {
-            _create: function() {
-                this._button = $("<button>");
-                this._button.text("Widget Button");
-                this._button.width(this.options.width)
-                this._button.css("background-color", this.options.color);
-                this._button.css("position", "absolute");
-                this._button.css("left", "100px");
-                $(this.element).append(this._button);
-            },
-            move: function(dx) {
-                var x = dx+parseInt(this._button.css("left"));
-                this._button.css("left", x);
-                if(x>400){ this._trigger("outbounds",{},  {position:x}); }
-            }
-        });
         $(function() {
-            $("#button4").myButton();
-            $("#button4").on("click", function(e, ui) {
-                $("#button4").myButton("move", 50);
-            });
-            $("#button4").on("mybuttonoutbounds", function(e, ui) {
-                alert("out");
-            });
-            // $("#button4").myButton("move", 500);
+            var myOptions = {
+                left: 64, top: 64, width: 320, height: 320,
+                slides: [
+                    { url: "images/slide1.png" },
+                    { url: "images/slide2.png" },
+                    { url: "images/slide3.png" }
+                ],
+                loop: true
+            };
+
+            $("#my-slides").Slideshow(myOptions);
         });
     </script>
 </head>
 <body>
-<div id="button4"></div>
+<div id="my-slides"></div>
 </body>
 </html>
