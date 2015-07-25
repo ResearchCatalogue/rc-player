@@ -1,34 +1,73 @@
-$.widget("rc.Slideshow", {
-    _create: function () {
-        var div = $('<div class="rc-slideshow">');
-        div.css("left"  , this.options.left  );
-        div.css("top"   , this.options.top   );
-        div.css("width" , this.options.width );
-        div.css("height", this.options.height);
+$.widget("rc.Slideshow", function() {
+    var self;
 
-        // TODO: padding, border, etc. goes here
+    return {
+        _create: function () {
+            self = this;
 
-        var img = $('<img class="rc-slide">')
-        img.attr("src", this.options.slides[0].url);
-        var self = this;
-        img.click(function() {
-            self.nextSlide();
-        });
-        div.append(img);
-        this._img = img;
-        this._slideIdx = 0;
-        $(this.element).replaceWith(div);
-    },
+            var div = $('<div class="rc-slideshow">');
+            var opt = self.options;
 
-    nextSlide: function() {
-        var slides      = this.options.slides;
-        var numSlides   = slides.length;
-        var idx         = this._slideIdx + 1;
-        if (idx < numSlides || this.options.loop) {
-            idx = idx % numSlides;
-            this._slideIdx  = idx;
-            this._img.attr("src", slides[idx].url);
+            div.css("left"  , opt.left  );
+            div.css("top"   , opt.top   );
+            div.css("width" , opt.width );
+            div.css("height", opt.height);
+
+            // TODO: padding, border, etc. goes here
+
+            var img = $('<img class="rc-slide">')
+            img.attr("src", opt.slides[0].url);
+            div.append(img);
+            self._img = img;
+            self._slideIdx = 0;
+
+            self.setSlide();
+
+            img.click(function() {
+                self.nextSlide();
+            });
+
+            if (opt.autoPlay == 'on') {
+                self.play()
+            };
+
+            $(self.element).replaceWith(div);
+        },
+
+        play: function() {
+            var opt         = self.options;
+            var slides      = opt.slides;
+            var numSlides   = slides.length;
+            var idx         = self._slideIdx;
+            var nextIdx     = idx + 1;
+            if (nextIdx < numSlides || opt.loop) {
+                var slide   = slides[idx];
+                var delay   = slide.duration;
+                if (delay == undefined) delay = opt.duration;
+                if (delay == undefined) delay = 4.0;
+                window.setTimeout(self.nextSlide, delay * 1000);
+            }
+        },
+
+        nextSlide: function() {
+            var opt         = self.options;
+            var slides      = opt.slides;
+            var numSlides   = slides.length;
+            var idx         = self._slideIdx + 1;
+            if (idx < numSlides || opt.loop) {
+                idx = idx % numSlides;
+                self._slideIdx  = idx;
+                self.setSlide();
+                if (opt.autoPlay == 'on') self.play();
+            }
+        },
+
+        setSlide: function() {
+            var idx     = self._slideIdx;
+            var opt     = self.options;
+            var slides  = opt.slides;
+            self._img.attr("src", slides[idx].url);
             // $.trigger()
         }
     }
-});
+}());
