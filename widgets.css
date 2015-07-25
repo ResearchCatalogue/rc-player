@@ -5,5 +5,20 @@
     color: white;
     width: 42px;
     padding: 4px 8px;
-    margin: 8px 0px; 8px; 8px;
+    margin: 8px 0px 8px 8px;
+}
+
+.rc-play {
+    padding: 0;
+    width: 40px;
+    height: 40px;
+}
+
+.rc-slideshow {
+    position: absolute;
+}
+
+.rc-slide {
+    width: 100%;
+    height: 100%;
 }

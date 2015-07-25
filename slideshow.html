@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>slideshow</title>
+    <!--<link href='http://fonts.googleapis.com/css?family=Inconsolata:700' rel='stylesheet' type='text/css'>-->
+    <!--<link href='http://fonts.googleapis.com/css?family=Dosis:600' rel='stylesheet' type='text/css'>-->
+    <link href="widgets.css" rel="stylesheet">
+    <!--<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"></script>-->
+    <!--<script type="text/javascript" src="http://code.jquery.com/ui/1.8.16/jquery-ui.js"></script>-->
+    <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script src="src/Slideshow.js"></script>
+    <script>
+        $(function() {
+            var myOptions = {
+                left: 64, top: 64, width: 320, height: 320,
+                slides: [
+                    { url: "images/slide1.png" },
+                    { url: "images/slide2.png" },
+                    { url: "images/slide3.png" }
+                ],
+                loop: true,
+                autoPlay: 'on'
+            };
+
+            $("#my-slides").Slideshow(myOptions);
+        });
+    </script>
+</head>
+<body>
+<div id="my-slides"></div>
+</body>
+</html>
