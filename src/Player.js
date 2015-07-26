@@ -33,6 +33,8 @@ var rc = {
 
         self._connections = [];
 
+        self.mediaNode = function() { return self._mediaNode };
+
         self._connect = function(source, sink) {
             source.connect(sink);
             self._connections.push({ source: source, sink: sink });
@@ -74,12 +76,12 @@ var rc = {
                     self._playTime = t0;
                     var fi  = sound.fadein;
                     if (fi.duration > 0) {
-                        var isExp   = fi.type == "exponential";
-                        var low     = isExp ? rc.dbamp(-60) : 0.0;
-                        g.gain.setValueAtTime(low, t0);
+                        var isExpI  = fi.type == "exponential";
+                        var lowI    = isExpI ? rc.dbamp(-60) : 0.0;
+                        g.gain.setValueAtTime(lowI, t0);
                         var t1      = t0 + fi.duration;
-                        if (isExp) g.gain.exponentialRampToValueAtTime(amp, t1);
-                        else       g.gain.linearRampToValueAtTime     (amp, t1);
+                        if (isExpI) g.gain.exponentialRampToValueAtTime(amp, t1);
+                        else        g.gain.linearRampToValueAtTime     (amp, t1);
                     }
                     var totalDur    = audio.duration;
                     var start       = sound.start ? Math.max(0.0, Math.min(totalDur, sound.start)) : 0.0;
@@ -87,16 +89,16 @@ var rc = {
                     var dur         = stop - start;
                     var fo  = sound.fadein;
                     if (fo.duration > 0 && isFinite(dur)) {
-                        var isExp   = fo.type == "exponential";
-                        var low     = isExp ? rc.dbamp(-60) : 0.0;
-                        var t2      = t0 + dur;
-                        var t1      = t2 - fo.duration;
-                        g.gain.setValueAtTime(amp, t1);
-                        if (isExp) g.gain.exponentialRampToValueAtTime(low, t2);
-                        else       g.gain.linearRampToValueAtTime     (low, t2);
+                        var isExpO  = fo.type == "exponential";
+                        var lowO    = isExpO ? rc.dbamp(-60) : 0.0;
+                        var t3      = t0 + dur;
+                        var t2      = t3 - fo.duration;
+                        g.gain.setValueAtTime(amp, t2);
+                        if (isExpO) g.gain.exponentialRampToValueAtTime(lowO, t3);
+                        else        g.gain.linearRampToValueAtTime     (lowO, t3);
                     } else if (stop < totalDur) {
-                        var t2      = t0 + dur;
-                        g.gain.setValueAtTime(0.0, t2);
+                        var t4      = t0 + dur;
+                        g.gain.setValueAtTime(0.0, t4);
                     }
                     self._connect(self._mediaNode, g);
                     self._connect(g, context.destination);
@@ -163,7 +165,7 @@ var rc = {
                     var f           = context.createGain();
                     f.gain.setValueAtTime           (1.0, t0);
                     f.gain.linearRampToValueAtTime  (0.0, t1);
-                    self._connect   (g, f)
+                    self._connect   (g, f);
                     self._disconnect(g, context.destination);
                     self._connect   (f, context.destination);
                     self._gainNode  = f;
