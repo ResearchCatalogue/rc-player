@@ -9,11 +9,15 @@ var rc = {
     },
 
     AudioRegion: function AudioRegion(sound) {
-        if (!(this instanceof AudioRegion)) { // bloody hell, this language is the worst abomination ever
+        if (!(this instanceof AudioRegion)) {
             return new AudioRegion(sound);
         }
 
-        var self = this;    // bloody hell, this language is the worst abomination ever
+        var self = this;
+
+        if (!sound.fadein ) sound.fadein  = { duration: 0.0 };
+        if (!sound.fadeout) sound.fadeout = { duration: 0.0 };
+        if (!sound.gain   ) sound.gain    = 0.0;
 
         var audio       = document.createElement("AUDIO");
         self._elem      = audio;
@@ -22,9 +26,9 @@ var rc = {
         self._mediaNode = rc.AudioContext().createMediaElementSource(audio);
         self._connected = false;
         self._needsGain =
-            (sound.fadein  && sound.fadein .duration > 0) ||
-            (sound.fadeout && sound.fadeout.duration > 0) ||
-            (sound.gain    && sound.gain > 0) ||
+            (sound.fadein .duration > 0) ||
+            (sound.fadeout.duration > 0) ||
+            (sound.gain > 0) ||
              sound.stop;
 
         self._connections = [];
@@ -34,14 +38,29 @@ var rc = {
             self._connections.push({ source: source, sink: sink });
         };
 
+        self._disconnect = function(source, sink) {
+            var cs = self._connections;
+            var ci = -1;
+            for (var idx = 0; idx < cs.length; idx++) {
+                if (cs[idx].source == source && cs[idx].sink == sink) {
+                    ci = idx;
+                    break;
+                }
+            }
+            cs[ci].source.disconnect(cs[ci].sink);
+            cs.splice(ci, 1);
+        };
+
         self._disconnectAll = function() {
-            var c = self._connections;
-            for (var i = 0; i < c.length; i++) {
-                c[i].source.disconnect(c[i].sink);
+            var cs = self._connections;
+            for (var idx = 0; idx < cs.length; idx++) {
+                cs[idx].source.disconnect(cs[idx].sink);
             }
             self._connections.length = 0;
             self._connected = false;
         };
+
+        self._playTime = 0.0;
 
         self._doPlay = function() {
             var audio = self._elem;
@@ -52,8 +71,9 @@ var rc = {
                     self._gainNode = g;
                     var amp = rc.dbamp(Math.max(0, sound.gain ? sound.gain : 0.0));
                     var t0  = context.currentTime;
+                    self._playTime = t0;
                     var fi  = sound.fadein;
-                    if (fi && fi.duration > 0) {
+                    if (fi.duration > 0) {
                         var isExp   = fi.type == "exponential";
                         var low     = isExp ? rc.dbamp(-60) : 0.0;
                         g.gain.setValueAtTime(low, t0);
@@ -66,7 +86,7 @@ var rc = {
                     var stop        = sound.stop  ? Math.max(start, Math.min(totalDur, sound.stop)) : totalDur;
                     var dur         = stop - start;
                     var fo  = sound.fadein;
-                    if (fo && fo.duration > 0 && isFinite(dur)) {
+                    if (fo.duration > 0 && isFinite(dur)) {
                         var isExp   = fo.type == "exponential";
                         var low     = isExp ? rc.dbamp(-60) : 0.0;
                         var t2      = t0 + dur;
@@ -114,6 +134,8 @@ var rc = {
             audio.volume = rc.dbamp(sound.gain);
         }
 
+        self.playing = function() { return self._playing };
+
         self.play = function() {
             self._playing = true;
             var audio = self._elem;
@@ -131,15 +153,50 @@ var rc = {
             self._disconnectAll();
         };
 
-        self.dispose = function() {
-            var audio = self._elem;
-            for (var i = 0; i < self._events.length; i++) {
-                audio.removeEventListener(self._events[i], self._eventFun);
-            }
+        self.release = function(dur) {
+            if (self._playing) {
+                if (self._needsGain) {
+                    var g           = self._gainNode;
+                    var context     = g.context;
+                    var t0          = g.context.currentTime;
+                    var t1          = t0 + dur;
+                    var f           = context.createGain();
+                    f.gain.setValueAtTime           (1.0, t0);
+                    f.gain.linearRampToValueAtTime  (0.0, t1);
+                    self._connect   (g, f)
+                    self._disconnect(g, context.destination);
+                    self._connect   (f, context.destination);
+                    self._gainNode  = f;
 
-            self.stop();
-            audio.src = "";
-            audio.load();
+                } else {
+                    self.stop();
+                }
+            }
+        };
+
+        self.releaseAndDispose = function(dur) {
+            if (self._playing && self._needsGain) {
+                self.release(dur);
+                window.setTimeout(self.dispose, (dur + 0.1) * 1000);
+            } else {
+                self.dispose();
+            }
+        };
+
+        self._disposed = false;
+
+        self.dispose = function() {
+            if (!self._disposed) {
+                var audio = self._elem;
+                for (var i = 0; i < self._events.length; i++) {
+                    audio.removeEventListener(self._events[i], self._eventFun);
+                }
+
+                self.stop();
+                audio.src = "";
+                audio.load();
+                self._disposed = true;
+            }
         }
     }
 };

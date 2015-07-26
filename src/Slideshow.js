@@ -1,17 +1,21 @@
-$.widget("rc.Slideshow", function() {
-    var self;
+(function() {
+    function Slideshow() {
+        if (!(this instanceof Slideshow)) {
+            return new Slideshow();
+        }
 
-    return {
-        _create: function () {
-            self = this;
+        var self = this;
+
+        self._create = function () {
+            self = this;    // Yo dawg, I put a this in the self, so you can this while you self
 
             var div = $('<div class="rc-slideshow">');
             var opt = self.options;
 
             if (opt.style) {
-                var style = opt.style
+                var style = opt.style;
                 if (style.position) {
-                    var pos = style.position
+                    var pos = style.position;
                     div.css("left"  , pos.left  );
                     div.css("top"   , pos.top   );
                     div.css("width" , pos.width );
@@ -35,11 +39,11 @@ $.widget("rc.Slideshow", function() {
 
             var slides      = opt.slides;
             var numSlides   = slides.length;
-            for (var i = 0; i < numSlides; i++) {
-                var slide = slides[i];
+            for (var idx = 0; idx < numSlides; idx++) {
+                var slide = slides[idx];
                 // console.log(slide.sound !== undefined);
-                if (slide.sound) this._sounds[i] = rc.AudioRegion(slide.sound);
-                // console.log(this._sounds[i]);
+                if (slide.sound) this._sounds[idx] = rc.AudioRegion(slide.sound);
+                // console.log(this._sounds[idx]);
             }
 
             self.setSlide();
@@ -50,12 +54,12 @@ $.widget("rc.Slideshow", function() {
 
             if (optOpt.automate.autoplay == 'on') {
                 self.play()
-            };
+            }
 
             $(self.element).replaceWith(div);
-        },
+        };
 
-        play: function() {
+        self.play = function() {
             var opt         = self.options;
             var slides      = opt.slides;
             var numSlides   = slides.length;
@@ -69,9 +73,9 @@ $.widget("rc.Slideshow", function() {
                 if (delay == undefined) delay = 4.0;
                 window.setTimeout(self.nextSlide, delay * 1000);
             }
-        },
+        };
 
-        nextSlide: function() {
+        self.nextSlide = function() {
             var opt         = self.options;
             var slides      = opt.slides;
             var numSlides   = slides.length;
@@ -83,18 +87,50 @@ $.widget("rc.Slideshow", function() {
                 self.setSlide();
                 if (optOpt.automate.autoplay == 'on') self.play();
             }
-        },
+        };
 
-        setSlide: function() {
+        self.setSlide = function() {
             var idx     = self._slideIdx;
             var opt     = self.options;
             var slides  = opt.slides;
-            var url     = slides[idx].image;
+            var slide   = slides[idx];
+            var url     = slide.image;
             // console.log("setting " + url);
             self._img.attr("src", url);
             var sound   = this._sounds[idx];
-            if (sound) sound.play();
+            if (sound || slide.sound == "none") {
+                var curr    = self._currentSound;
+                var optOpt  = opt.options;
+                var x       = optOpt.audio.crossfade;
+                if (curr) {
+                    if (x) {
+                        curr.release(x);
+                    } else {
+                        curr.stop();
+                    }
+                    self._currentSound = null;
+                }
+                if (sound) {
+                    if (sound.playing()) {
+                        // console.log("new sound is already playing.");
+                        if (x) {
+                            // console.log("...release and dispose " + x);
+                            sound.releaseAndDispose(x);
+                            sound = rc.AudioRegion(slide.sound);
+                            this._sounds[idx] = sound;
+                        } else {
+                            // console.log("...stop.");
+                            sound.stop();
+                        }
+                    }
+                    sound.play();
+                    self._currentSound = sound;
+                }
+            }
             // $.trigger()
         }
     }
-}());
+
+    $.widget("rc.Slideshow", new Slideshow())
+
+}.apply());
