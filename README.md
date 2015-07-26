@@ -6,3 +6,7 @@ of Artistic Research (SAR). All rights reserved. Written by Hanns Holger Rutz.
 This software is published under a BSD 2-Clause License.
 
 The project is currently in incubation.
+
+## test page
+
+The current test page is `slideshow.html`. You have to clone the repository and open that page in a browser.

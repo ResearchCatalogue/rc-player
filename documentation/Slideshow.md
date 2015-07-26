@@ -87,7 +87,7 @@ The `sound`  structure has the following properties:
 A `fade` structure has the following properties:
 
 - `duration` (required), length of fade in seconds
-- `type`, being either `linear` or `exponential`
+- `type`, being either `linear` (default) or `exponential`
 
 ### Style
 
