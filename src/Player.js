@@ -3,6 +3,12 @@ var rc = {
         return Math.pow(10, x * 0.05);
     },
 
+    logging: false,
+
+    log: function(x) {
+        if (rc.logging) console.log(x);
+    },
+
     AudioContext: function() {
         if (!rc._context) rc._context = new window.AudioContext;
         return rc._context;
@@ -62,15 +68,20 @@ var rc = {
             self._connected = false;
         };
 
-        self._playTime = 0.0;
+        self._playTime  = 0.0;
+        self._playing   = false;
 
         self._doPlay = function() {
-            var audio = self._elem;
+            var audio       = self._elem;
+            var totalDur    = audio.duration;
+            var start       = sound.start ? Math.max(0.0  , Math.min(totalDur, sound.start)) : 0.0;
+            var stop        = sound.stop  ? Math.max(start, Math.min(totalDur, sound.stop )) : totalDur;
+            var dur         = stop - start;
             if (!self._connected) {
                 var context = rc.AudioContext();
                 if (self._needsGain) {
                     var g       = context.createGain();
-                    self._gainNode = g;
+                    self._outNode = g;
                     var amp = rc.dbamp(Math.max(0, sound.gain ? sound.gain : 0.0));
                     var t0  = context.currentTime;
                     self._playTime = t0;
@@ -83,10 +94,6 @@ var rc = {
                         if (isExpI) g.gain.exponentialRampToValueAtTime(amp, t1);
                         else        g.gain.linearRampToValueAtTime     (amp, t1);
                     }
-                    var totalDur    = audio.duration;
-                    var start       = sound.start ? Math.max(0.0, Math.min(totalDur, sound.start)) : 0.0;
-                    var stop        = sound.stop  ? Math.max(start, Math.min(totalDur, sound.stop)) : totalDur;
-                    var dur         = stop - start;
                     var fo  = sound.fadein;
                     if (fo.duration > 0 && isFinite(dur)) {
                         var isExpO  = fo.type == "exponential";
@@ -103,14 +110,27 @@ var rc = {
                     self._connect(self._mediaNode, g);
                     self._connect(g, context.destination);
                 } else {
+                    self._outNode = self._mediaNode;
                     self._connect(self._mediaNode, context.destination);
                 }
                 self._connected = true;
             }
             audio.play();
+            if (dur < totalDur) {
+                // if we use the envelope and no loop, schedule a bit later
+                var dly = sound.loop || !self._needsGain ? dur : dur + 0.1;
+                self._timeOut = window.setTimeout(self._ended, dly * 1000);
+            }
         };
 
-        self._eventFun  = function(e) {
+        self._ended = function() {
+            rc.log("ended " + sound.src);
+            var repeat = self._playing && !self._releasing;
+            self.stop();
+            if (sound.loop && repeat) self.play();
+        };
+
+        self._eventFun = function(e) {
             var audio = self._elem;
             if (e.type == "loadedmetadata" && audio.paused) {
                 // console.log("loadedmetadata - readyState is " + audio.readyState);
@@ -121,7 +141,7 @@ var rc = {
                 // console.log("canplay - readyState is " + audio.readyState);
                 if (self._playing) self._doPlay();
             } else if (e.type == "ended") {
-                self.stop();
+                self._ended();
             }
             // console.log(e.type);
         };
@@ -139,13 +159,17 @@ var rc = {
         self.playing = function() { return self._playing };
 
         self.play = function() {
+            rc.log("play " + sound.src);
             self._playing = true;
             var audio = self._elem;
             if (audio.readyState >= 2) self._doPlay();
         };
 
         self.stop = function() {
-            self._playing = false;
+            rc.log("stop " + sound.src);
+            self._playing   = false;
+            self._releasing = false;
+            if (self._timeOut) window.clearTimeout(self._timeOut);
             var audio = self._elem;
             if (!audio.paused) audio.pause();
             // reset position
@@ -156,29 +180,31 @@ var rc = {
         };
 
         self.release = function(dur) {
+            rc.log("release " + dur + " " + sound.src);
             if (self._playing) {
-                if (self._needsGain) {
-                    var g           = self._gainNode;
-                    var context     = g.context;
-                    var t0          = g.context.currentTime;
-                    var t1          = t0 + dur;
-                    var f           = context.createGain();
-                    f.gain.setValueAtTime           (1.0, t0);
-                    f.gain.linearRampToValueAtTime  (0.0, t1);
-                    self._connect   (g, f);
-                    self._disconnect(g, context.destination);
-                    self._connect   (f, context.destination);
-                    self._gainNode  = f;
-
-                } else {
-                    self.stop();
-                }
+                self._release1(dur);
+                window.setTimeout(self.stop, (dur + 0.1) * 1000);
             }
         };
 
+        self._release1 = function(dur) {
+            var outNode     = self._outNode;
+            var context     = outNode.context;
+            var t0          = context.currentTime;
+            var t1          = t0 + dur;
+            var f           = context.createGain();
+            f.gain.setValueAtTime           (1.0, t0);
+            f.gain.linearRampToValueAtTime  (0.0, t1);
+            self._connect   (outNode, f);
+            self._connect   (f      , context.destination);
+            self._disconnect(outNode, context.destination);
+            self._outNode   = f;
+            self._releasing = true;
+        };
+
         self.releaseAndDispose = function(dur) {
-            if (self._playing && self._needsGain) {
-                self.release(dur);
+            if (self._playing /* && self._needsGain */) {
+                self._release1(dur);
                 window.setTimeout(self.dispose, (dur + 0.1) * 1000);
             } else {
                 self.dispose();
@@ -188,6 +214,7 @@ var rc = {
         self._disposed = false;
 
         self.dispose = function() {
+            rc.log("dispose " + sound.src);
             if (!self._disposed) {
                 var audio = self._elem;
                 for (var i = 0; i < self._events.length; i++) {

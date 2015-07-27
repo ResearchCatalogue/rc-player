@@ -48,16 +48,23 @@
 
             self.setSlide();
 
+            var autoplay = optOpt.automate.autoplay;
+
             img.click(function() {
                 self.nextSlide();
+                if (autoplay == 'click' && !self._playing) self.play();
             });
 
-            if (optOpt.automate.autoplay == 'on') {
+            if (autoplay == 'on') {
                 self.play()
             }
 
             $(self.element).replaceWith(div);
         };
+
+        self._playing = false;
+
+        self.playing = function() { return self._playing };
 
         self.play = function() {
             var opt         = self.options;
@@ -67,11 +74,19 @@
             var nextIdx     = idx + 1;
             var optOpt      = opt.options;
             if (nextIdx < numSlides || optOpt.settings.loop) {
+                self._playing = true;
                 var slide   = slides[idx];
                 var delay   = slide.duration;
                 if (delay == undefined) delay = optOpt.automate.duration;
                 if (delay == undefined) delay = 4.0;
-                window.setTimeout(self.nextSlide, delay * 1000);
+                self._timeOut = window.setTimeout(self.nextSlide, delay * 1000);
+            }
+        };
+
+        self.stop = function() {
+            if (self._playing) {
+                self._playing = false;
+                window.clearTimeout(self._timeOut);
             }
         };
 

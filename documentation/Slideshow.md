@@ -9,54 +9,7 @@ Invocation:
 $(parent).Slideshow(<options>)
 ```
 
-Example:
-
-```javascript
-var opt = {
-    slides: [
-        {
-            image: "images/slide1.png",
-            sound: {
-                src: "sounds/203066.mp3",
-                start: 3.7
-            }
-        },
-        {
-            image: "images/slide2.png",
-        },
-        {
-            image: "images/slide3.png",
-            sound: {
-                src: "sounds/sound2.mp3",
-                fadein: {
-                    duration: 2.0
-                },
-                fadeout: {
-                    duration: 2.0
-                }
-            }
-        }
-    ],
-    style: {
-        position: {
-            left: 100, top: 100, width: 320, height: 320
-        }
-    },
-    options: {
-        settings: {
-            loop: true,
-            navigation: true
-        },
-        automate: {
-            autoplay: "no"
-        },
-        audio: {
-            crossfade: 4.0
-        }
-    }
-};
-$("#my-slides").Slideshow(opt);
-```
+An example is contained in the file `slideshow.html`.
 
 ## Options
  
@@ -83,6 +36,7 @@ The `sound`  structure has the following properties:
 - `gain` (optional), gain adjustment in decibels
 - `fadein` (optional), pointing to a `fade` structure
 - `fadeout` (optional), pointing to a `fade` structure
+- `loop` (optional), a boolean (defaults to `false`) specifying whether to loop the sound region or not
 
 A `fade` structure has the following properties:
 
@@ -150,7 +104,7 @@ The `settings` structure has the following properties
 
 The `automate` structure has the following properties
 
-- `autoplay`, either of `yes`, `no`, `on-click`
+- `autoplay`, either of `yes`, `no`, `click`
 - `duration`, default value in seconds
 
 #### Audio
