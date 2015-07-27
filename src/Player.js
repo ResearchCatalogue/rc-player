@@ -1,3 +1,5 @@
+console.log("build 2");
+
 var rc = {
     dbamp: function(x) {
         return Math.pow(10, x * 0.05);
@@ -49,29 +51,63 @@ var rc = {
         self._disconnect = function(source, sink) {
             var cs = self._connections;
             var ci = -1;
+            var c  = null;
             for (var idx = 0; idx < cs.length; idx++) {
-                if (cs[idx].source == source && cs[idx].sink == sink) {
+                c = cs[idx];
+                if (c.source == source && c.sink == sink) {
                     ci = idx;
                     break;
                 }
             }
-            cs[ci].source.disconnect(cs[ci].sink);
+            c.source.disconnect(c.sink);
             cs.splice(ci, 1);
         };
 
         self._disconnectAll = function() {
             var cs = self._connections;
             for (var idx = 0; idx < cs.length; idx++) {
-                cs[idx].source.disconnect(cs[idx].sink);
+                var c = cs[idx];
+                c.source.disconnect(c.sink);
             }
-            self._connections.length = 0;
+            cs.length = 0;
             self._connected = false;
         };
 
         self._playTime  = 0.0;
         self._playing   = false;
 
+        self._scheduled = [];
+
+        self._schedule = function(fun, dly) {
+            var token = -1;
+            var fun1 = function() {
+                var s       = self._scheduled;
+                var ti = -1;
+                for (var idx = 0; idx < s.length; idx++) {
+                    if (s[idx] == token) {
+                        ti = idx;
+                        break;
+                    }
+                }
+                if (ti >= 0) {
+                    s.splice(ti, 1);
+                    fun();
+                }
+            };
+            token = window.setTimeout(fun1, dly * 1000);
+            self._scheduled.push(token);
+        };
+
+        self._clearSchedule = function() {
+            var s = self._scheduled;
+            for (var idx = 0; idx < s.length; idx++) {
+                window.clearTimeout(s[idx]);
+            }
+            s.length = 0;
+        };
+
         self._doPlay = function() {
+            rc.log("do-play " + sound.src);
             var audio       = self._elem;
             var totalDur    = audio.duration;
             var start       = sound.start ? Math.max(0.0  , Math.min(totalDur, sound.start)) : 0.0;
@@ -119,7 +155,7 @@ var rc = {
             if (dur < totalDur) {
                 // if we use the envelope and no loop, schedule a bit later
                 var dly = sound.loop || !self._needsGain ? dur : dur + 0.1;
-                self._timeOut = window.setTimeout(self._ended, dly * 1000);
+                self._schedule(self._ended, dly);
             }
         };
 
@@ -160,6 +196,9 @@ var rc = {
 
         self.play = function() {
             rc.log("play " + sound.src);
+            if (self._playing) {
+                self._stop1();
+            }
             self._playing = true;
             var audio = self._elem;
             if (audio.readyState >= 2) self._doPlay();
@@ -167,9 +206,13 @@ var rc = {
 
         self.stop = function() {
             rc.log("stop " + sound.src);
+            self._stop1();
+        };
+
+        self._stop1 = function() {
             self._playing   = false;
             self._releasing = false;
-            if (self._timeOut) window.clearTimeout(self._timeOut);
+            self._clearSchedule();
             var audio = self._elem;
             if (!audio.paused) audio.pause();
             // reset position
@@ -181,9 +224,9 @@ var rc = {
 
         self.release = function(dur) {
             rc.log("release " + dur + " " + sound.src);
-            if (self._playing) {
+            if (self._playing ) {
                 self._release1(dur);
-                window.setTimeout(self.stop, (dur + 0.1) * 1000);
+                // self._schedule(self.stop, dur + 0.1);
             }
         };
 
@@ -195,9 +238,15 @@ var rc = {
             var f           = context.createGain();
             f.gain.setValueAtTime           (1.0, t0);
             f.gain.linearRampToValueAtTime  (0.0, t1);
-            self._connect   (outNode, f);
+            // Ok, here's the deal. Bloody Firefox
+            // only behaves correctly if we obey the
+            // following order of connections and
+            // disconnections. First connect the
+            // fading synth to output, then reconnect
+            // the original tail synth.
             self._connect   (f      , context.destination);
             self._disconnect(outNode, context.destination);
+            self._connect   (outNode, f);
             self._outNode   = f;
             self._releasing = true;
         };
