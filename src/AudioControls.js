@@ -13,6 +13,12 @@ rc.AudioControls = function AudioControls(options) {
     //    console.log(x);
     //}
 
+    var elem    = options.element;
+    var width   = elem.width();
+    var height  = elem.height();
+
+    // console.log("width = " + width + "; height = " + height);
+
     if (optOpt.play) {
         var divPlay = $('<span class="rc-play"></span>');
         var svgPlay = $('<svg width="32" height="32"><path d="M6.684,25.682L24.316,15.5L6.684,5.318V25.682z"></path></svg>');
@@ -32,10 +38,31 @@ rc.AudioControls = function AudioControls(options) {
         div.append(divElapsed);
     }
 
+    if (optOpt.remaining) {
+        var divRemaining = $('<span class="rc-timer">&nbsp;-0:00</span>');
+        div.append(divRemaining);
+    }
+
+    if (optOpt.volume) {
+        var divVolume = $('<span class="rc-volume"></span>');
+        var svgVolume = $('<svg width="32" height="32"><path d="M6.684,25.682L24.316,15.5L6.684,5.318V25.682z"></path></svg>');
+        // svgPlay.css("fill", "white");
+        divVolume.append(svgVolume);
+        // divPlay.css("background", "black");
+        divVolume.click(function() {
+        });
+        div.append(divVolume);
+    }
+
     $(options.element).append(div);
 
-    self._init = function() {
+    if (optOpt.meter) {
 
+    }
+
+    self._init = function() {
+        var canvas = $('<canvas width="160" height="20" class="rc-meter"></canvas>');
+        div.append(canvas);
     };
 
     self._init();
