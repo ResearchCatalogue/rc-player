@@ -117,6 +117,8 @@ rc.AudioRegion = function AudioRegion(sound) {
     ///** Returns the media-element-source `AudioNode` on which this region is based. */
     //self.mediaNode = function() { return self._mediaNode };
 
+    self.audioElem = function() { return self._elem };
+
     // ---------------- private ----------------
 
     /* Initialization. This must only be called from the
@@ -155,8 +157,9 @@ rc.AudioRegion = function AudioRegion(sound) {
     };
 
     // the events that we wish to observe from the media element.
-    self._events        = ["loadedmetadata", "canplay", "durationchange", "emptied", "ended", "error",
-        "loadstart", "progress", "timeupdate"];
+    //self._events        = ["loadedmetadata", "canplay", "durationchange", "emptied", "ended", "error",
+    //    "loadstart", "progress", "timeupdate"];
+    self._events        = ["loadedmetadata", "canplay", "ended"];
     self._connected     = false;
     self._connections   = [];
 
