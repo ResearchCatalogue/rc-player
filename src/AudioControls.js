@@ -14,17 +14,22 @@ rc.AudioControls = function AudioControls(options) {
     //}
 
     if (optOpt.play) {
-        var divPlay = $('<div class="rc-play"></div>');
+        var divPlay = $('<span class="rc-play"></span>');
         var svgPlay = $('<svg width="32" height="32"><path d="M6.684,25.682L24.316,15.5L6.684,5.318V25.682z"></path></svg>');
-        svgPlay.css("fill", "white");
+        // svgPlay.css("fill", "white");
         divPlay.append(svgPlay);
-        div.append(divPlay);
-        divPlay.css("background", "black");
+        // divPlay.css("background", "black");
         divPlay.click(function() {
             // console.log("click");
             var sound = options.sound;
             if (sound.playing()) sound.pause(); else sound.play();
         });
+        div.append(divPlay);
+    }
+
+    if (optOpt.elapsed) {
+        var divElapsed = $('<span class="rc-timer">&nbsp;0:00</span>');
+        div.append(divElapsed);
     }
 
     $(options.element).append(div);

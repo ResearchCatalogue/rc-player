@@ -1,17 +1,28 @@
 .rc-timer {
     font-family: 'Dosis', sans-serif;
     font-size: 16px;
-    background: black;
+    /*background: black;*/
     color: white;
-    width: 42px;
+    /*width: 42px;*/
     padding: 4px 8px;
-    margin: 8px 0px 8px 8px;
+    margin: 0;
 }
 
 .rc-play {
     padding: 0;
+    /*background: black;*/
+    margin: 0;
+    /*color: white;*/
     /*width: 40px;*/
     /*height: 40px;*/
+}
+
+.rc-play > svg {
+    fill: white;
+}
+
+.rc-audio-controls {
+    background: black;
 }
 
 .rc-slideshow {
