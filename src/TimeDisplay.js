@@ -1,3 +1,4 @@
+/*
 $(function() {
     var r       = rc.Registry();
     var timer   = $("<div class='rc-timer' id='timer'>00:00</div>")
@@ -12,4 +13,4 @@ $(function() {
         timer.text(text)
     });
 });
-
+*/

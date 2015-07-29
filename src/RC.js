@@ -1,4 +1,4 @@
-console.log("build 3");
+// console.log("build 3");
 
 var rc = {
     dbamp: function (x) {

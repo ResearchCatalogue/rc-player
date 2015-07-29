@@ -16,6 +16,7 @@
     <script src="lib/AudioContextMonkeyPatch.js"></script>
     <script src="src/RC.js"></script>
     <script src="src/AudioRegion.js"></script>
+    <script src="src/AudioControls.js"></script>
     <script src="src/AudioPlayer.js"></script>
     <script>
         $(function() {
@@ -30,7 +31,7 @@
                     }
                 },
                 options: {
-                    autoplay: false,
+                    autoplay: true,
                     controls: {
                         play        : true, // play/pause button
                         elapsed     : true, // elapsed time display

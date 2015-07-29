@@ -24,6 +24,8 @@ rc.Slideshow = function Slideshow() {
             // TODO: padding, border, etc. goes here
         }
 
+        // XXX TODO -- perhaps create all elements
+        // already, so browser caches future images
         var img = $('<img class="rc-slide">');
         div.append(img);
         self._img = img;

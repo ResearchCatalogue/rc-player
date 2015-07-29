@@ -5,9 +5,13 @@ rc.AudioControls = function AudioControls(options) {
 
     var self = this;
 
+    if (options.play) {
+        $("<div></div>")
+    }
+
     self._init = function() {
 
-    }
+    };
 
     self._init();
 };
