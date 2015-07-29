@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AudioPlayer</title>
+    <!--<link href='http://fonts.googleapis.com/css?family=Inconsolata:700' rel='stylesheet' type='text/css'>-->
+    <!--<link href='http://fonts.googleapis.com/css?family=Dosis:600' rel='stylesheet' type='text/css'>-->
+    <link href="widgets.css" rel="stylesheet">
+    <!--<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.2.js"></script>-->
+    <!--<script type="text/javascript" src="http://code.jquery.com/ui/1.8.16/jquery-ui.js"></script>-->
+    <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+    <!--<script src="http://code.jquery.com/jquery-1.10.2.js"></script>-->
+    <!--<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>-->
+    <script src="lib/http_code.jquery.com_jquery-2.0.0.js"></script>
+    <script src="lib/http_ajax.googleapis.com_ajax_libs_jqueryui_1.10.2_jquery-ui.js"></script>
+    <script src="lib/AudioContextMonkeyPatch.js"></script>
+    <script src="src/RC.js"></script>
+    <script src="src/AudioRegion.js"></script>
+    <script src="src/AudioPlayer.js"></script>
+    <script>
+        $(function() {
+            var opt = {
+                sound: {
+                    src: "sounds/123718.mp3",
+                    loop: true
+                },
+                style: {
+                    position: {
+                        left: 100, top: 100, width: 160, height: 32
+                    }
+                },
+                options: {
+                    autoplay: false,
+                    controls: {
+                        play        : true, // play/pause button
+                        elapsed     : true, // elapsed time display
+                        cue         : true, // show/cue position
+                        remaining   : true, // remaining time display
+                        volume      : true, // volume control
+                        meter       : true, // peak level meter
+                        hover: "foo bar"
+                    },
+                    fadein:  { duration: 0.1 },
+                    fadeout: { duration: 0.1 },
+                    stopothers: false
+                }
+            };
+            $("#my-player").AudioPlayer(opt);
+
+            // console.log(window.AudioContext);
+        });
+    </script>
+</head>
+<body>
+<div id="my-player"></div>
+</body>
+</html>

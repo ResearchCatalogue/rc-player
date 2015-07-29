@@ -5,6 +5,7 @@ rc.Slideshow = function Slideshow() {
 
     var self = this;
 
+    /* The constructor for JQuery UI. */
     self._create = function () {
         self = this;    // Yo dawg, I put a this in the self, so you can this while you self
 
