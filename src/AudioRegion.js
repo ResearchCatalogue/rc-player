@@ -22,7 +22,10 @@ rc.AudioRegion = function AudioRegion(sound) {
      * calling `play()` this is `true`, after
      * `stop()` this is `false`.
      */
-    self.playing = function() { return self._playing };
+    self.playing        = function() { return self._playing          };
+
+    self.currentTime    = function() { return self._elem.currentTime };
+    self.duration       = function() { return self._elem.duration    };
 
     /**
      * Puts the region into playing mode.

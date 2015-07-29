@@ -20,6 +20,21 @@ rc.AudioControls = function AudioControls(options) {
 
     // console.log("width = " + width + "; height = " + height);
 
+    self._updateTimer = function(elem, sec, neg) {
+        var txt = "";
+        if (isFinite(sec)) {
+            var sec1 = Math.floor(sec);
+            var min0 = Math.floor(sec1 / 60);
+            var sec2 = sec1 % 60;
+            var min1 = Math.floor(min0 / 10) % 10;
+            var min2 = min0 % 10;
+            var sec3 = Math.floor(sec2 / 10);
+            var sec4 = sec2 % 10;
+            txt = (min1 == 0 ? (neg ? " -" : " ") : (neg ? "-" : "") + min1) + min2 + ":" + sec3 + sec4;
+        }
+        elem.text(txt);
+    };
+
     if (optOpt.play) {
         var divPlay = $('<span class="rc-play"></span>');
         var svgPlay = $('<svg width="32" height="32">' +
@@ -50,8 +65,17 @@ rc.AudioControls = function AudioControls(options) {
     }
 
     if (optOpt.elapsed) {
-        var divElapsed = $('<span class="rc-timer">&nbsp;0:00</span>');
+        var divElapsed = $('<span class="rc-timer"></span>');
         div.append(divElapsed);
+
+        self._updateTimer(divElapsed, model.currentTime());
+
+        $(model)
+            .on("timeupdate", function() {
+                var time = model.currentTime();
+                // console.log("||| timeupdate " + time);
+                self._updateTimer(divElapsed, time);
+            });
     }
 
     if (optOpt.remaining) {
