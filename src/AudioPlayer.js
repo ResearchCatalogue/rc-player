@@ -16,15 +16,19 @@ rc.AudioPlayer = function AudioPlayer() {
         var ctl     = optOpt.controls;
         if (!ctl) ctl = {};
 
+        if (opt.style) rc.style(self.element, opt.style);
+
+        self._sound = rc.AudioRegion(opt.sound);
+
         var ctlOpt = {
-            element: self.element,
-            options: ctl,
-            style  : opt.style
+            element : self.element,
+            options : ctl,
+            style   : opt.style,
+            sound   : self._sound
         };
         /* var ggCtl = */ rc.AudioControls(ctlOpt);
 
-        self._audio = rc.AudioRegion(opt.sound);
-        if (optOpt.autoplay) self._audio.play();
+        if (optOpt.autoplay) self._sound.play();
     }
 };
 

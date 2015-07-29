@@ -14,5 +14,16 @@ var rc = {
     AudioContext: function () {
         if (!rc._context) rc._context = new window.AudioContext;
         return rc._context;
+    },
+
+    style: function(elem, style) {
+        if (style.position) {
+            var pos = style.position;
+            elem.css("left"  , pos.left  );
+            elem.css("top"   , pos.top   );
+            elem.css("width" , pos.width );
+            elem.css("height", pos.height);
+        }
+        // TODO: padding, border, etc. goes here
     }
-}
+};

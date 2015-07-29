@@ -12,17 +12,7 @@ rc.Slideshow = function Slideshow() {
         var div = $('<div class="rc-slideshow">');
         var opt = self.options;
 
-        if (opt.style) {
-            var style = opt.style;
-            if (style.position) {
-                var pos = style.position;
-                div.css("left"  , pos.left  );
-                div.css("top"   , pos.top   );
-                div.css("width" , pos.width );
-                div.css("height", pos.height);
-            }
-            // TODO: padding, border, etc. goes here
-        }
+        if (opt.style) rc.style(div, opt.style);
 
         // XXX TODO -- perhaps create all elements
         // already, so browser caches future images

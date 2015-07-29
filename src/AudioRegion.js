@@ -40,11 +40,18 @@ rc.AudioRegion = function AudioRegion(sound) {
 
         rc.log("play " + sound.src);
         if (self._playing) {
-            self._stop1();
+            self._stop1(true);
         }
         self._playing = true;
         var audio = self._elem;
         if (audio.readyState >= 2) self._doPlay();
+    };
+
+    self.pause = function() {
+        if (self._disposed) return;
+
+        rc.log("pause " + sound.src);
+        self._stop1(false);
     };
 
     /** Stops the playback of the region immediately. */
@@ -52,7 +59,7 @@ rc.AudioRegion = function AudioRegion(sound) {
         if (self._disposed) return;
 
         rc.log("stop " + sound.src);
-        self._stop1();
+        self._stop1(true);
     };
 
     /**
@@ -341,14 +348,14 @@ rc.AudioRegion = function AudioRegion(sound) {
      * and disconnects the audio graph.
      * Cues back to sound's start position
      */
-    self._stop1 = function() {
+    self._stop1 = function(seek) {
         self._playing   = false;
         self._releasing = false;
         self._clearSchedule();
         var audio = self._elem;
         if (!audio.paused) audio.pause();
         // reset position
-        audio.currentTime = sound.start;
+        if (seek) audio.currentTime = sound.start;
         self._disconnectAll();
     };
 
