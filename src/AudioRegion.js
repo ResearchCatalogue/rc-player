@@ -22,10 +22,26 @@ rc.AudioRegion = function AudioRegion(sound) {
      * calling `play()` this is `true`, after
      * `stop()` this is `false`.
      */
-    self.playing        = function() { return self._playing          };
+    self.playing = function() { return self._playing          };
 
-    self.currentTime    = function() { return self._elem.currentTime };
-    self.duration       = function() { return self._elem.duration    };
+    /**
+     * Returns the current relative time offset
+     * in seconds from the region's start.
+     */
+    self.currentTime = function() {
+        return self._elem.currentTime - sound.start;
+    };
+
+    /**
+     * Returns the duration of the region in seconds.
+     */
+    self.duration = function() {
+        var audio       = self._elem;
+        var totalDur    = audio.duration;
+        var start       = Math.max(0.0, Math.min(totalDur, sound.start));
+        var stop        = sound.stop ? Math.max(start, Math.min(totalDur, sound.stop )) : totalDur;
+        return stop - start;
+    };
 
     /**
      * Puts the region into playing mode.

@@ -30,17 +30,18 @@ rc.AudioControls = function AudioControls(options) {
             var min2 = min0 % 10;
             var sec3 = Math.floor(sec2 / 10);
             var sec4 = sec2 % 10;
-            txt = (min1 == 0 ? (neg ? " -" : " ") : (neg ? "-" : "") + min1) + min2 + ":" + sec3 + sec4;
+            txt = (min1 == 0 ? (neg ? "\xa0-" : "\xa0") : (neg ? "-" : "") + min1) +
+                min2 + ":" + sec3 + sec4;
         }
         elem.text(txt);
     };
 
     if (optOpt.play) {
         var divPlay = $('<span class="rc-play"></span>');
-        var svgPlay = $('<svg width="32" height="32">' +
+        var svgPlay = $('<svg width="26" height="26"><g transform="scale(0.8)">' +
             '<path class="rc-playing" d="M6.684,25.682L24.316,15.5L6.684,5.318V25.682z"></path>' +
             '<path class="rc-pausing" d="m 6.6875,5.312 0,20.376 5.65625,0 0,-20.376 z m 12.3125,0 0,20.376 5.312,0 0,-20.376 z"></path>' +
-            '</svg>');
+            '</g></svg>');
         divPlay.addClass(model.playing() ? "rc-playing" : "rc-pausing");
         // svgPlay.css("fill", "white");
         divPlay.append(svgPlay);

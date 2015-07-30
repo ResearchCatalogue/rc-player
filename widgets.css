@@ -1,11 +1,12 @@
-.rc-timer {
-    position: relative;
+span.rc-timer {
+    float: left;
+    /*position: relative;*/
     font-family: 'Dosis', sans-serif;
     font-size: 16px;
     /*background: black;*/
     color: white;
-    /*width: 42px;*/
-    padding: 4px 8px;
+    width: 40px;
+    padding: 2px 4px;
     margin: 0;
 }
 
@@ -19,24 +20,24 @@
     /*height: 40px;*/
 }
 
-.rc-play > svg {
-    position: relative;
+span.rc-play > svg {
+    float: left;
     fill: white;
 }
 
-span.rc-playing > svg > path.rc-playing {
+span.rc-playing path.rc-playing {
     visibility: hidden;
 }
 
-span.rc-playing > svg > path.rc-pausing {
+span.rc-playing path.rc-pausing {
     visibility: visible;
 }
 
-span.rc-pausing > svg > path.rc-playing {
+span.rc-pausing path.rc-playing {
     visibility: visible;
 }
 
-span.rc-pausing > svg > path.rc-pausing {
+span.rc-pausing path.rc-pausing {
     visibility: hidden;
 }
 
