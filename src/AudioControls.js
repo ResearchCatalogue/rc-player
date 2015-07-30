@@ -38,31 +38,27 @@ rc.AudioControls = function AudioControls(options) {
 
     if (optOpt.play) {
         var divPlay = $('<span class="rc-play"></span>');
-        var svgPlay = $('<svg width="26" height="26"><g transform="scale(0.8)">' +
-            '<path class="rc-playing" d="M6.684,25.682L24.316,15.5L6.684,5.318V25.682z"></path>' +
-            '<path class="rc-pausing" d="m 6.6875,5.312 0,20.376 5.65625,0 0,-20.376 z m 12.3125,0 0,20.376 5.312,0 0,-20.376 z"></path>' +
-            '</g></svg>');
-        divPlay.addClass(model.playing() ? "rc-playing" : "rc-pausing");
-        // svgPlay.css("fill", "white");
+        var svgPlay = $('<svg width="26" height="26"><g transform="scale(0.8)"><path></path></g></svg>');
+
+        // cf. http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
+        // i.e., we cannot append to SVG with JQuery. Instead we construct the whole
+        // object and then use search to find the `path`.
+        var updatePath = function() {
+            var d = model.playing() ?
+                "m 6.6875,5.312 0,20.376 5.65625,0 0,-20.376 z m 12.3125,0 0,20.376 5.312,0 0,-20.376 z" :
+                "M6.684,25.682L24.316,15.5L6.684,5.318V25.682z";
+            $("path", svgPlay).attr("d", d);
+        };
+
+        updatePath();
+
         divPlay.append(svgPlay);
-        // divPlay.css("background", "black");
         divPlay.click(function() {
-            // console.log("click");
-            // var sound = options.sound;
-            // if (sound.playing()) sound.pause(); else sound.play();
             $(self).trigger("play");
         });
         div.append(divPlay);
 
-        $(model)
-            .on("playing", function() {
-                // console.log("||| playing");
-                divPlay.addClass("rc-playing").removeClass("rc-pausing");
-            })
-            .on("pause", function() {
-                // console.log("||| pause");
-                divPlay.removeClass("rc-playing").addClass("rc-pausing");
-            });
+        $(model).on("playing", updatePath).on("pause", updatePath);
     }
 
     if (optOpt.elapsed) {
@@ -86,7 +82,9 @@ rc.AudioControls = function AudioControls(options) {
 
     if (optOpt.volume) {
         var divVolume = $('<span class="rc-volume"></span>');
-        var svgVolume = $('<svg width="32" height="32"><path d="M6.684,25.682L24.316,15.5L6.684,5.318V25.682z"></path></svg>');
+        var svgVolume = $('<svg width="32" height="32"></svg>');
+        var svgPath = $('<path d="M6.684,25.682L24.316,15.5L6.684,5.318V25.682z"></path>');
+        svgVolume.append(svgPath);
         // svgPlay.css("fill", "white");
         divVolume.append(svgVolume);
         // divPlay.css("background", "black");
