@@ -25,7 +25,7 @@ rc.AudioRegion = function AudioRegion(sound) {
      * calling `play()` this is `true`, after
      * `stop()` this is `false`.
      */
-    self.playing = function() { return self._playing          };
+    self.playing = function() { return self._playing };
 
     /**
      * Returns the current relative time offset
@@ -316,6 +316,11 @@ rc.AudioRegion = function AudioRegion(sound) {
 
     self._gainNode  = undefined;
 
+    self._addTail = function(node) {
+        self._connect(self._outNode, node);
+        self._outNode = node;
+    };
+
     /* Establishes the audio connections (if necessary)
      * and calls `play` on the media node.
      */
@@ -337,10 +342,8 @@ rc.AudioRegion = function AudioRegion(sound) {
                 // var amp = rc.dbamp(Math.max(0, sound.gain ? sound.gain : 0.0));
                 var amp = rc.dbamp(sound.gain) * self._volume;
                 g.gain.setValueAtTime(amp, t0);
-                var out = self._outNode;
-                self._connect(out, g);
                 self._gainNode  = g;
-                self._outNode   = g;
+                self._addTail(g);
             }
             if (self._needsFade) {
                 var f   = context.createGain();
@@ -366,9 +369,7 @@ rc.AudioRegion = function AudioRegion(sound) {
                     var t4      = t0 + dur;
                     f.gain.setValueAtTime(0.0, t4);
                 }
-                var out = self._outNode;
-                self._connect(out, f);
-                self._outNode = f;
+                self._addTail(f);
             }
             self._connect(self._outNode, context.destination);
             self._connected = true;
@@ -457,8 +458,7 @@ rc.AudioRegion = function AudioRegion(sound) {
         // the original tail node.
         self._connect   (f      , context.destination);
         self._disconnect(outNode, context.destination);
-        self._connect   (outNode, f);
-        self._outNode   = f;
+        self._addTail(f);
         self._releasing = true;
     };
 
