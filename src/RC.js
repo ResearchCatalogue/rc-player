@@ -1,14 +1,20 @@
 // console.log("build 3");
 
 var rc = {
-    dbamp: function (x) {
-        return Math.pow(10, x * 0.05);
-    },
-
     logging: true,
 
     log: function (x) {
         if (rc.logging) console.log(x);
+    },
+
+    dbamp: function (x) {
+        return Math.pow(10, x * 0.05);
+    },
+
+    _ampdbFactor: 20 / Math.log(10),
+
+    ampdb: function(x) {
+        return Math.log(x) * rc._ampdbFactor
     },
 
     AudioContext: function () {

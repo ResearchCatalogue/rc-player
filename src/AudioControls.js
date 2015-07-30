@@ -5,14 +5,9 @@ rc.AudioControls = function AudioControls(options) {
 
     var self = this;
 
-    var div = $('<div class="rc-audio-controls"></div>');
+    var div     = $('<div class="rc-audio-controls"></div>');
 
-    var optOpt = options.options;
-
-    //for (var x in optOpt) {
-    //    console.log(x);
-    //}
-
+    var optOpt  = options.options;
     var model   = options.model;
     var elem    = model.element;
     var width   = elem.width();
@@ -35,6 +30,8 @@ rc.AudioControls = function AudioControls(options) {
         }
         elem.text(txt);
     };
+
+    ////////////////////////////////////////////////// play
 
     if (optOpt.play) {
         var divPlay = $('<span class="rc-play"></span>');
@@ -61,6 +58,8 @@ rc.AudioControls = function AudioControls(options) {
         $(model).on("playing", updatePlay).on("pause", updatePlay);
     }
 
+    ////////////////////////////////////////////////// elapsed
+
     if (optOpt.elapsed) {
         var divElapsed = $('<span class="rc-timer"></span>');
         div.append(divElapsed);
@@ -73,6 +72,8 @@ rc.AudioControls = function AudioControls(options) {
         updateElapsed();
         $(model).on("timeupdate", updateElapsed);
     }
+
+    ////////////////////////////////////////////////// remaining
 
     if (optOpt.remaining) {
         var divRemaining = $('<span class="rc-timer"></span>');
@@ -88,6 +89,8 @@ rc.AudioControls = function AudioControls(options) {
         $(model).on("timeupdate", updateRemaining).on("durationchange", updateRemaining);
     }
 
+    ////////////////////////////////////////////////// volume
+
     if (optOpt.volume) {
         var divVolume = $('<span class="rc-volume"></span>');
         var svgVolume = $('<svg width="26" height="26"><g transform="scale(0.8)"><path></path></g></svg>');
@@ -97,7 +100,7 @@ rc.AudioControls = function AudioControls(options) {
 
         var updateVolume = function() {
             var volume = model.volume();
-            console.log("volume = " + volume);
+            // console.log("volume = " + volume);
             var vol0 = "M4.998,12.127v7.896h4.495l6.729,5.526l0.004-18.948l-6.73,5.526H4.998z";
             var vol1 = "M18.806,11.219c-0.393-0.389-1.024-0.389-1.415,0.002c-0.39,0.391-0.39,1.024,0.002,1.416v-0.002c0.863,0.864,1.395,2.049,1.395,3.366c0,1.316-0.531,2.497-1.393,3.361c-0.394,0.389-0.394,1.022-0.002,1.415c0.195,0.195,0.451,0.293,0.707,0.293c0.257,0,0.513-0.098,0.708-0.293c1.222-1.22,1.98-2.915,1.979-4.776C20.788,14.136,20.027,12.439,18.806,11.219z";
             var vol2 = "M21.101,8.925c-0.393-0.391-1.024-0.391-1.413,0c-0.392,0.391-0.392,1.025,0,1.414c1.45,1.451,2.344,3.447,2.344,5.661c0,2.212-0.894,4.207-2.342,5.659c-0.392,0.39-0.392,1.023,0,1.414c0.195,0.195,0.451,0.293,0.708,0.293c0.256,0,0.512-0.098,0.707-0.293c1.808-1.809,2.929-4.315,2.927-7.073C24.033,13.24,22.912,10.732,21.101,8.925z";
@@ -134,10 +137,144 @@ rc.AudioControls = function AudioControls(options) {
 
     $(elem).append(div);
 
+    ////////////////////////////////////////////////// meter
+
     if (optOpt.meter) {
+        var w       = 160;
+        var h       = 20;
+        var canvas  = $('<canvas width="' + w + '" height="' + h + '" class="rc-meter"></canvas>');
+        div.append(canvas);
+        var canvasE = canvas[0]; // .get();
 
+        var lastPeak    = 0.0;
+        var lastRMS     = 0.0;
+        var sqrSum      = 0.0;
+        var sqrMax      = 0.0;
+        var count       = 0;
+        var lastPeakPx  = 0.0;
+        var lastRMSPx   = 0.0;
+
+        var peak = function() {
+            if (count > 0) lastPeak = Math.sqrt(sqrMax);
+            return lastPeak;
+        };
+
+        var rms = function() {
+            if (count > 0) lastRMS = Math.sqrt(sqrSum / count);
+            return lastRMS;
+        };
+
+        var reset = function() {
+            if (count > 0) {
+                sqrSum  = 0.0;
+                sqrMax  = 0.0;
+                count   = 0;
+            }
+        };
+
+        var animStep = function() {
+            var peakDB    = rc.ampdb(peak());
+            var floorDB   = -48;
+            var peakNorm  = peakDB / -floorDB + 1;
+            var rmsDB     = rc.ampdb(rms());
+            var rmsNorm   = rmsDB / -floorDB + 1;
+
+            var px0   = Math.max(0, Math.min(w, peakNorm * w));
+            var rx0   = Math.max(0, Math.min(w, rmsNorm  * w));
+            var px    = Math.max(lastPeakPx - 4, px0);
+            var rx    = Math.max(lastRMSPx  - 4, rx0);
+
+            if (lastPeakPx != px || lastRMSPx != rx) {
+                lastPeakPx  = px;
+                lastRMSPx   = rx;
+                // console.log("px = " + px + "; rx = " + rx + "; h = " + h);
+                // console.log("peakDB = " + peakDB + "; rmsDB = " + rmsDB);
+                var ctx     = canvasE.getContext("2d");
+                ctx.fillStyle = "#000000";
+                ctx.fillRect(0, 0, w , h);
+                ctx.fillStyle = "#FFFFFF";
+                ctx.fillRect(0, 0, px, h);
+                ctx.fillStyle = "#7F7F7F";
+                ctx.fillRect(0, 0, rx, h)
+            }
+
+            reset();
+        };
+
+        var meterAnalyze    = undefined;
+        var meterDummy      = undefined;
+
+        // var _foo = 0;
+
+        var attachMeter = function() {
+            var blockSize   = 512;
+            var context     = rc.AudioContext();
+            meterAnalyze    = context.createScriptProcessor(blockSize, 1, 1);
+            meterAnalyze.onaudioprocess = function(e) {
+                var inBuf   = e.inputBuffer;
+                var numCh   = inBuf.numberOfChannels;
+                for (var ch = 0; ch < numCh; ch++) {
+                    var input = inBuf.getChannelData(ch);
+                    var len   = input.length;
+                    for (var idx = 0; idx < len; idx++) {
+                        var x0 = input[idx];
+                        var x = x0 * x0;
+                        sqrSum += x;
+                        if (x > sqrMax) sqrMax = x;
+                    }
+                    count += len;
+                }
+                // _foo++;
+                // if (_foo % 100 == 0) {
+                //    console.log("METER " + sqrMax);
+                // }
+            };
+            // THIS IS NEEDED FOR CHROME
+            // XXX TODO --- look into Tone.js, they
+            // call some GC-prevention function that might serve the same purpose.
+            meterDummy = context.createGain();
+            meterDummy.gain.value = 0.0;
+            meterAnalyze.connect(meterDummy);
+            meterDummy.connect(context.destination);
+            model.mediaNode().connect(meterAnalyze);
+        };
+
+        var detachMeter = function() {
+            if (meterDummy) {
+                if (meterAnalyze) {
+                    meterAnalyze.disconnect(meterDummy);
+                    meterAnalyze = undefined;
+                }
+                var context = meterDummy.context;
+                meterDummy.disconnect(context.destination);
+                meterDummy = undefined;
+            }
+        };
+
+        var meterTimerHandle = undefined;
+
+        var startMeterAnim = function() {
+            stopMeterAnim();
+            meterTimerHandle = window.setInterval(animStep, 33.3);
+        };
+
+        var stopMeterAnim = function() {
+            if (meterTimerHandle) {
+                window.clearInterval(meterTimerHandle);
+                meterTimerHandle = undefined;
+            }
+        };
+
+        $(model)
+            .on("connected", function() {
+                rc.log("connect meter");
+                attachMeter();
+                startMeterAnim();
+            })
+            .on("disconnected", function() {
+                rc.log("disconnect meter");
+                stopMeterAnim();
+                detachMeter();
+            });
     }
-
-    var canvas = $('<canvas width="160" height="20" class="rc-meter"></canvas>');
-    div.append(canvas);
 };

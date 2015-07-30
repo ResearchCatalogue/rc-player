@@ -159,9 +159,10 @@ rc.AudioRegion = function AudioRegion(sound) {
         }
     };
 
-    ///** Returns the media-element-source `AudioNode` on which this region is based. */
-    //self.mediaNode = function() { return self._mediaNode };
+    /** Returns the media-element-source `AudioNode` on which this region is based. */
+    self.mediaNode = function() { return self._mediaNode };
 
+    /** Returns the <audio> element. */
     self.audioElem = function() { return self._elem };
 
     // ---------------- private ----------------
@@ -254,6 +255,7 @@ rc.AudioRegion = function AudioRegion(sound) {
         }
         cs.length = 0;
         self._connected = false;
+        $(self._elem).trigger("disconnected");
     };
 
     // Audio-clock time when `doPlay` was invoked. This is currently not used. */
@@ -373,6 +375,7 @@ rc.AudioRegion = function AudioRegion(sound) {
             }
             self._connect(self._outNode, context.destination);
             self._connected = true;
+            $(self._elem).trigger("connected");
         }
         audio.play();
         if (dur < totalDur) {

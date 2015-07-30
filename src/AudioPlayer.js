@@ -11,6 +11,7 @@ rc.AudioPlayer = function AudioPlayer() {
     self.currentTime    = function()  { return self._sound.currentTime() };
     self.duration       = function()  { return self._sound.duration   () };
     self.volume         = function(x) { return self._sound.volume    (x) };
+    self.mediaNode      = function()  { return self._sound.mediaNode  () };
 
     self._attachSound = function() {
         var sound   = self._sound;
@@ -40,6 +41,12 @@ rc.AudioPlayer = function AudioPlayer() {
             })
             .on("volumechange", function(e) {
                 $(self).trigger("volumechange", e);
+            })
+            .on("connected", function(e) {
+                $(self).trigger("connected", e);
+            })
+            .on("disconnected", function(e) {
+                $(self).trigger("disconnected", e);
             });
     };
 
