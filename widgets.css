@@ -1,9 +1,10 @@
 span.rc-play > svg {
     float: left;
     fill: white;
-    padding: 0;
+    /*padding: 0;*/
     /*background: black;*/
-    margin: 0;
+    /*margin: 0;*/
+    vertical-align: top;
 }
 
 span.rc-timer {
@@ -15,18 +16,26 @@ span.rc-timer {
     color: white;
     width: 40px;
     padding: 3px 4px 2px 4px;
-    margin: 0;
+    /*margin: 0;*/
 }
 
 span.rc-cue {
     float: left;
-    padding-top: 6px;
+    /*padding-top: 6px;*/
     /*margin: 0;*/
+    /* don't touch, or else a kitten will die */
+    vertical-align: top;
+    padding: 6px 2px 0px 0px; /* T R B L */
+}
+
+span.rc-cue > svg {
+    vertical-align: top;
 }
 
 span.rc-volume > svg {
     /*position: relative;*/
     fill: white;
+    vertical-align: top;
 }
 
 div.rc-audio-controls {

@@ -109,7 +109,7 @@ rc.AudioRegion = function AudioRegion(sound) {
         if (self._disposed) return;
 
         rc.log("stop " + sound.src);
-        self._stop1(true);
+        self._stop1(false /* true */);
     };
 
     /**
