@@ -23,14 +23,36 @@ var rc = {
     },
 
     style: function(elem, style) {
-        if (style.position) {
-            var pos = style.position;
+        var pos = style.position;
+        if (pos) {
             elem.css("position", "absolute");
             elem.css("left"  , pos.left  );
             elem.css("top"   , pos.top   );
             elem.css("width" , pos.width );
             elem.css("height", pos.height);
         }
-        // TODO: padding, border, etc. goes here
+        var pad = style.padding;
+        if (pad) {
+            elem.css("padding-left"  , pad.left  );
+            elem.css("padding-top"   , pad.top   );
+            elem.css("padding-bottom", pad.bottom);
+            elem.css("padding-right" , pad.right );
+        }
+        var bd = style.border;
+        if (bd) {
+            elem.css("border-style" , bd.style   );
+            elem.css("border-width" , bd.strength);
+            elem.css("border-color" , bd.color   );
+            elem.css("border-radius", bd.radius  );
+        }
+        var bg = style.background;
+        if (bg) {
+            elem.css("background-color"   , bg.color   );
+            elem.css("background-image"   , bg.image   );
+            elem.css("background-repeat"  , bg.repeat  );
+            elem.css("background-position", bg.position);
+            // TODO: `size`: `auto`, `cover`, `contain`
+        }
+        // TODO: opacity
     }
 };

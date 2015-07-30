@@ -23,7 +23,9 @@ span.rc-cue {
     float: left;
     /*padding-top: 6px;*/
     /*margin: 0;*/
-    /* don't touch, or else a kitten will die */
+    /* Don't touch, or else a kitten will die.
+     * Problem still: height is larger in Firefox
+     */
     vertical-align: top;
     padding: 6px 2px 0px 0px; /* T R B L */
 }
@@ -38,10 +40,10 @@ span.rc-volume > svg {
     vertical-align: top;
 }
 
-div.rc-audio-controls {
-    background: black;
-    /*vertical-align: bottom;*/
-}
+/*div.rc-audio-controls {*/
+    /*background: black;*/
+    /*/!*vertical-align: bottom;*!/*/
+/*}*/
 
 div.rc-player {
     position: absolute;

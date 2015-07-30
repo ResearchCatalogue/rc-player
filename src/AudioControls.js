@@ -1,3 +1,6 @@
+/*
+
+ */
 rc.AudioControls = function AudioControls(options) {
     if (!(this instanceof AudioControls)) {
         return new AudioControls(options);
@@ -30,6 +33,10 @@ rc.AudioControls = function AudioControls(options) {
         }
         elem.text(txt);
     };
+
+    var bg = options.style ? options.style.background ? options.style.background.color
+            : undefined : undefined;
+    bg = bg ? bg : "black";
 
     ////////////////////////////////////////////////// play
 
@@ -88,7 +95,7 @@ rc.AudioControls = function AudioControls(options) {
         var divCue = $('<span class="rc-cue"></span>');
         var svgCue = $('<svg width="' + wc + '" height="' + hc + '">' +
             '<rect fill="white" x="0" y="0" rx="' + rr + '" ry="' + rr + '" width="' + wc + '" height = "' + hc + '"/>'  +
-            '<circle cx="' + hch + '" cy="' + hch + '" r="' + (hch - 1) + '" fill="black"/>' +
+            '<circle cx="' + hch + '" cy="' + hch + '" r="' + (hch - 1) + '" fill="' + bg + '"/>' +
             '</svg>');
         divCue.append(svgCue);
         div.append(divCue);
@@ -242,8 +249,8 @@ rc.AudioControls = function AudioControls(options) {
         var sqrSum      = 0.0;
         var sqrMax      = 0.0;
         var count       = 0;
-        var lastPeakPx  = 0.0;
-        var lastRMSPx   = 0.0;
+        var lastPeakPx  = -1;   // other than zero so we initially paint once
+        var lastRMSPx   = -1;
 
         var peak = function() {
             if (count > 0) lastPeak = Math.sqrt(sqrMax);
@@ -285,7 +292,7 @@ rc.AudioControls = function AudioControls(options) {
                 // console.log("px = " + px + "; rx = " + rx + "; h = " + h);
                 // console.log("peakDB = " + peakDB + "; rmsDB = " + rmsDB);
                 var ctx     = canvasE.getContext("2d");
-                ctx.fillStyle = "#000000";
+                ctx.fillStyle = bg; // "#000000";
                 ctx.fillRect(0, 0, wm , hm);
                 ctx.fillStyle = "#FFFFFF";
                 ctx.fillRect(0, 0, px, hm);
@@ -362,6 +369,8 @@ rc.AudioControls = function AudioControls(options) {
             }
         };
 
+        meterAnimStep();    // paint once
+
         $(model)
             .on("connected", function() {
                 rc.log("connect meter");
@@ -374,5 +383,14 @@ rc.AudioControls = function AudioControls(options) {
                 // stopMeterAnim(); -- the will now be detected in meterAnimStep
                 detachMeter();
             });
+    }
+
+    ////////////////////////////////////////////////// hover
+
+    if (optOpt.hover) {
+        // XXX TODO -- doesn't seem to work
+        $(model.element).tooltip({
+            content: optOpt.hover
+        });
     }
 };

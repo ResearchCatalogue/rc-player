@@ -398,7 +398,6 @@ rc.AudioRegion = function AudioRegion(sound) {
      */
     self._ended = function() {
         rc.log("ended " + sound.src);
-        rc.log("- self._playing = " + self._playing + "; self._releasing = " + self._releasing);
         var repeat = self._playing && !self._releasing;
         self.stop();
         if (sound.loop && repeat) self.play();

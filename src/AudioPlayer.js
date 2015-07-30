@@ -1,3 +1,11 @@
+/* AudioPlayer.js
+ * (rc-player)
+ */
+
+/**
+ * The AudioPlayer class is instantiated by the AudioPlayerPlugIn
+ * widget. It stores an AudioRegion object that it controls.
+ */
 rc.AudioPlayer = function AudioPlayer(self) {
     if (!(this instanceof AudioPlayer)) {
         return new AudioPlayer(self);
@@ -25,9 +33,6 @@ rc.AudioPlayer = function AudioPlayer(self) {
                 if (obj != self) {
                     obj.stop();
                 }
-                //for (var key in obj) {
-                //    console.log(key);
-                //}
             });
         }
         self._sound.play();
@@ -36,14 +41,6 @@ rc.AudioPlayer = function AudioPlayer(self) {
     self._attachSound = function() {
         var sound   = self._sound;
         var audio   = sound.audioElem();
-
-        //var printObj = function(obj) {
-        //    for (var i in obj) {
-        //        console.log(i);
-        //    }
-        //};
-
-        // $(audio).delegate()
 
         // XXX TODO -- there must be a more efficient way to create forwarding
         $(audio)
@@ -95,11 +92,7 @@ rc.AudioPlayer = function AudioPlayer(self) {
             style   : opt.style,
             sound   : self._sound
         };
-        var ggCtl = rc.AudioControls(ctlOpt);
-        //$(ggCtl).on("play", function() {
-        //    var sound = self._sound;
-        //    if (sound.playing()) sound.pause(); else sound.play();
-        //});
+        /* var ggCtl = */ rc.AudioControls(ctlOpt);
 
         self._attachSound();
 
@@ -114,6 +107,14 @@ rc.AudioPlayerPlugIn = {
     _create: function() {
         // console.log("CREATE " + this.options.sound.src);
         this._instance = new rc.AudioPlayer(this);
+    },
+
+    options: {
+        style: {
+            background: {
+                color: "black"
+            }
+        }
     }
 };
 
