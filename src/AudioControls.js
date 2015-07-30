@@ -23,7 +23,7 @@ rc.AudioControls = function AudioControls(options) {
     self._updateTimer = function(elem, sec, neg) {
         var txt = "";
         if (isFinite(sec)) {
-            var sec1 = Math.floor(sec);
+            var sec1 = neg ? Math.ceil(sec) : Math.floor(sec);
             var min0 = Math.floor(sec1 / 60);
             var sec2 = sec1 % 60;
             var min1 = Math.floor(min0 / 10) % 10;

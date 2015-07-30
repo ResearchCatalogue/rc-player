@@ -5,6 +5,9 @@
 /**
  *  A class for playing sound files or fragments thereof.
  *
+ *  Note that events are currently all dispatched from
+ *  `audioElem`, not the region itself.
+ *
  * @param sound    an object with the sound parameter configuration.
  * @returns {rc.AudioRegion}
  */
@@ -51,12 +54,18 @@ rc.AudioRegion = function AudioRegion(sound) {
      *          if a defined number, sets the volume.
      */
     self.volume = function(x) {
-        var audio = self._elem;
         if (x == undefined) {
-            return audio.volume;
-        } else {
-            var y = (sound.gain < 0 ? rc.dbamp(sound.gain) : 1.0) * x;
-            audio.volume = y;
+            return self._volume;
+        } else if (self._volume != x) {
+            self._volume = x;
+            if (self._connected) {
+                var g   = self._gainNode;
+                var y   = rc.dbamp(sound.gain) * x;
+                var t0  = g.context.currentTime;
+                rc.log("volume " + sound.src + " - " + x);
+                g.gain.setValueAtTime(y, t0);
+            }
+            $(self._elem).trigger("volumechange")
         }
     };
 
@@ -171,11 +180,23 @@ rc.AudioRegion = function AudioRegion(sound) {
         // a dedicated gain node is needed if there
         // are fade-ins or the gain is greater than zero decibels,
         // or the sound stops before the end of the sound file.
-        self._needsGain =
+        self._needsGain = true;
+
+        // N.B. Mozilla doesn't allow us to change the
+        // <audio>'s volume once it's connected to WAA,
+        // therefore we must always make a gain node.
+
+        /*
             (sound.fadein .duration > 0) ||
             (sound.fadeout.duration > 0) ||
             (sound.gain > 0) ||
              sound.stop;
+        */
+
+        self._needsFade =
+            (sound.fadein .duration > 0) ||
+            (sound.fadeout.duration > 0) ||
+            sound.stop;
 
         var audio           = document.createElement("AUDIO");
         self._elem          = audio;
@@ -187,9 +208,11 @@ rc.AudioRegion = function AudioRegion(sound) {
 
         audio.preload   = "auto";
         audio.src       = sound.src;
-        if (sound.gain && sound.gain < 0) { // N.B. only attenuation supported here
-            audio.volume = rc.dbamp(sound.gain);
-        }
+
+        // broken in Mozilla
+        // if (sound.gain && sound.gain < 0) { // N.B. only attenuation supported here
+        //    audio.volume = rc.dbamp(sound.gain);
+        // }
     };
 
     // the events that we wish to observe from the media element.
@@ -248,6 +271,8 @@ rc.AudioRegion = function AudioRegion(sound) {
     // disposed before time.
     self._scheduled = [];
 
+    self._volume = 1.0;
+
     /* Schedules a function to be executed after a time `dly` given in seconds.
      *
      * If we discover that drift against audio-clock is not negligible for
@@ -287,7 +312,9 @@ rc.AudioRegion = function AudioRegion(sound) {
     // i.e. the one that goes to `destination`. This
     // is needed for `release` which inserts a fade
     // node between the `_outNode` and the `destination`.
-    self._outNode = undefined;
+    self._outNode   = undefined;
+
+    self._gainNode  = undefined;
 
     /* Establishes the audio connections (if necessary)
      * and calls `play` on the media node.
@@ -300,21 +327,31 @@ rc.AudioRegion = function AudioRegion(sound) {
         var stop        = sound.stop ? Math.max(start, Math.min(totalDur, sound.stop )) : totalDur;
         var dur         = stop - start;
         if (!self._connected) {
-            var context = rc.AudioContext();
+            var context     = rc.AudioContext();
+            var t0          = context.currentTime;
+            self._playTime  = t0;
+            self._outNode   = self._mediaNode;
             if (self._needsGain) {
-                var g       = context.createGain();
-                self._outNode = g;
-                var amp = rc.dbamp(Math.max(0, sound.gain ? sound.gain : 0.0));
-                var t0  = context.currentTime;
-                self._playTime = t0;
+                var g = context.createGain();
+                // <audio>.volume broken in Mozilla
+                // var amp = rc.dbamp(Math.max(0, sound.gain ? sound.gain : 0.0));
+                var amp = rc.dbamp(sound.gain) * self._volume;
+                g.gain.setValueAtTime(amp, t0);
+                var out = self._outNode;
+                self._connect(out, g);
+                self._gainNode  = g;
+                self._outNode   = g;
+            }
+            if (self._needsFade) {
+                var f   = context.createGain();
                 var fi  = sound.fadein;
                 if (fi.duration > 0) {
                     var isExpI  = fi.type == "exponential";
                     var lowI    = isExpI ? rc.dbamp(-60) : 0.0;
-                    g.gain.setValueAtTime(lowI, t0);
+                    f.gain.setValueAtTime(lowI, t0);
                     var t1      = t0 + fi.duration;
-                    if (isExpI) g.gain.exponentialRampToValueAtTime(amp, t1);
-                    else        g.gain.linearRampToValueAtTime     (amp, t1);
+                    if (isExpI) f.gain.exponentialRampToValueAtTime(1.0, t1);
+                    else        f.gain.linearRampToValueAtTime     (1.0, t1);
                 }
                 var fo  = sound.fadein;
                 if (fo.duration > 0 && isFinite(dur)) {
@@ -322,25 +359,24 @@ rc.AudioRegion = function AudioRegion(sound) {
                     var lowO    = isExpO ? rc.dbamp(-60) : 0.0;
                     var t3      = t0 + dur;
                     var t2      = t3 - fo.duration;
-                    g.gain.setValueAtTime(amp, t2);
-                    if (isExpO) g.gain.exponentialRampToValueAtTime(lowO, t3);
-                    else        g.gain.linearRampToValueAtTime     (lowO, t3);
+                    f.gain.setValueAtTime(1.0, t2);
+                    if (isExpO) f.gain.exponentialRampToValueAtTime(lowO, t3);
+                    else        f.gain.linearRampToValueAtTime     (lowO, t3);
                 } else if (stop < totalDur) {
                     var t4      = t0 + dur;
-                    g.gain.setValueAtTime(0.0, t4);
+                    f.gain.setValueAtTime(0.0, t4);
                 }
-                self._connect(self._mediaNode, g);
-                self._connect(g, context.destination);
-            } else {
-                self._outNode = self._mediaNode;
-                self._connect(self._mediaNode, context.destination);
+                var out = self._outNode;
+                self._connect(out, f);
+                self._outNode = f;
             }
+            self._connect(self._outNode, context.destination);
             self._connected = true;
         }
         audio.play();
         if (dur < totalDur) {
             // if we use the envelope and no loop, schedule a bit later
-            var dly = sound.loop || !self._needsGain ? dur : dur + 0.1;
+            var dly = sound.loop || !self._needsFade ? dur : dur + 0.1;
             self._schedule(self._ended, dly);
         }
     };

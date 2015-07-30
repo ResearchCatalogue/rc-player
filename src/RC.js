@@ -5,7 +5,7 @@ var rc = {
         return Math.pow(10, x * 0.05);
     },
 
-    logging: false,
+    logging: true,
 
     log: function (x) {
         if (rc.logging) console.log(x);

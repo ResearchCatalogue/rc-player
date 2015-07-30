@@ -27,24 +27,19 @@ rc.AudioPlayer = function AudioPlayer() {
         // XXX TODO -- there must be a more efficient way to create forwarding
         $(audio)
             .on("playing", function(e) {
-                // console.log("||| playing");
-                // printObj(e);
                 $(self).trigger("playing", e);
             })
             .on("timeupdate", function(e) {
-                // console.log("||| timeupdate");
-                // printObj(e);
                 $(self).trigger("timeupdate", e);
             })
             .on("durationchange", function(e) {
-                // console.log("||| durationchange");
-                // printObj(e);
                 $(self).trigger("durationchange", e);
             })
             .on("pause", function(e) {
-                // console.log("||| pause");
-                // printObj(e);
                 $(self).trigger("pause", e);
+            })
+            .on("volumechange", function(e) {
+                $(self).trigger("volumechange", e);
             });
     };
 
