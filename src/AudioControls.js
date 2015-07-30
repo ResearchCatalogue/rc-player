@@ -51,11 +51,15 @@ rc.AudioControls = function AudioControls(options) {
 
         divPlay.append(svgPlay);
         divPlay.click(function() {
-            $(self).trigger("play");
+            // $(self).trigger("play");
+            if (model.playing()) model.pause(); else model.play();
         });
         div.append(divPlay);
 
-        $(model).on("playing", updatePlay).on("pause", updatePlay);
+        $(model)
+            .on("playing", updatePlay)
+            .on("paused", updatePlay)
+            .on("ended", updatePlay);
     }
 
     ////////////////////////////////////////////////// elapsed

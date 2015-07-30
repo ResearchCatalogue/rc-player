@@ -14,6 +14,8 @@ rc.AudioPlayer = function AudioPlayer(self) {
     self.duration       = function()  { return self._sound.duration   ()  };
     self.volume         = function(x) { return self._sound.volume     (x) };
     self.mediaNode      = function()  { return self._sound.mediaNode  ()  };
+    self.play           = function()  { return self._sound.play       ()  };
+    self.pause          = function()  { return self._sound.pause      ()  };
 
     self._attachSound = function() {
         var sound   = self._sound;
@@ -39,7 +41,14 @@ rc.AudioPlayer = function AudioPlayer(self) {
                 $(self).trigger("durationchange", e);
             })
             .on("pause", function(e) {
-                $(self).trigger("pause", e);
+                // this is a WTF:
+                // if we call this "pause", JQuery
+                // will actually call the pause()
+                // function.
+                $(self).trigger("paused", e);
+            })
+            .on("ended", function(e) {
+                $(self).trigger("ended", e);
             })
             .on("volumechange", function(e) {
                 $(self).trigger("volumechange", e);
@@ -71,10 +80,10 @@ rc.AudioPlayer = function AudioPlayer(self) {
             sound   : self._sound
         };
         var ggCtl = rc.AudioControls(ctlOpt);
-        $(ggCtl).on("play", function() {
-            var sound = self._sound;
-            if (sound.playing()) sound.pause(); else sound.play();
-        });
+        //$(ggCtl).on("play", function() {
+        //    var sound = self._sound;
+        //    if (sound.playing()) sound.pause(); else sound.play();
+        //});
 
         self._attachSound();
 
