@@ -52,7 +52,7 @@ rc.AudioPlayer = function AudioPlayer(self) {
             });
     };
 
-    self._init = function () {
+    self._init1 = function () {
         // var img = $('<img class="rc-slide">');
         // div.append(img);
         var opt     = self.options;
@@ -82,7 +82,7 @@ rc.AudioPlayer = function AudioPlayer(self) {
     };
 
     // _init is already called by JQuery UI
-    // self._init();
+    self._init1();
 };
 
 rc.AudioPlayerPlugIn = {
