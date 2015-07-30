@@ -1,15 +1,3 @@
-span.rc-timer {
-    float: left;
-    /*position: relative;*/
-    font-family: 'Dosis', sans-serif;
-    font-size: 16px;
-    /*background: black;*/
-    color: white;
-    width: 40px;
-    padding: 2px 4px;
-    margin: 0;
-}
-
 span.rc-play > svg {
     float: left;
     fill: white;
@@ -18,13 +6,31 @@ span.rc-play > svg {
     margin: 0;
 }
 
-.rc-volume > svg {
-    position: relative;
+span.rc-timer {
+    float: left;
+    /*position: relative;*/
+    font-family: 'Dosis', sans-serif;
+    font-size: 16px;
+    /*background: black;*/
+    color: white;
+    width: 40px;
+    padding: 3px 4px 2px 4px;
+    margin: 0;
+}
+
+span.rc-cue {
+    float: left;
+    padding-top: 6px;
+}
+
+span.rc-volume > svg {
+    /*position: relative;*/
     fill: white;
 }
 
 div.rc-audio-controls {
     background: black;
+    /*vertical-align: bottom;*/
 }
 
 .rc-slideshow {

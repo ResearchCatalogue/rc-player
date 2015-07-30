@@ -73,6 +73,35 @@ rc.AudioControls = function AudioControls(options) {
         $(model).on("timeupdate", updateElapsed);
     }
 
+    ////////////////////////////////////////////////// cue
+
+    if (optOpt.cue) {
+        var wc  = 64;
+        var hc  = 14;
+        var hch = hc/2;
+        var rr  = 7;
+
+        var divCue = $('<span class="rc-cue"></span>');
+        var svgCue = $('<svg width="' + wc + '" height="' + hc + '">' +
+            '<rect fill="white" x="0" y="0" rx="' + rr + '" ry="' + rr + '" width="' + wc + '" height = "' + hc + '"/>'  +
+            '<circle cx="' + hch + '" cy="' + hch + '" r="' + (hch - 1) + '" fill="black"/>' +
+            '</svg>');
+        divCue.append(svgCue);
+        div.append(divCue);
+
+        var updateCue = function() {
+            var time = model.currentTime();
+            var dur  = model.duration();
+            if (isFinite(dur)) {
+                var cx = Math.max(0, Math.min(1, (time / dur))) * (wc - hc) + hch;
+                $("circle", svgCue).attr("cx", cx);
+            }
+        };
+
+        updateCue();
+        $(model).on("timeupdate", updateCue).on("durationchange", updateCue);
+    }
+
     ////////////////////////////////////////////////// remaining
 
     if (optOpt.remaining) {
@@ -140,9 +169,9 @@ rc.AudioControls = function AudioControls(options) {
     ////////////////////////////////////////////////// meter
 
     if (optOpt.meter) {
-        var w       = elem.width();
-        var h       = 12;   // XXX TODO
-        var canvas  = $('<canvas width="' + w + '" height="' + h + '" class="rc-meter"></canvas>');
+        var wm      = elem.width();
+        var hm      = 12;   // XXX TODO
+        var canvas  = $('<canvas width="' + wm + '" height="' + hm + '" class="rc-meter"></canvas>');
         div.append(canvas);
         var canvasE = canvas[0]; // .get();
 
@@ -183,8 +212,8 @@ rc.AudioControls = function AudioControls(options) {
             var rmsDB     = rc.ampdb(rms());
             var rmsNorm   = rmsDB / -floorDB + 1;
 
-            var px0   = Math.max(0, Math.min(w, peakNorm * w));
-            var rx0   = Math.max(0, Math.min(w, rmsNorm  * w));
+            var px0   = Math.max(0, Math.min(wm, peakNorm * wm));
+            var rx0   = Math.max(0, Math.min(wm, rmsNorm  * wm));
             var px    = Math.max(lastPeakPx - 4, px0);
             var rx    = Math.max(lastRMSPx  - 4, rx0);
 
@@ -195,11 +224,11 @@ rc.AudioControls = function AudioControls(options) {
                 // console.log("peakDB = " + peakDB + "; rmsDB = " + rmsDB);
                 var ctx     = canvasE.getContext("2d");
                 ctx.fillStyle = "#000000";
-                ctx.fillRect(0, 0, w , h);
+                ctx.fillRect(0, 0, wm , hm);
                 ctx.fillStyle = "#FFFFFF";
-                ctx.fillRect(0, 0, px, h);
+                ctx.fillRect(0, 0, px, hm);
                 ctx.fillStyle = "#7F7F7F";
-                ctx.fillRect(0, 0, rx, h)
+                ctx.fillRect(0, 0, rx, hm)
             } else {
                 if (!meterAnalyze) {
                     lastPeak    = 0.0;
