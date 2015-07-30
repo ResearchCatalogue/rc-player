@@ -28,11 +28,16 @@ rc.AudioRegion = function AudioRegion(sound) {
     self.playing = function() { return self._playing };
 
     /**
-     * Returns the current relative time offset
+     * Gets or sets the current relative time offset
      * in seconds from the region's start.
+     * `currentTime()` queries and `currentTime(x)` sets the time.
      */
-    self.currentTime = function() {
-        return self._elem.currentTime - sound.start;
+    self.currentTime = function(x) {
+        if (x == undefined) {
+            return self._elem.currentTime - sound.start;
+        } else {
+            self._elem.currentTime = sound.start + x;
+        }
     };
 
     /**

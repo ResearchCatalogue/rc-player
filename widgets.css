@@ -21,6 +21,7 @@ span.rc-timer {
 span.rc-cue {
     float: left;
     padding-top: 6px;
+    /*margin: 0;*/
 }
 
 span.rc-volume > svg {
@@ -31,6 +32,10 @@ span.rc-volume > svg {
 div.rc-audio-controls {
     background: black;
     /*vertical-align: bottom;*/
+}
+
+div.rc-player {
+    position: absolute;
 }
 
 .rc-slideshow {

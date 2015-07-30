@@ -89,16 +89,74 @@ rc.AudioControls = function AudioControls(options) {
         divCue.append(svgCue);
         div.append(divCue);
 
+        var cueDragging     = false;
+        var cueDragStartX   = 0;
+        var cueDragX        = 0;
+        var cueDragStartXM  = 0;
+        var cueDragXM       = 0;
+
         var updateCue = function() {
-            var time = model.currentTime();
-            var dur  = model.duration();
-            if (isFinite(dur)) {
-                var cx = Math.max(0, Math.min(1, (time / dur))) * (wc - hc) + hch;
-                $("circle", svgCue).attr("cx", cx);
+            if (!cueDragging) {
+                var time = model.currentTime();
+                var dur  = model.duration();
+                if (isFinite(dur)) {
+                    var cx = Math.max(0, Math.min(1, (time / dur))) * (wc - hc) + hch;
+                    $("circle", svgCue).attr("cx", cx);
+                }
             }
         };
 
         updateCue();
+
+        //$("circle", svgCue).draggable({
+        //   addClasses: false,
+        //    axis: "x",
+        //    containment: "parent" // $("rect", svgCue)
+        //})
+        //.bind("drag", function(e, ui) {
+        //    var x0 = ui.position.left;
+        //    // console.log("x = " + x);
+        //    var x = Math.max(hch, Math.min(wc - hch, x0));
+        //    e.target.setAttribute("cx", x);
+        //});
+
+        var cueDrag = function(e) {
+            if (cueDragging) {
+                cueDragX = e.clientX;
+                var dx = cueDragX - cueDragStartX;
+                var x0 = dx + cueDragStartXM;
+                var x1 = Math.max(hch, Math.min(wc - hch, x0));
+                // console.log("drag: dx = " + dx + "; cueDragCX = " + cueDragCX + "; hch = " + hch + "; wc-hch = " + (wc - hch) +  "; x0 = " + x0);
+                cueDragXM = x1;
+                $("circle", svgCue).attr("cx", x1);
+                e.preventDefault();
+            }
+        };
+
+        var cueDragUp = function(e) {
+            if (cueDragging) {
+                cueDragging = false;
+                if (cueDragX != cueDragStartX) {
+                    // console.log("dragged " + (cueDragX - cueDragStartX));
+                    var dur     = model.duration();
+                    var time    = ((cueDragXM - hch) / (wc - hc)) * dur;
+                    model.currentTime(time);
+                }
+                e.preventDefault();
+            }
+        };
+
+        $("circle", svgCue).mousedown(function (e) {
+            cueDragStartX   = e.clientX;
+            cueDragX        = cueDragStartX;
+            cueDragging     = true;
+            cueDragStartXM  = parseInt($("circle", svgCue).attr("cx"));
+            // console.log("down " + cueDragX + "; " + cueDragCX);
+            e.preventDefault();
+        }).mouseup(cueDragUp).mousemove(cueDrag);
+        // tricky stuff to keep dragging while leaving the circle
+        $(div).mouseup(cueDragUp).mousemove(cueDrag);
+
         $(model).on("timeupdate", updateCue).on("durationchange", updateCue);
     }
 

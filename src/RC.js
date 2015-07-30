@@ -25,6 +25,7 @@ var rc = {
     style: function(elem, style) {
         if (style.position) {
             var pos = style.position;
+            elem.css("position", "absolute");
             elem.css("left"  , pos.left  );
             elem.css("top"   , pos.top   );
             elem.css("width" , pos.width );

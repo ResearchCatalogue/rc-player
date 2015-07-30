@@ -1,17 +1,19 @@
-rc.AudioPlayer = function AudioPlayer() {
+rc.AudioPlayer = function AudioPlayer(self) {
     if (!(this instanceof AudioPlayer)) {
-        return new AudioPlayer();
+        return new AudioPlayer(self);
     }
 
-    var self = this;
+    // console.log("INIT " + self.options.sound.src);
+
+    // var self = this;
 
     // forwarders - at some point `self._sound` might be changing
 
-    self.playing        = function()  { return self._sound.playing    () };
-    self.currentTime    = function()  { return self._sound.currentTime() };
-    self.duration       = function()  { return self._sound.duration   () };
-    self.volume         = function(x) { return self._sound.volume    (x) };
-    self.mediaNode      = function()  { return self._sound.mediaNode  () };
+    self.playing        = function()  { return self._sound.playing    ()  };
+    self.currentTime    = function(x) { return self._sound.currentTime(x) };
+    self.duration       = function()  { return self._sound.duration   ()  };
+    self.volume         = function(x) { return self._sound.volume     (x) };
+    self.mediaNode      = function()  { return self._sound.mediaNode  ()  };
 
     self._attachSound = function() {
         var sound   = self._sound;
@@ -50,10 +52,7 @@ rc.AudioPlayer = function AudioPlayer() {
             });
     };
 
-    /* The constructor for JQuery UI. */
-    self._create = function () {
-        self = this;
-
+    self._init = function () {
         // var img = $('<img class="rc-slide">');
         // div.append(img);
         var opt     = self.options;
@@ -80,7 +79,17 @@ rc.AudioPlayer = function AudioPlayer() {
         self._attachSound();
 
         if (optOpt.autoplay) self._sound.play();
+    };
+
+    // _init is already called by JQuery UI
+    // self._init();
+};
+
+rc.AudioPlayerPlugIn = {
+    _create: function() {
+        // console.log("CREATE " + this.options.sound.src);
+        /* this._instance = */ new rc.AudioPlayer(this);
     }
 };
 
-$.widget("rc.AudioPlayer", new rc.AudioPlayer());
+$.widget("rc.AudioPlayer", rc.AudioPlayerPlugIn);
