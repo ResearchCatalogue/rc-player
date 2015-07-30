@@ -140,8 +140,8 @@ rc.AudioControls = function AudioControls(options) {
     ////////////////////////////////////////////////// meter
 
     if (optOpt.meter) {
-        var w       = 160;
-        var h       = 20;
+        var w       = elem.width();
+        var h       = 12;   // XXX TODO
         var canvas  = $('<canvas width="' + w + '" height="' + h + '" class="rc-meter"></canvas>');
         div.append(canvas);
         var canvasE = canvas[0]; // .get();
@@ -172,7 +172,11 @@ rc.AudioControls = function AudioControls(options) {
             }
         };
 
-        var animStep = function() {
+        var meterAnalyze        = undefined;
+        var meterDummy          = undefined;
+        var meterTimerHandle    = undefined;    // interval-token
+
+        var meterAnimStep = function() {
             var peakDB    = rc.ampdb(peak());
             var floorDB   = -48;
             var peakNorm  = peakDB / -floorDB + 1;
@@ -196,13 +200,16 @@ rc.AudioControls = function AudioControls(options) {
                 ctx.fillRect(0, 0, px, h);
                 ctx.fillStyle = "#7F7F7F";
                 ctx.fillRect(0, 0, rx, h)
+            } else {
+                if (!meterAnalyze) {
+                    lastPeak    = 0.0;
+                    lastRMS     = 0.0;
+                    if (px == 0 && rx == 0) stopMeterAnim();
+                }
             }
 
             reset();
         };
-
-        var meterAnalyze    = undefined;
-        var meterDummy      = undefined;
 
         // var _foo = 0;
 
@@ -251,15 +258,14 @@ rc.AudioControls = function AudioControls(options) {
             }
         };
 
-        var meterTimerHandle = undefined;
-
         var startMeterAnim = function() {
             stopMeterAnim();
-            meterTimerHandle = window.setInterval(animStep, 33.3);
+            meterTimerHandle = window.setInterval(meterAnimStep, 33.3);
         };
 
         var stopMeterAnim = function() {
             if (meterTimerHandle) {
+                // console.log("STOP METER");
                 window.clearInterval(meterTimerHandle);
                 meterTimerHandle = undefined;
             }
@@ -273,7 +279,8 @@ rc.AudioControls = function AudioControls(options) {
             })
             .on("disconnected", function() {
                 rc.log("disconnect meter");
-                stopMeterAnim();
+                // let the meter fall to zero
+                // stopMeterAnim(); -- the will now be detected in meterAnimStep
                 detachMeter();
             });
     }

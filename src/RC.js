@@ -1,7 +1,7 @@
 // console.log("build 3");
 
 var rc = {
-    logging: true,
+    logging: false,
 
     log: function (x) {
         if (rc.logging) console.log(x);
