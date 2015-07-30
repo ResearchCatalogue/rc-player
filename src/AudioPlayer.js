@@ -14,8 +14,24 @@ rc.AudioPlayer = function AudioPlayer(self) {
     self.duration       = function()  { return self._sound.duration   ()  };
     self.volume         = function(x) { return self._sound.volume     (x) };
     self.mediaNode      = function()  { return self._sound.mediaNode  ()  };
-    self.play           = function()  { return self._sound.play       ()  };
     self.pause          = function()  { return self._sound.pause      ()  };
+    self.stop           = function()  { return self._sound.stop       ()  };
+
+    self.play = function() {
+        var optOpt = self.options.options;
+        if (optOpt.stopothers) {
+            $(":rc-AudioPlayer").each(function(idx, elem) {
+                var obj = $(elem).data("rc-AudioPlayer");
+                if (obj != self) {
+                    obj.stop();
+                }
+                //for (var key in obj) {
+                //    console.log(key);
+                //}
+            });
+        }
+        self._sound.play();
+    };
 
     self._attachSound = function() {
         var sound   = self._sound;
@@ -97,7 +113,7 @@ rc.AudioPlayer = function AudioPlayer(self) {
 rc.AudioPlayerPlugIn = {
     _create: function() {
         // console.log("CREATE " + this.options.sound.src);
-        /* this._instance = */ new rc.AudioPlayer(this);
+        this._instance = new rc.AudioPlayer(this);
     }
 };
 
