@@ -7,9 +7,10 @@ rc.AudioPlayer = function AudioPlayer() {
 
     // forwarders - at some point `self._sound` might be changing
 
-    self.playing        = function() { return self._sound.playing    () };
-    self.currentTime    = function() { return self._sound.currentTime() };
-    self.duration       = function() { return self._sound.duration   () };
+    self.playing        = function()  { return self._sound.playing    () };
+    self.currentTime    = function()  { return self._sound.currentTime() };
+    self.duration       = function()  { return self._sound.duration   () };
+    self.volume         = function(x) { return self._sound.volume    (x) };
 
     self._attachSound = function() {
         var sound   = self._sound;

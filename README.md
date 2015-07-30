@@ -11,3 +11,7 @@ The project is currently in incubation.
 
 The current test pages are `slideshow.html` and `audioplayer.html`. You have to clone the 
 repository and open these pages in a browser.
+
+## credits
+
+Uses some of Raphael.js' [icons](http://raphaeljs.com/icons) which are released under the MIT License.

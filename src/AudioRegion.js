@@ -44,6 +44,23 @@ rc.AudioRegion = function AudioRegion(sound) {
     };
 
     /**
+     * Gets or sets the volume.
+     * E.g. `mySound.volume()` to query and `mySound.volume(0.5)` to update.
+     *
+     * @param x if undefined, gets the current volume,
+     *          if a defined number, sets the volume.
+     */
+    self.volume = function(x) {
+        var audio = self._elem;
+        if (x == undefined) {
+            return audio.volume;
+        } else {
+            var y = (sound.gain < 0 ? rc.dbamp(sound.gain) : 1.0) * x;
+            audio.volume = y;
+        }
+    };
+
+    /**
      * Puts the region into playing mode.
      * If the media element is ready to play,
      * playing commences immediately, otherwise
@@ -120,7 +137,7 @@ rc.AudioRegion = function AudioRegion(sound) {
      * Like `release()` but with a successive `dispose()`.
      * This can be used to "fade-out and forget" this region.
      *
-     * @param dur   the fade-out durtion in seconds.
+     * @param dur   the fade-out duration in seconds.
      */
     self.releaseAndDispose = function(dur) {
         if (self._disposed) return;
