@@ -1,12 +1,16 @@
-rc.Slideshow = function Slideshow() {
+/* Slideshow.js
+ * (rc-player)
+ */
+
+/**
+ * The Slideshow class is instantiated by the SlideshowPlugIn widget.
+ */
+rc.Slideshow = function Slideshow(self) {
     if (!(this instanceof Slideshow)) {
-        return new Slideshow();
+        return new Slideshow(self);
     }
 
-    var self = this;
-
-    /* The constructor for JQuery UI. */
-    self._create = function () {
+    self._init1 = function () {
         self = this;    // Yo dawg, I put a this in the self, so you can this while you self
 
         var div = $('<div class="rc-slideshow">');
@@ -135,7 +139,24 @@ rc.Slideshow = function Slideshow() {
             }
         }
         // $.trigger()
+    };
+
+    self._init1();
+};
+
+rc.SlideshowPlugIn = {
+    _create: function() {
+        // console.log("CREATE " + this.options.sound.src);
+        this._instance = new rc.Slideshow(this);
+    },
+
+    options: {
+        style: {
+            background: {
+                color: "black"
+            }
+        }
     }
 };
 
-$.widget("rc.Slideshow", new rc.Slideshow());
+$.widget("rc.Slideshow", rc.SlideshowPlugIn);

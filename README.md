@@ -9,8 +9,24 @@ The project is currently in incubation.
 
 ## test page
 
-The current test pages are `slideshow.html` and `audioplayer.html`. You have to clone the 
-repository and open these pages in a browser.
+The current test pages are `audioplayer.html` and `slideshow.html`.
+The easiest way to run them locally is via Node.js.
+
+- `npm install http-server`
+- `ln -s <location-to-rc-player-directory> <location-to-http-server-directory>/public/`
+
+The second line makes a symbolic link into the server's publicly served root folder.
+Then to start the server:
+
+- `node <location-to-http-server-directory>/bin/http-server`
+
+The pages can be opened at 
+[http://0.0.0.0:8080/rc-player/audioplayer.html](http://0.0.0.0:8080/rc-player/audioplayer.html)
+and
+[http://0.0.0.0:8080/rc-player/slideshow.html](http://0.0.0.0:8080/rc-player/slideshow.html)
+
+Note that you cannot enter the address `0.0.0.0` into Chrome directly due to a bug in Chrome.
+Instead you can create a bookmark for this address.
 
 ## credits
 
