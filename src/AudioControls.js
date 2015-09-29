@@ -9,6 +9,7 @@ rc.AudioControls = function AudioControls(options) {
     var self = this;
 
     var div     = $('<div class="rc-audio-controls"></div>');
+    var div1    = div;
 
     var optOpt  = options.options;
     var model   = options.model;
@@ -37,6 +38,45 @@ rc.AudioControls = function AudioControls(options) {
     var bg = options.style ? options.style.background ? options.style.background.color
             : undefined : undefined;
     bg = bg ? bg : "black";
+
+    // calculate minimum width in order
+    // to determine if scale reduction is needed
+    var minWidth = 0;
+    var optPos   = options.style ? options.style.position ? options.style.position : {} : {};
+    var optPad   = options.style ? options.style.padding  ? options.style.padding  : {} : {};
+    var hPad     = optPad.left ? optPad.left : 0;
+    if (optOpt.play) minWidth += 26;
+    if (optOpt.elapsed) {
+        hPad = Math.max(hPad, 4);
+        minWidth += 36 + hPad;
+        hPad = 4;
+    }
+    if (optOpt.cue) {
+        hPad = Math.max(hPad, 4);
+        minWidth += 32 + hPad;
+        hPad = 4;
+    }
+    if (optOpt.remaining) {
+        hPad = Math.max(hPad, 4);
+        minWidth += 36 + hPad;
+        hPad = 4;
+    }
+    if (optOpt.volume) {
+        minWidth += 26 + hPad;
+        hPad = optPad.right ? optPad.right : 0;
+    }
+    minWidth += hPad;
+    var minHeight = 26;
+    var actualWidth     = optPos.width  ? optPos.width  : minWidth;
+    var actualHeight    = optPos.height ? optPos.height : minHeight;
+    var scale = Math.min(1.0, Math.min(actualWidth / minWidth, actualHeight / minHeight));
+    // console.log("minWidth = " + minWidth + "; actualWidth = " + actualWidth + "; scale = " + scale);
+
+    if (scale < 1) {
+        div1 = $('<div></div>');
+        div1.append(div).css('transform', 'scale(' + scale + ')');
+        // minWidth = Math.ceil(minWidth * scale);  // so that elapsed can grow properly
+    }
 
     ////////////////////////////////////////////////// play
 
@@ -87,10 +127,12 @@ rc.AudioControls = function AudioControls(options) {
     ////////////////////////////////////////////////// cue
 
     if (optOpt.cue) {
-        var wc  = 64;
+        var wc  = 32; // 64;
         var hc  = 14;
         var hch = hc/2;
         var rr  = 7;
+
+        if (actualWidth > minWidth) wc += actualWidth - minWidth;   // use the rest
 
         var divCue = $('<span class="rc-cue"></span>');
         var svgCue = $('<svg width="' + wc + '" height="' + hc + '">' +
@@ -233,7 +275,7 @@ rc.AudioControls = function AudioControls(options) {
         $(model).on("volumechange", updateVolume);
     }
 
-    $(elem).append(div);
+    $(elem).append(div1);
 
     ////////////////////////////////////////////////// meter
 

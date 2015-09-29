@@ -18,7 +18,8 @@ The easiest way to run them locally is via Node.js.
 The second line makes a symbolic link into the server's publicly served root folder.
 Then to start the server:
 
-- `node <location-to-http-server-directory>/bin/http-server`
+- `cd <location-to-http-server-directory>`
+- `node bin/http-server`
 
 The pages can be opened at 
 [http://0.0.0.0:8080/rc-player/audioplayer.html](http://0.0.0.0:8080/rc-player/audioplayer.html)

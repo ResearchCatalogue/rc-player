@@ -80,11 +80,34 @@
                 }
             };
             $("#my-player2").AudioPlayer(opt2);
+
+            // small
+            var opt3 = {
+                sound: {
+                    src: "sounds/123718.mp3",
+                    loop: false
+                },
+                style: {
+                    position: {
+                        left: 64, top: 220, width: 140, height: 22
+                    }
+                },
+                options: {
+                    controls: {
+                        play        : true, // play/pause button
+                        elapsed     : true, // elapsed time display
+                        cue         : true, // show/cue position
+                        volume      : true  // volume control
+                    }
+                }
+            };
+            $("#my-player3").AudioPlayer(opt3);
         });
     </script>
 </head>
 <body>
 <div id="my-player1"></div>
 <div id="my-player2"></div>
+<div id="my-player3"></div>
 </body>
 </html>
