@@ -1,48 +1,26 @@
-span.rc-play > svg {
-    float: left;
+div.rc-audio-controls > svg {
     fill: white;
-    /*padding: 0;*/
-    /*background: black;*/
-    /*margin: 0;*/
-    vertical-align: top;
-}
-
-span.rc-timer {
-    float: left;
-    /*position: relative;*/
     font-family: 'Dosis', sans-serif;
     font-size: 16px;
-    /*background: black;*/
-    color: white;
-    width: 36px;
-    padding: 3px 4px 2px 4px; /* T R B L */
-    /*margin: 0;*/
 }
 
-span.rc-cue {
-    float: left;
-    /*padding-top: 6px;*/
-    /*margin: 0;*/
-    /* Don't touch, or else a kitten will die.
-     * Problem still: height is larger in Firefox
-     */
-    vertical-align: top;
-    padding: 6px 2px 0px 0px; /* T R B L */
+rect.rc-button {
+    fill: rgba(0,0,0,0); /* cf. https://stackoverflow.com/questions/6179514/ */
 }
 
-span.rc-cue > svg {
-    vertical-align: top;
-}
+/*span.rc-cue {*/
+    /*float: left;*/
+    /*/!*padding-top: 6px;*!/*/
+    /*/!*margin: 0;*!/*/
+    /*/!* Don't touch, or else a kitten will die.*/
+     /** Problem still: height is larger in Firefox*/
+     /**!/*/
+    /*vertical-align: top;*/
+    /*padding: 6px 2px 0px 0px; /!* T R B L *!/*/
+/*}*/
 
-span.rc-volume > svg {
-    /*position: relative;*/
-    fill: white;
-    vertical-align: top;
-}
-
-/*div.rc-audio-controls {*/
-    /*background: black;*/
-    /*/!*vertical-align: bottom;*!/*/
+/*span.rc-cue > svg {*/
+    /*vertical-align: top;*/
 /*}*/
 
 div.rc-player {

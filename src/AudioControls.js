@@ -44,7 +44,7 @@ rc.AudioControls = function AudioControls(options) {
     var minWidth = 0;
     var optPos   = options.style ? options.style.position ? options.style.position : {} : {};
     var optPad   = options.style ? options.style.padding  ? options.style.padding  : {} : {};
-    var hPad     = optPad.left ? optPad.left : 0;
+    var hPad     = 0; // optPad.left ? optPad.left : 0;
     if (optOpt.play) minWidth += 26;
     if (optOpt.elapsed) {
         hPad = Math.max(hPad, 4);
@@ -52,9 +52,9 @@ rc.AudioControls = function AudioControls(options) {
         hPad = 4;
     }
     if (optOpt.cue) {
-        hPad = Math.max(hPad, 4);
+        // hPad = Math.max(hPad, 4);
         minWidth += 32 + hPad;
-        hPad = 4;
+        hPad = 2; // 4;
     }
     if (optOpt.remaining) {
         hPad = Math.max(hPad, 4);
@@ -63,7 +63,7 @@ rc.AudioControls = function AudioControls(options) {
     }
     if (optOpt.volume) {
         minWidth += 26 + hPad;
-        hPad = optPad.right ? optPad.right : 0;
+        hPad = 0; // optPad.right ? optPad.right : 0;
     }
     minWidth += hPad;
     var minHeight = 26;
@@ -72,17 +72,38 @@ rc.AudioControls = function AudioControls(options) {
     var scale = Math.min(1.0, Math.min(actualWidth / minWidth, actualHeight / minHeight));
     // console.log("minWidth = " + minWidth + "; actualWidth = " + actualWidth + "; scale = " + scale);
 
+    // crappy jQuery cannot append to svg, so we create all elements as empty here
+    var svg = $('<svg width="' + actualWidth + '" height="' + Math.min(minHeight, actualHeight) + '">' +
+        '<g class="rc-scale">' +
+        '<g class="rc-play"><path></path><rect class="rc-button"></rect></g>' +
+        '<text class="rc-timer rc-elapsed"></text>' +
+        '<g class="rc-cue"><rect></rect><circle></circle></g>' +
+        '<text class="rc-timer rc-remaining"></text>' +
+        '<g class="rc-volume"><path></path><rect class="rc-button"></rect></g>' +
+        '</g></svg>');
+
     if (scale < 1) {
-        div1 = $('<div></div>');
-        div1.append(div).css('transform', 'scale(' + scale + ')');
-        // minWidth = Math.ceil(minWidth * scale);  // so that elapsed can grow properly
+        // N.B. unlike Firefox, Chrome doesn't scale outer 'svg' element, only 'g' elements.
+        $(".rc-scale", svg).attr("transform", 'scale(' + scale + ')');
+        minWidth *= scale;
     }
+
+    div.append(svg);
 
     ////////////////////////////////////////////////// play
 
+    var currentX = 0;
+    hPad = 0;
+
     if (optOpt.play) {
-        var divPlay = $('<span class="rc-play"></span>');
-        var svgPlay = $('<svg width="26" height="26"><g transform="scale(0.8)"><path></path></g></svg>');
+        // var divPlay = $('<span class="rc-play"></span>');
+        var svgPlay     = $(".rc-play", svg);
+        var svgPlayR    = $("rect", svgPlay);
+        currentX += hPad;
+        svgPlay.attr("transform", 'translate(' + currentX + ',0) scale(0.8)');
+        svgPlayR.attr({ width: 26, height: 26 });
+        currentX += 26;
+        hPad = 0;
 
         // cf. http://stackoverflow.com/questions/3642035/jquerys-append-not-working-with-svg-element
         // i.e., we cannot append to SVG with JQuery. Instead we construct the whole
@@ -96,28 +117,34 @@ rc.AudioControls = function AudioControls(options) {
 
         updatePlay();
 
-        divPlay.append(svgPlay);
-        divPlay.click(function() {
+        // svg /* divPlay */.append(svgPlay);
+        svgPlayR /* divPlay */.click(function() {
             // $(self).trigger("play");
             if (model.playing()) model.pause(); else model.play();
         });
-        div.append(divPlay);
+        // div.append(divPlay);
 
         $(model)
             .on("playing", updatePlay)
-            .on("paused", updatePlay)
-            .on("ended", updatePlay);
+            .on("paused" , updatePlay)
+            .on("ended"  , updatePlay);
     }
 
     ////////////////////////////////////////////////// elapsed
 
     if (optOpt.elapsed) {
-        var divElapsed = $('<span class="rc-timer"></span>');
-        div.append(divElapsed);
+        // var divElapsed = $('<span class="rc-timer"></span>');
+        // div.append(divElapsed);
+        var svgElapsed = $(".rc-elapsed", svg);
+        hPad = Math.max(hPad, 4);
+        currentX += hPad;
+        svgElapsed.attr({x: currentX, y: 19});
+        currentX += 36;
+        hPad = 4;
 
         var updateElapsed = function() {
             var time = model.currentTime();
-            self._updateTimer(divElapsed, time);
+            self._updateTimer(svgElapsed, time);
         };
 
         updateElapsed();
@@ -134,13 +161,18 @@ rc.AudioControls = function AudioControls(options) {
 
         if (actualWidth > minWidth) wc += actualWidth - minWidth;   // use the rest
 
-        var divCue = $('<span class="rc-cue"></span>');
-        var svgCue = $('<svg width="' + wc + '" height="' + hc + '">' +
-            '<rect fill="white" x="0" y="0" rx="' + rr + '" ry="' + rr + '" width="' + wc + '" height = "' + hc + '"/>'  +
-            '<circle cx="' + hch + '" cy="' + hch + '" r="' + (hch - 1) + '" fill="' + bg + '"/>' +
-            '</svg>');
-        divCue.append(svgCue);
-        div.append(divCue);
+        var svgCue  = $('.rc-cue', svg);
+        currentX += hPad;
+        svgCue.attr("transform", 'translate(' + currentX + ',6)');
+
+        var svgCueR = $("rect", svgCue);
+        var svgCueC = $("circle", svgCue);
+        svgCueR.attr({ rx: rr, ry: rr, width: wc, height: hc });
+        svgCueC.attr({ cx: hch, cy: hch, r: (hch - 1), fill: bg });
+        // divCue.append(svgCue);
+        // div.append(divCue);
+        currentX += wc;
+        hPad = 2;
 
         var cueDragging     = false;
         var cueDragStartX   = 0;
@@ -181,7 +213,7 @@ rc.AudioControls = function AudioControls(options) {
                 var x1 = Math.max(hch, Math.min(wc - hch, x0));
                 // console.log("drag: dx = " + dx + "; cueDragCX = " + cueDragCX + "; hch = " + hch + "; wc-hch = " + (wc - hch) +  "; x0 = " + x0);
                 cueDragXM = x1;
-                $("circle", svgCue).attr("cx", x1);
+                svgCueC.attr("cx", x1);
                 e.preventDefault();
             }
         };
@@ -199,16 +231,16 @@ rc.AudioControls = function AudioControls(options) {
             }
         };
 
-        $("circle", svgCue).mousedown(function (e) {
+        svgCueC.mousedown(function (e) {
             cueDragStartX   = e.clientX;
             cueDragX        = cueDragStartX;
             cueDragging     = true;
-            cueDragStartXM  = parseInt($("circle", svgCue).attr("cx"));
+            cueDragStartXM  = parseInt(svgCueC.attr("cx"));
             // console.log("down " + cueDragX + "; " + cueDragCX);
             e.preventDefault();
         }).mouseup(cueDragUp).mousemove(cueDrag);
         // tricky stuff to keep dragging while leaving the circle
-        $(div).mouseup(cueDragUp).mousemove(cueDrag);
+        svgCueR.mouseup(cueDragUp).mousemove(cueDrag);
 
         $(model).on("timeupdate", updateCue).on("durationchange", updateCue);
     }
@@ -216,13 +248,19 @@ rc.AudioControls = function AudioControls(options) {
     ////////////////////////////////////////////////// remaining
 
     if (optOpt.remaining) {
-        var divRemaining = $('<span class="rc-timer"></span>');
-        div.append(divRemaining);
+        //var divRemaining = $('<span class="rc-timer"></span>');
+        //div.append(divRemaining);
+        var svgRemaining = $(".rc-remaining", svg);
+        hPad = Math.max(hPad, 4);
+        currentX += hPad;
+        svgRemaining.attr({x: currentX, y: 19});
+        currentX += 36;
+        hPad = 4;
 
         var updateRemaining = function() {
             var time = model.currentTime();
             var dur  = model.duration();
-            self._updateTimer(divRemaining, dur - time, true);
+            self._updateTimer(svgRemaining, dur - time, true);
         };
 
         updateRemaining();
@@ -232,8 +270,14 @@ rc.AudioControls = function AudioControls(options) {
     ////////////////////////////////////////////////// volume
 
     if (optOpt.volume) {
-        var divVolume = $('<span class="rc-volume"></span>');
-        var svgVolume = $('<svg width="26" height="26"><g transform="scale(0.8)"><path></path></g></svg>');
+        // var divVolume = $('<span class="rc-volume"></span>');
+        var svgVolume   = $('.rc-volume', svg);
+        var svgVolumeR  = $("rect", svgVolume);
+        currentX += hPad;
+        svgVolume.attr("transform", 'translate(' + currentX + ',0) scale(0.8)');
+        svgVolumeR.attr({width: 26, height: 26 });
+        currentX += 26;
+        hPad = 0;
 
         var regularVolume   = model.volume();
         var muted           = false;
@@ -260,17 +304,17 @@ rc.AudioControls = function AudioControls(options) {
 
         updateVolume();
 
-        divVolume.append(svgVolume);
-        divVolume.click(function() {
+        // divVolume.append(svgVolume);
+        svgVolumeR /* divVolume */.click(function() {
             if (muted) model.volume(regularVolume > 0 ? regularVolume : 1.0);
             else {
                 regularVolume = model.volume();
                 model.volume(0.0);
             }
             muted = !muted;
-            console.log("muted = " + muted);
+            // console.log("muted = " + muted);
         });
-        div.append(divVolume);
+        // div.append(divVolume);
 
         $(model).on("volumechange", updateVolume);
     }
