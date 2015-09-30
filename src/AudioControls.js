@@ -175,10 +175,10 @@ rc.AudioControls = function AudioControls(options) {
         hPad = 2;
 
         var cueDragging     = false;
-        var cueDragStartX   = 0;
-        var cueDragX        = 0;
-        var cueDragStartXM  = 0;
-        var cueDragXM       = 0;
+        var cueDragStartX   = 0;    // relative to window top-left
+        var cueDragX        = 0;    // relative to window top-left
+        var cueDragStartXM  = 0;    // relative to left margin of track
+        var cueDragXM       = 0;    // relative to left margin of track
 
         var updateCue = function() {
             if (!cueDragging) {
@@ -193,19 +193,10 @@ rc.AudioControls = function AudioControls(options) {
 
         updateCue();
 
-        //$("circle", svgCue).draggable({
-        //   addClasses: false,
-        //    axis: "x",
-        //    containment: "parent" // $("rect", svgCue)
-        //})
-        //.bind("drag", function(e, ui) {
-        //    var x0 = ui.position.left;
-        //    // console.log("x = " + x);
-        //    var x = Math.max(hch, Math.min(wc - hch, x0));
-        //    e.target.setAttribute("cx", x);
-        //});
+        var dndPane = $('<div class="rc-drag"></div>');
 
         var cueDrag = function(e) {
+            // console.log("cueDrag " + cueDragging);
             if (cueDragging) {
                 cueDragX = e.clientX;
                 var dx = cueDragX - cueDragStartX;
@@ -219,6 +210,7 @@ rc.AudioControls = function AudioControls(options) {
         };
 
         var cueDragUp = function(e) {
+            // console.log("cueDragUp " + cueDragging);
             if (cueDragging) {
                 cueDragging = false;
                 if (cueDragX != cueDragStartX) {
@@ -228,19 +220,31 @@ rc.AudioControls = function AudioControls(options) {
                     model.currentTime(time);
                 }
                 e.preventDefault();
+                dndPane.remove(); // $(document).remove(dndPane, false);
             }
         };
 
-        svgCueC.mousedown(function (e) {
+        var cueDragDown = function (e) {
             cueDragStartX   = e.clientX;
             cueDragX        = cueDragStartX;
             cueDragging     = true;
             cueDragStartXM  = parseInt(svgCueC.attr("cx"));
             // console.log("down " + cueDragX + "; " + cueDragCX);
             e.preventDefault();
-        }).mouseup(cueDragUp).mousemove(cueDrag);
+            dndPane.appendTo("body"); // $(document).append(dndPane);
+            dndPane.mouseup(cueDragUp).mousemove(cueDrag);
+        };
+
+        var cueDragDown2 = function (e) {
+            cueDragDown(e);
+            cueDragStartXM = e.pageX - svgCueR.offset().left; // cf. https://css-tricks.com/snippets/jquery/get-x-y-mouse-coordinates/
+            var x1 = Math.max(hch, Math.min(wc - hch, cueDragStartXM));
+            svgCueC.attr("cx", x1);
+        };
+
+        svgCueC.mousedown(cueDragDown);
         // tricky stuff to keep dragging while leaving the circle
-        svgCueR.mouseup(cueDragUp).mousemove(cueDrag);
+        svgCueR.mousedown(cueDragDown2); // .mousemove(cueDrag);
 
         $(model).on("timeupdate", updateCue).on("durationchange", updateCue);
     }

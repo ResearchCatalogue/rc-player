@@ -8,21 +8,6 @@ rect.rc-button {
     fill: rgba(0,0,0,0); /* cf. https://stackoverflow.com/questions/6179514/ */
 }
 
-/*span.rc-cue {*/
-    /*float: left;*/
-    /*/!*padding-top: 6px;*!/*/
-    /*/!*margin: 0;*!/*/
-    /*/!* Don't touch, or else a kitten will die.*/
-     /** Problem still: height is larger in Firefox*/
-     /**!/*/
-    /*vertical-align: top;*/
-    /*padding: 6px 2px 0px 0px; /!* T R B L *!/*/
-/*}*/
-
-/*span.rc-cue > svg {*/
-    /*vertical-align: top;*/
-/*}*/
-
 div.rc-player {
     position: absolute;
 }
@@ -34,4 +19,11 @@ div.rc-player {
 .rc-slide {
     width: 100%;
     height: 100%;
+}
+
+div.rc-drag {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: none;
 }
