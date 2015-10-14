@@ -86,9 +86,9 @@ The `background` corresponds to the same CSS property
 
 The `options` section is used to customize the slideshow
 
-#### Position
+#### Placement
 
-The `position` structure has the following properties
+The `placement` structure has the following properties
 
 - `size`, one of `contain`, `cover`, `fit`, `auto`
 - `position`, such as `center-center`

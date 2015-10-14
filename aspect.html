@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>aspect</title>
+    <style>
+        body {
+            background-color: #C0C0C0;
+        }
+
+        div.outer {
+            position: relative;
+            background-color: red;
+            padding: 2px;
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        div.label {
+            position: absolute;
+            z-index: 2;
+            color: #00FF00;
+        }
+
+        div.div1 {
+            left: 8px;
+            top: 8px;
+        }
+
+        div.div2 {
+            left: 316px;
+            top: -296px;
+        }
+
+        div.div3 {
+            left: 624px;
+            top: -600px;
+        }
+
+        div.div4 {
+            left: 932px;
+            top: -904px;
+        }
+
+        div.row {
+            height: 308px;
+        }
+
+        /* top-left contains */
+        #img1 {
+            width: auto;
+            height: auto;
+            max-width:  300px; /* div width  */
+            max-height: 300px; /* div height */
+        }
+
+        /* top-left cover */
+        #img2 {
+            /* this doesn't work because we would
+               need to dynamically change between width and height */
+            max-width: 100%;
+            height: auto;
+            /*max-height: 100%;*/
+            /*width: auto;*/
+        }
+
+        /* top-left fit */
+        #img3 {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* top-left auto? */
+        #img4 {
+        }
+
+    </style>
+</head>
+<body>
+<div class="row">
+<div class="outer div1">
+    <div class="label">TL contain</div>
+    <img src="images/aspect.png" id="img1"/>
+</div>
+<div class="outer div2">
+    <div class="label">TL cover</div>
+    <img src="images/aspect.png" id="img2"/>
+</div>
+<div class="outer div3">
+    <div class="label">TL fit</div>
+    <img src="images/aspect.png" id="img3"/>
+</div>
+<div class="outer div4">
+    <div class="label">TL auto?</div>
+    <img src="images/aspect.png" id="img4"/>
+</div>
+</div>
+
+<!--<div class="row">-->
+<!--<div class="outer div1">-->
+    <!--<div class="label">CC contain</div>-->
+    <!--<img src="images/aspect.png" id="img5"/>-->
+<!--</div>-->
+<!--<div class="outer div2">-->
+    <!--<div class="label">CC cover</div>-->
+    <!--<img src="images/aspect.png" id="img6"/>-->
+<!--</div>-->
+<!--<div class="outer div3">-->
+    <!--<div class="label">CC fit</div>-->
+    <!--<img src="images/aspect.png" id="img7"/>-->
+<!--</div>-->
+<!--<div class="outer div4">-->
+    <!--<div class="label">CC auto?</div>-->
+    <!--<img src="images/aspect.png" id="img8"/>-->
+<!--</div>-->
+<!--</div>-->
+</body>
+</html>

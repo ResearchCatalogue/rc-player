@@ -14,11 +14,13 @@ div.rc-player {
 
 .rc-slideshow {
     position: absolute;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 .rc-slide {
-    width: 100%;
-    height: 100%;
+    /*width: 100%;*/
+    /*height: 100%;*/
 }
 
 div.rc-drag {
