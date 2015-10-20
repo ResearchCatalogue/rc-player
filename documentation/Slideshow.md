@@ -28,15 +28,7 @@ A `slide` structure has the following properties
 If the `sound` property is absent, it means that any previous sound keeps playing. Using `none`
 makes the previous sound stop or fade out.
 
-The `sound`  structure has the following properties:
-
-- `src` (required), the URL
-- `start` (optional), start offset in the sound file in seconds
-- `stop` (optional), stop offset in the sound file in seconds
-- `gain` (optional), gain adjustment in decibels
-- `fadein` (optional), pointing to a `fade` structure
-- `fadeout` (optional), pointing to a `fade` structure
-- `loop` (optional), a boolean (defaults to `false`) specifying whether to loop the sound region or not
+The `sound`  structure has the properties described in the [AudioRegion] document.
 
 A `fade` structure has the following properties:
 
