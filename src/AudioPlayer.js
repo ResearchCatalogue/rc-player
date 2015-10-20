@@ -100,7 +100,9 @@ rc.AudioPlayer = function AudioPlayer(self) {
     };
 
     // _init is already called by JQuery UI
+    rc.log("begin init AudioPlayer");
     self._init1();
+    rc.log("begin init AudioPlayer");
 };
 
 rc.AudioPlayerPlugIn = {

@@ -40,6 +40,7 @@ rc.Slideshow = function Slideshow(self) {
         var numSlides   = slides.length;
 
         for (var idx = 0; idx < numSlides; idx++) {
+            // rc.log("mkSlide(" + idx + ")");
             self._mkSlide(idx);
         }
 
@@ -245,7 +246,9 @@ rc.Slideshow = function Slideshow(self) {
         // $.trigger()
     };
 
+    rc.log("begin init Slideshow");
     self._init1();
+    rc.log("end init Slideshow");
 };
 
 rc.SlideshowPlugIn = {
