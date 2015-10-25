@@ -363,7 +363,7 @@ rc.AudioRegion = function AudioRegion(sound) {
                     if (isExpI) f.gain.exponentialRampToValueAtTime(1.0, t1);
                     else        f.gain.linearRampToValueAtTime     (1.0, t1);
                 }
-                var fo  = sound.fadein;
+                var fo  = sound.fadeout;
                 if (fo.duration > 0 && isFinite(dur)) {
                     var isExpO  = fo.type == "exponential";
                     var lowO    = isExpO ? rc.dbamp(-60) : 0.0;

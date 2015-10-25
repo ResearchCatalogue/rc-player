@@ -66,6 +66,61 @@
                     }
                 }
             };
+            var optTEST = {
+                slides: [
+                    {
+                        image: "images/slide1.png",
+                        sound: {
+                            fadein: {
+                                duration: 0
+                            },
+                            fadeout: {
+                                duration: 0
+                            },
+                            gain: 0,
+                            loop: true,
+                            src: "sounds/32_42129_01363021245_00001.mp3",
+                            start: 3.7,
+                            stop: 10.0
+                        }
+                    },
+                    {
+                        image: "images/slide3.png",
+                        sound: {
+                            src: "sounds/32_42129_01363021245_00001.mp3",
+                            gain: +6,
+                            fadein: {
+                                duration: 5.0
+                            },
+                            fadeout: {
+                                duration: 5.0
+                            },
+                            start: 0
+                        }
+                    }
+                ],
+                style: {
+                    position: {
+                        left: 100, top: 100, width: 240, height: 320
+                    }
+                },
+                options: {
+                    placement: {
+                        size: "contain",
+                        position: "center-bottom"
+                    },
+                    settings: {
+                        loop: true,
+                        navigation: true
+                    },
+                    automate: {
+                        autoplay: "no"
+                    },
+                    audio: {
+                        crossfade: 4.0
+                    }
+                }
+            };
             $("#my-slides").Slideshow(opt);
 
             // console.log(window.AudioContext);
