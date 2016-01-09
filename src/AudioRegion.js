@@ -205,6 +205,7 @@ rc.AudioRegion = function AudioRegion(sound) {
             sound.stop;
 
         var audio           = document.createElement("AUDIO");
+        audio.setAttribute('crossorigin', 'anonymous'); // CORS
         self._elem          = audio;
         self._mediaNode     = rc.AudioContext().createMediaElementSource(audio);
 
