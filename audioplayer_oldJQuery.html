@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AudioPlayer</title>
+    <!--<link href='http://fonts.googleapis.com/css?family=Inconsolata:700' rel='stylesheet' type='text/css'>-->
+    <link href='http://fonts.googleapis.com/css?family=Dosis:600' rel='stylesheet' type='text/css'>
+    <link href="widgets.css" rel="stylesheet">
+    <script src="lib/jquery-1.6.2.js"></script>
+    <script src="lib/jquery-ui-1.11.2.js"></script>
+    <link  href="lib/jquery-ui-1.11.2.css" rel="stylesheet">
+    <script src="lib/AudioContextMonkeyPatch.js"></script>
+    <script src="src/RC.js"></script>
+    <script src="src/AudioRegion.js"></script>
+    <script src="src/AudioControls.js"></script>
+    <script src="src/AudioPlayer.js"></script>
+    <script>
+        $(function() {
+            var opt1 = {
+                sound: {
+                    src: "sounds/203066.mp3", // "sounds/123718.mp3"
+                    loop: true
+                },
+                style: {
+                    position: {
+                        left: 64, top: 64, width: 220, height: 45
+                    },
+                    background: {
+                        color: "#000080"
+                    },
+                    padding: {
+                        left: 8, top: 8, bottom: 8, right: 8
+                    },
+                    border: {
+                        style: "solid",
+                        radius: 4,
+                        strength: "4px",
+                        color: "#FFFF00"
+                    }
+                },
+                options: {
+                    autoplay: false,
+                    controls: {
+                        play        : true, // play/pause button
+                        elapsed     : true, // elapsed time display
+                        cue         : true, // show/cue position
+                        remaining   : true, // remaining time display
+                        volume      : true, // volume control
+                        meter       : true, // peak level meter
+                        hover: "foo bar"
+                    },
+                    stopothers: false
+                }
+            };
+            $("#my-player1").AudioPlayer(opt1);
+
+            var opt2 = {
+                sound: {
+                    src: "sounds/123718.mp3",
+                    loop: false
+                },
+                style: {
+                    position: {
+                        left: 64, top: 160, width: 172, height: 26
+                    }
+                },
+                options: {
+                    autoplay: true,
+                    controls: {
+                        play        : true, // play/pause button
+                        elapsed     : true, // elapsed time display
+                        cue         : true, // show/cue position
+                        volume      : true  // volume control
+                    },
+                    stopothers: true
+                }
+            };
+            $("#my-player2").AudioPlayer(opt2);
+
+            // small
+            var opt3 = {
+                sound: {
+                    src: "sounds/123718.mp3",
+                    loop: false
+                },
+                style: {
+                    position: {
+                        left: 64, top: 220, width: 140, height: 22
+                    }
+                },
+                options: {
+                    controls: {
+                        play        : true, // play/pause button
+                        elapsed     : true, // elapsed time display
+                        cue         : true, // show/cue position
+                        volume      : true  // volume control
+                    }
+                }
+            };
+            $("#my-player3").AudioPlayer(opt3);
+        });
+    </script>
+</head>
+<body>
+<div id="my-player1"></div>
+<div id="my-player2"></div>
+<div id="my-player3"></div>
+</body>
+</html>
