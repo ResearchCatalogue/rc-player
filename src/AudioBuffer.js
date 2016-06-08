@@ -77,12 +77,9 @@ rc.AudioBuffer = function AudioBuffer() {
     self._reqDecoded = function(req, buf) {
         rc.log("reqDecoded " + self.src());
         self._buf = buf;
-        //var n = self.mediaNode();
-        //n.buffer = buf;
         var m = self.elem();
-        var q = $(m);
-        q.trigger("loadedmetadata");
-        q.trigger("canplay");
+        m.dispatchEvent(new Event("loadedmetadata"));
+        m.dispatchEvent(new Event("canplay"));
     };
 
     self.load = function() {
@@ -114,7 +111,7 @@ rc.AudioBuffer = function AudioBuffer() {
     self.play = function() {
         self._freeSource();
         rc.log("AudioBuffer play()");
-        var gain    = self.elem();
+        var gain    = self.mediaNode();
         var context = gain.context;
         var source  = context.createBufferSource();
         source.buffer = self._buf;
