@@ -34,9 +34,9 @@ rc.AudioRegion = function AudioRegion(sound) {
      */
     self.currentTime = function(x) {
         if (x == undefined) {
-            return self._elem.currentTime - sound.start;
+            return self._audioModel.currentTime - sound.start;
         } else {
-            self._elem.currentTime = sound.start + x;
+            self._audioModel.currentTime = sound.start + x;
         }
     };
 
@@ -44,7 +44,7 @@ rc.AudioRegion = function AudioRegion(sound) {
      * Returns the duration of the region in seconds.
      */
     self.duration = function() {
-        var audio       = self._elem;
+        var audio       = self._audioModel;
         var totalDur    = audio.duration;
         var start       = Math.max(0.0, Math.min(totalDur, sound.start));
         var stop        = sound.stop ? Math.max(start, Math.min(totalDur, sound.stop )) : totalDur;
@@ -70,7 +70,7 @@ rc.AudioRegion = function AudioRegion(sound) {
                 rc.log("volume " + sound.src + " - " + x);
                 g.gain.setValueAtTime(y, t0);
             }
-            $(self._elem).trigger("volumechange")
+            $(self._audioElem).trigger("volumechange")
         }
     };
 
@@ -93,8 +93,8 @@ rc.AudioRegion = function AudioRegion(sound) {
             self._stop1(true);
         }
         self._playing = true;
-        var audio = self._elem;
-        if (audio.readyState >= 2) self._doPlay();
+        var audio = self._audioModel;
+        if (audio.readyState >= 3 /* 2 */) self._doPlay();
     };
 
     self.pause = function() {
@@ -135,9 +135,10 @@ rc.AudioRegion = function AudioRegion(sound) {
     self.dispose = function() {
         rc.log("dispose " + sound.src);
         if (!self._disposed) {
-            var audio = self._elem;
+            var audio     = self._audioModel;
+            var audioElem = self._audioElem;
             for (var i = 0; i < self._events.length; i++) {
-                audio.removeEventListener(self._events[i], self._eventFun);
+                audioElem.removeEventListener(self._events[i], self._eventFun);
             }
 
             self.stop();
@@ -168,7 +169,7 @@ rc.AudioRegion = function AudioRegion(sound) {
     self.mediaNode = function() { return self._mediaNode };
 
     /** Returns the <audio> element. */
-    self.audioElem = function() { return self._elem };
+    self.audioElem = function() { return self._audioElem };
 
     // ---------------- private ----------------
 
@@ -204,13 +205,25 @@ rc.AudioRegion = function AudioRegion(sound) {
             (sound.fadeout.duration > 0) ||
             sound.stop;
 
-        var audio           = document.createElement("AUDIO");
-        audio.setAttribute('crossorigin', 'anonymous'); // CORS
-        self._elem          = audio;
-        self._mediaNode     = rc.AudioContext().createMediaElementSource(audio);
+        // `true` : old behaviour using createMediaElementSource.
+        // `false`: new behaviour using AJAX and completely buffered sound.
+        var useStreaming = false;
+
+        if (useStreaming) {
+            self._audioElem  = document.createElement("AUDIO");
+            self._audioModel = self._audioElem;
+            self._mediaNode  = rc.AudioContext().createMediaElementSource(audio);
+        } else {
+            self._audioElem  = document.createElement("SPAN");
+            self._audioModel = rc.AudioBuffer();
+            self._mediaNode  = self._audioModel.mediaNode();
+        }
+        var audio           = self._audioModel;
+        var audioElem       = self._audioElem;
+        audioElem.setAttribute('crossorigin', 'anonymous'); // CORS
 
         for (var i = 0; i < self._events.length; i++) {
-            audio.addEventListener(self._events[i], self._eventFun);
+            audioElem.addEventListener(self._events[i], self._eventFun);
         }
 
         audio.preload   = "auto";
@@ -261,7 +274,7 @@ rc.AudioRegion = function AudioRegion(sound) {
         }
         cs.length = 0;
         self._connected = false;
-        $(self._elem).trigger("disconnected");
+        $(self._audioElem).trigger("disconnected");
     };
 
     // Audio-clock time when `doPlay` was invoked. This is currently not used. */
@@ -334,7 +347,7 @@ rc.AudioRegion = function AudioRegion(sound) {
      */
     self._doPlay = function() {
         rc.log("do-play " + sound.src);
-        var audio       = self._elem;
+        var audio       = self._audioModel;
         var totalDur    = audio.duration;
         var start       = Math.max(0.0, Math.min(totalDur, sound.start));
         var stop        = sound.stop ? Math.max(start, Math.min(totalDur, sound.stop )) : totalDur;
@@ -345,6 +358,7 @@ rc.AudioRegion = function AudioRegion(sound) {
             self._playTime  = t0;
             self._outNode   = self._mediaNode;
             if (self._needsGain) {
+                console.log("needsGain");
                 var g = context.createGain();
                 // <audio>.volume broken in Mozilla
                 // var amp = rc.dbamp(Math.max(0, sound.gain ? sound.gain : 0.0));
@@ -381,7 +395,7 @@ rc.AudioRegion = function AudioRegion(sound) {
             }
             self._connect(self._outNode, context.destination);
             self._connected = true;
-            $(self._elem).trigger("connected");
+            $(self._audioElem).trigger("connected");
         }
         audio.play();
         if (dur < totalDur) {
@@ -413,7 +427,7 @@ rc.AudioRegion = function AudioRegion(sound) {
      * data is available.
      */
     self._eventFun = function(e) {
-        var audio = self._elem;
+        var audio = self._audioModel;
         if (e.type == "loadedmetadata" && audio.paused) {
             // console.log("loadedmetadata - readyState is " + audio.readyState);
             if (sound.start > 0) {
@@ -437,7 +451,7 @@ rc.AudioRegion = function AudioRegion(sound) {
         self._playing   = false;
         self._releasing = false;
         self._clearSchedule();
-        var audio = self._elem;
+        var audio = self._audioModel;
         if (!audio.paused) audio.pause();
         // reset position
         if (seek) audio.currentTime = sound.start;

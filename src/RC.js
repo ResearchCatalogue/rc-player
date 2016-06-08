@@ -1,4 +1,4 @@
-// console.log("build 3");
+console.log("build 4");
 
 var rc = {
     logging: true,
