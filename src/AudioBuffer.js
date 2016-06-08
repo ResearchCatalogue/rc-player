@@ -27,7 +27,7 @@ rc.AudioBuffer = function AudioBuffer() {
         } else {
             var t0 = self._playTime;
             var t1 = self.mediaNode().context.currentTime;
-            return t1 - t0;
+            return Math.min(t1 - t0, self._duration - self._startTime);
         }
     };
 
@@ -35,7 +35,11 @@ rc.AudioBuffer = function AudioBuffer() {
         if (x == undefined) {
             return self._startTime + self._elapsed();
         } else {
+            var isPlaying = !self.paused();
+            if (isPlaying) self._stop1();
             self._startTime = x;
+            if (isPlaying) self._play1();
+            else self._timerUpdate()
         }
     };
 
@@ -66,6 +70,7 @@ rc.AudioBuffer = function AudioBuffer() {
       if (self._req) {
           self._req.abort();
           self._req = null;
+          self._readyState = 0;
       }
     };
 
@@ -86,8 +91,9 @@ rc.AudioBuffer = function AudioBuffer() {
 
     self._reqDecoded = function(req, buf) {
         rc.log("reqDecoded " + self.src());
-        self._buf = buf;
-        self._duration = buf.duration;
+        self._buf           = buf;
+        self._duration      = buf.duration;
+        self._readyState    = 3;
         var m = self.elem();
         m.dispatchEvent(new Event("durationchange"));
         m.dispatchEvent(new Event("loadedmetadata"));
@@ -111,7 +117,7 @@ rc.AudioBuffer = function AudioBuffer() {
         }
     };
 
-    self._freeSource = function() {
+    self._stop1 = function() {
         var n = self._sourceNode;
         if (n) {
             n.stop();
@@ -130,26 +136,31 @@ rc.AudioBuffer = function AudioBuffer() {
         m.dispatchEvent(new Event("timeupdate"));
     };
 
-    self.play = function() {
-        self._freeSource();
-        rc.log("AudioBuffer play()");
-        self._paused    = false;
-        var gain        = self.mediaNode();
-        var context     = gain.context;
-        var source      = context.createBufferSource();
-        source.buffer   = self._buf;
+    self._play1 = function() {
+        self._stop1();
+        self._paused        = false;
+        var gain            = self.mediaNode();
+        var context         = gain.context;
+        var source          = context.createBufferSource();
+        self._sourceNode    = source;
+        source.buffer       = self._buf;
         source.connect(gain);
-        var t0          = context.currentTime;
-        self._playTime  = t0;
+        var t0              = context.currentTime;
+        self._playTime      = t0;
         source.start(t0, self._startTime);
+        self._timerID = setInterval(self._timerUpdate, 100);
+    };
+
+    self.play = function() {
+        rc.log("AudioBuffer play()");
+        self._play1();
         var m = self.elem();
         m.dispatchEvent(new Event("playing"));
-        self._timerID = setInterval(self._timerUpdate, 100);
     };
 
     self.pause = function() {
         rc.log("AudioBuffer pause()");
-        self._freeSource();
+        self._stop1();
         var m = self.elem();
         m.dispatchEvent(new Event("pause"));
     };

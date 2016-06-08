@@ -97,7 +97,8 @@ rc.AudioRegion = function AudioRegion(sound) {
         }
         self._playing = true;
         var m = self.model();
-        if (m.readyState() >= 2) self._doPlay();
+        var state = m.readyState();
+        if (state >= 2) self._doPlay();
     };
 
     self.pause = function() {
