@@ -23,9 +23,18 @@ div.rc-player {
     /*height: 100%;*/
 }
 
+/*
+  This is a window filling
+  div that like a "modal" is
+  shown during drag-and-drop
+  in order to be able to trace
+  the mouse motion.
+*/
 div.rc-drag {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    left:0;
+    top:0;
+    bottom:0;
+    right:0;
     background: none;
 }

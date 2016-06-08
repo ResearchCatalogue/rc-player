@@ -179,13 +179,14 @@ rc.AudioControls = function AudioControls(options) {
         var cueDragX        = 0;    // relative to window top-left
         var cueDragStartXM  = 0;    // relative to left margin of track
         var cueDragXM       = 0;    // relative to left margin of track
+        var cueTime         = 0;    // model time as last reflected in the view
 
         var updateCue = function() {
             if (!cueDragging) {
-                var time = model.currentTime();
-                var dur  = model.duration();
+                cueTime = model.currentTime();
+                var dur = model.duration();
                 if (isFinite(dur)) {
-                    var cx = Math.max(0, Math.min(1, (time / dur))) * (wc - hc) + hch;
+                    var cx = Math.max(0, Math.min(1, (cueTime / dur))) * (wc - hc) + hch;
                     $("circle", svgCue).attr("cx", cx);
                 }
             }
@@ -213,18 +214,28 @@ rc.AudioControls = function AudioControls(options) {
             // console.log("cueDragUp " + cueDragging);
             if (cueDragging) {
                 cueDragging = false;
-                if (cueDragX != cueDragStartX) {
+                e.preventDefault();
+                dndPane.remove();
+
+                var dur     = model.duration();
+                var time    = ((cueDragXM - hch) / (wc - hc)) * dur;
+                if (time != cueTime) {
                     // console.log("dragged " + (cueDragX - cueDragStartX));
-                    var dur     = model.duration();
-                    var time    = ((cueDragXM - hch) / (wc - hc)) * dur;
                     model.currentTime(time);
                 }
-                e.preventDefault();
-                dndPane.remove(); // $(document).remove(dndPane, false);
             }
         };
 
-        var cueDragDown = function (e) {
+        var cueDragCancel = function() {
+            if (cueDragging) {
+                cueDragging = false;
+                dndPane.remove();
+                updateCue();
+            }
+        };
+
+        // from circle
+        var cueDragDownC = function (e) {
             cueDragStartX   = e.clientX;
             cueDragX        = cueDragStartX;
             cueDragging     = true;
@@ -232,19 +243,24 @@ rc.AudioControls = function AudioControls(options) {
             // console.log("down " + cueDragX + "; " + cueDragCX);
             e.preventDefault();
             dndPane.appendTo("body"); // $(document).append(dndPane);
-            dndPane.mouseup(cueDragUp).mousemove(cueDrag);
+            dndPane
+                .mouseup(cueDragUp)
+                .mouseleave(cueDragCancel)
+                .mousemove(cueDrag);
         };
 
-        var cueDragDown2 = function (e) {
-            cueDragDown(e);
+        // from track rect
+        var cueDragDownR = function (e) {
+            cueDragDownC(e);
             cueDragStartXM = e.pageX - svgCueR.offset().left; // cf. https://css-tricks.com/snippets/jquery/get-x-y-mouse-coordinates/
-            var x1 = Math.max(hch, Math.min(wc - hch, cueDragStartXM));
-            svgCueC.attr("cx", x1);
+            //var x1 = Math.max(hch, Math.min(wc - hch, cueDragStartXM));
+            //svgCueC.attr("cx", x1);
+            cueDrag(e);
         };
 
-        svgCueC.mousedown(cueDragDown);
+        svgCueC.mousedown(cueDragDownC);
         // tricky stuff to keep dragging while leaving the circle
-        svgCueR.mousedown(cueDragDown2); // .mousemove(cueDrag);
+        svgCueR.mousedown(cueDragDownR);
 
         $(model).on("timeupdate", updateCue).on("durationchange", updateCue);
     }
