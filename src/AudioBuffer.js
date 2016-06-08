@@ -160,8 +160,10 @@ rc.AudioBuffer = function AudioBuffer() {
 
     self.pause = function() {
         rc.log("AudioBuffer pause()");
+        var ct = self.currentTime();
         self._stop1();
         var m = self.elem();
+        self.currentTime(ct);   // fix at current position
         m.dispatchEvent(new Event("pause"));
     };
 
