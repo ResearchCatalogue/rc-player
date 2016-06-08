@@ -14,9 +14,14 @@ The `options` object has the following properties:
 - `fadein` (optional), pointing to a `fade` structure
 - `fadeout` (optional), pointing to a `fade` structure
 - `loop` (optional), a boolean (defaults to `false`) specifying whether to loop the sound region or not
+- `buffer` (optional), a boolean (defaults to `false`) specifying whether to
+  download and buffer the the sound or to use streaming via a media-source-node
+  (the latter has hiccups in Safari 9)
 
-The region creates an HTML5 `<audio>` node responsible for the playback, and feeds it into the Web Audio API 
-in order to allow fading or further processing.
+The region creates an HTML5 `<audio>` node (when not using the `buffer` option)
+or a buffer-source-node (when using the `buffer` option) responsible for the 
+playback, and feeds it into the Web Audio API in order to allow fading or further 
+processing.
 
 The following methods are supported:
 
@@ -44,4 +49,6 @@ The following methods are supported:
                           This can be used to "fade-out and forget" this region.
                           The argument specifies the fade time in seconds.
 - `mediaNode()`: returns the media-element-source `AudioNode` (Web Audio API) on which this region is based.
-- `audioElem()`: returns the HTML5 `<audio>` element. 
+- `audioElem()`: returns the HTML5 element that emits events.
+ When not using the `buffer` option, this is an `<audio>` element,
+  otherwise it is a dummy `<span>` element.

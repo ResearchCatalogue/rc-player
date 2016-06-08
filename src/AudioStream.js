@@ -26,7 +26,6 @@ rc.AudioStream = function AudioStream() {
         if (x == undefined) {
             return m.currentTime;
         } else {
-            rc.log("<S> currentTime = " + x);
             m.currentTime = x;
         }
     };
@@ -51,7 +50,6 @@ rc.AudioStream = function AudioStream() {
         if (x == undefined) {
             return m.src;
         } else {
-            rc.log("<S> src = " + x);
             m.src = x;
         }
     };
@@ -62,13 +60,11 @@ rc.AudioStream = function AudioStream() {
     };
 
     self.play = function() {
-        rc.log("<S> play()");
         var m = self.elem();
         m.play();
     };
 
     self.pause = function() {
-        rc.log("<S> pause()");
         var m = self.elem();
         m.pause();
     };
@@ -78,7 +74,6 @@ rc.AudioStream = function AudioStream() {
         if (x == undefined) {
             return m.preload;
         } else {
-            rc.log("<S> preload = " + x);
             m.preload = x;
         }
     };

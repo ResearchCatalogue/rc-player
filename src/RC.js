@@ -1,11 +1,13 @@
-// console.log("build 4");
-
 var rc = {
     logging: true,
+
+    version: "2016-06-08b1",
 
     log: function (x) {
         if (rc.logging) console.log(x);
     },
+
+    forceBuffer: true,   // if `true`, overrides sound.buffer setting as `true`
 
     dbamp: function (x) {
         return Math.pow(10, x * 0.05);

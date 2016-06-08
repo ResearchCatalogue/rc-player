@@ -144,6 +144,12 @@ rc.AudioBuffer = function AudioBuffer() {
         var source          = context.createBufferSource();
         self._sourceNode    = source;
         source.buffer       = self._buf;
+        source.onended = function() {
+            if (self._sourceNode == source) {
+                var m = self.elem();
+                m.dispatchEvent(new Event("ended"));
+            }
+        };
         source.connect(gain);
         var t0              = context.currentTime;
         self._playTime      = t0;
