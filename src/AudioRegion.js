@@ -27,16 +27,19 @@ rc.AudioRegion = function AudioRegion(sound) {
      */
     self.playing = function() { return self._playing };
 
+    self.model = function() { return self._model };
+
     /**
      * Gets or sets the current relative time offset
      * in seconds from the region's start.
      * `currentTime()` queries and `currentTime(x)` sets the time.
      */
     self.currentTime = function(x) {
+        var m = self.model();
         if (x == undefined) {
-            return self._audioModel.currentTime - sound.start;
+            return m.currentTime() - sound.start;
         } else {
-            self._audioModel.currentTime = sound.start + x;
+            m.currentTime(sound.start + x);
         }
     };
 
@@ -44,8 +47,8 @@ rc.AudioRegion = function AudioRegion(sound) {
      * Returns the duration of the region in seconds.
      */
     self.duration = function() {
-        var audio       = self._audioModel;
-        var totalDur    = audio.duration;
+        var m           = self.model();
+        var totalDur    = m.duration();
         var start       = Math.max(0.0, Math.min(totalDur, sound.start));
         var stop        = sound.stop ? Math.max(start, Math.min(totalDur, sound.stop )) : totalDur;
         return stop - start;
@@ -70,7 +73,7 @@ rc.AudioRegion = function AudioRegion(sound) {
                 rc.log("volume " + sound.src + " - " + x);
                 g.gain.setValueAtTime(y, t0);
             }
-            $(self._audioElem).trigger("volumechange")
+            $(self.audioElem()).trigger("volumechange")
         }
     };
 
@@ -93,8 +96,8 @@ rc.AudioRegion = function AudioRegion(sound) {
             self._stop1(true);
         }
         self._playing = true;
-        var audio = self._audioModel;
-        if (audio.readyState >= 3 /* 2 */) self._doPlay();
+        var m = self.model();
+        if (m.readyState() >= 2) self._doPlay();
     };
 
     self.pause = function() {
@@ -135,15 +138,15 @@ rc.AudioRegion = function AudioRegion(sound) {
     self.dispose = function() {
         rc.log("dispose " + sound.src);
         if (!self._disposed) {
-            var audio     = self._audioModel;
-            var audioElem = self._audioElem;
+            var m = self.model();
+            var e = m.elem();
             for (var i = 0; i < self._events.length; i++) {
-                audioElem.removeEventListener(self._events[i], self._eventFun);
+                e.removeEventListener(self._events[i], self._eventFun);
             }
 
             self.stop();
-            audio.src = "";
-            audio.load();
+            m.src("");
+            m.load();
             self._disposed = true;
         }
     };
@@ -166,10 +169,10 @@ rc.AudioRegion = function AudioRegion(sound) {
     };
 
     /** Returns the media-element-source `AudioNode` on which this region is based. */
-    self.mediaNode = function() { return self._mediaNode };
+    self.mediaNode = function() { return self.model().mediaNode() };
 
     /** Returns the <audio> element. */
-    self.audioElem = function() { return self._audioElem };
+    self.audioElem = function() { return self.model().elem() };
 
     // ---------------- private ----------------
 
@@ -207,32 +210,23 @@ rc.AudioRegion = function AudioRegion(sound) {
 
         // `true` : old behaviour using createMediaElementSource.
         // `false`: new behaviour using AJAX and completely buffered sound.
-        var useStreaming = false;
+        var useStreaming = true;
 
         if (useStreaming) {
-            self._audioElem  = document.createElement("AUDIO");
-            self._audioModel = self._audioElem;
-            self._mediaNode  = rc.AudioContext().createMediaElementSource(audio);
+            self._model = rc.AudioStream();
         } else {
-            self._audioElem  = document.createElement("SPAN");
-            self._audioModel = rc.AudioBuffer();
-            self._mediaNode  = self._audioModel.mediaNode();
+            self._model = rc.AudioBuffer();
         }
-        var audio           = self._audioModel;
-        var audioElem       = self._audioElem;
-        audioElem.setAttribute('crossorigin', 'anonymous'); // CORS
+
+        var m = self.model();
+        var e = m.elem();
 
         for (var i = 0; i < self._events.length; i++) {
-            audioElem.addEventListener(self._events[i], self._eventFun);
+            e.addEventListener(self._events[i], self._eventFun);
         }
 
-        audio.preload   = "auto";
-        audio.src       = sound.src;
-
-        // broken in Mozilla
-        // if (sound.gain && sound.gain < 0) { // N.B. only attenuation supported here
-        //    audio.volume = rc.dbamp(sound.gain);
-        // }
+        m.preload("auto");
+        m.src(sound.src);
     };
 
     // the events that we wish to observe from the media element.
@@ -274,7 +268,7 @@ rc.AudioRegion = function AudioRegion(sound) {
         }
         cs.length = 0;
         self._connected = false;
-        $(self._audioElem).trigger("disconnected");
+        $(self.audioElem()).trigger("disconnected");
     };
 
     // Audio-clock time when `doPlay` was invoked. This is currently not used. */
@@ -347,8 +341,8 @@ rc.AudioRegion = function AudioRegion(sound) {
      */
     self._doPlay = function() {
         rc.log("do-play " + sound.src);
-        var audio       = self._audioModel;
-        var totalDur    = audio.duration;
+        var m           = self.model();
+        var totalDur    = m.duration();
         var start       = Math.max(0.0, Math.min(totalDur, sound.start));
         var stop        = sound.stop ? Math.max(start, Math.min(totalDur, sound.stop )) : totalDur;
         var dur         = stop - start;
@@ -356,7 +350,7 @@ rc.AudioRegion = function AudioRegion(sound) {
             var context     = rc.AudioContext();
             var t0          = context.currentTime;
             self._playTime  = t0;
-            self._outNode   = self._mediaNode;
+            self._outNode   = m.mediaNode();
             if (self._needsGain) {
                 console.log("needsGain");
                 var g = context.createGain();
@@ -395,9 +389,9 @@ rc.AudioRegion = function AudioRegion(sound) {
             }
             self._connect(self._outNode, context.destination);
             self._connected = true;
-            $(self._audioElem).trigger("connected");
+            $(m.elem()).trigger("connected");
         }
-        audio.play();
+        m.play();
         if (dur < totalDur) {
             // if we use the envelope and no loop, schedule a bit later
             var dly = sound.loop || !self._needsFade ? dur : dur + 0.1;
@@ -427,14 +421,14 @@ rc.AudioRegion = function AudioRegion(sound) {
      * data is available.
      */
     self._eventFun = function(e) {
-        var audio = self._audioModel;
-        if (e.type == "loadedmetadata" && audio.paused) {
-            // console.log("loadedmetadata - readyState is " + audio.readyState);
+        var m = self.model();
+        if (e.type == "loadedmetadata" && m.paused()) {
+            // console.log("loadedmetadata - readyState is " + m.readyState());
             if (sound.start > 0) {
-                audio.currentTime = sound.start;
+                m.currentTime(sound.start);
             }
-        } else if (e.type == "canplay" && audio.paused) {
-            // console.log("canplay - readyState is " + audio.readyState);
+        } else if (e.type == "canplay" && m.paused()) {
+            // console.log("canplay - readyState is " + m.readyState());
             if (self._playing) self._doPlay();
         } else if (e.type == "ended") {
             self._ended();
@@ -451,10 +445,10 @@ rc.AudioRegion = function AudioRegion(sound) {
         self._playing   = false;
         self._releasing = false;
         self._clearSchedule();
-        var audio = self._audioModel;
-        if (!audio.paused) audio.pause();
+        var m = self.model();
+        if (!m.paused()) m.pause();
         // reset position
-        if (seek) audio.currentTime = sound.start;
+        if (seek) m.currentTime(sound.start);
         self._disconnectAll();
     };
 

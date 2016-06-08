@@ -13,6 +13,10 @@ rc.AudioBuffer = function AudioBuffer() {
 
     var self = this;
 
+    self.elem = function() {
+        return self._elem;
+    };
+
     self.mediaNode = function() {
         return self._mediaNode;
     };
@@ -58,10 +62,14 @@ rc.AudioBuffer = function AudioBuffer() {
     };
 
     self.preload = function(x) {
+        alert("preload");
         if (x == undefined) {
             return self._preload;
         } else {
-            self._preload = x;
+            if (self._preload != x) {
+                self._preload = x;
+                alert(x);
+            }
         }
     };
 
@@ -72,6 +80,7 @@ rc.AudioBuffer = function AudioBuffer() {
      * functions have been defined!
      */
     self._init = function() {
+        self._elem          = document.createElement("SPAN");
         self._currentTime   = 0.0;
         self._readyState    = 0;
         self._duration      = undefined;
