@@ -210,7 +210,7 @@ rc.AudioRegion = function AudioRegion(sound) {
 
         // `true` : old behaviour using createMediaElementSource.
         // `false`: new behaviour using AJAX and completely buffered sound.
-        var useStreaming = true;
+        var useStreaming = false;
 
         if (useStreaming) {
             self._model = rc.AudioStream();
