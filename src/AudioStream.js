@@ -22,7 +22,7 @@ rc.AudioStream = function AudioStream() {
     };
 
     self.currentTime = function(x) {
-        var m = self.mediaNode();
+        var m = self.elem();
         if (x == undefined) {
             return m.currentTime;
         } else {
@@ -32,22 +32,22 @@ rc.AudioStream = function AudioStream() {
     };
 
     self.duration = function() {
-        var m = self.mediaNode();
+        var m = self.elem();
         return m.duration;
     };
 
     self.readyState = function() {
-        var m = self.mediaNode();
+        var m = self.elem();
         return m.readyState;
     };
 
     self.paused = function() {
-        var m = self.mediaNode();
+        var m = self.elem();
         return m.paused;
     };
 
     self.src = function(x) {
-        var m = self.mediaNode();
+        var m = self.elem();
         if (x == undefined) {
             return m.src;
         } else {
@@ -57,25 +57,24 @@ rc.AudioStream = function AudioStream() {
     };
 
     self.load = function() {
-        var m = self.mediaNode();
+        var m = self.elem();
         m.load();
     };
 
     self.play = function() {
         rc.log("<S> play()");
-        var m = self.mediaNode();
+        var m = self.elem();
         m.play();
     };
 
     self.pause = function() {
         rc.log("<S> pause()");
-        var m = self.mediaNode();
-        alert(m);
+        var m = self.elem();
         m.pause();
     };
 
     self.preload = function(x) {
-        var m = self.mediaNode();
+        var m = self.elem();
         if (x == undefined) {
             return m.preload;
         } else {
@@ -91,10 +90,10 @@ rc.AudioStream = function AudioStream() {
      * functions have been defined!
      */
     self._init = function() {
-        var e = document.createElement("AUDIO");
-        self._elem          = e;
-        self._mediaNode     = rc.AudioContext().createMediaElementSource(e);
-        e.setAttribute('crossorigin', 'anonymous'); // CORS
+        var m = document.createElement("AUDIO");
+        self._elem          = m;
+        self._mediaNode     = rc.AudioContext().createMediaElementSource(m);
+        m.setAttribute('crossorigin', 'anonymous'); // CORS
     };
 
     // finally run init
