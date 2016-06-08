@@ -90,6 +90,12 @@ rc.AudioControls = function AudioControls(options) {
 
     div.append(svg);
 
+    // model based timer updates are
+    // blocked during cue dragging
+    var cueDragging  = false;
+    var svgElapsed   = null;
+    var svgRemaining = null;
+
     ////////////////////////////////////////////////// play
 
     var currentX = 0;
@@ -135,7 +141,7 @@ rc.AudioControls = function AudioControls(options) {
     if (optOpt.elapsed) {
         // var divElapsed = $('<span class="rc-timer"></span>');
         // div.append(divElapsed);
-        var svgElapsed = $(".rc-elapsed", svg);
+        svgElapsed = $(".rc-elapsed", svg);
         hPad = Math.max(hPad, 4);
         currentX += hPad;
         svgElapsed.attr({x: currentX, y: 19});
@@ -143,8 +149,10 @@ rc.AudioControls = function AudioControls(options) {
         hPad = 4;
 
         var updateElapsed = function() {
-            var time = model.currentTime();
-            self._updateTimer(svgElapsed, time);
+            if (!cueDragging) {
+                var time = model.currentTime();
+                self._updateTimer(svgElapsed, time);
+            }
         };
 
         updateElapsed();
@@ -174,7 +182,6 @@ rc.AudioControls = function AudioControls(options) {
         currentX += wc;
         hPad = 2;
 
-        var cueDragging     = false;
         var cueDragStartX   = 0;    // relative to window top-left
         var cueDragX        = 0;    // relative to window top-left
         var cueDragStartXM  = 0;    // relative to left margin of track
@@ -196,6 +203,12 @@ rc.AudioControls = function AudioControls(options) {
 
         var dndPane = $('<div class="rc-drag"></div>');
 
+        var cueDragCalcTime = function() {
+            var dur     = model.duration();
+            var time    = ((cueDragXM - hch) / (wc - hc)) * dur;
+            return time;
+        };
+
         var cueDrag = function(e) {
             // console.log("cueDrag " + cueDragging);
             if (cueDragging) {
@@ -206,6 +219,14 @@ rc.AudioControls = function AudioControls(options) {
                 // console.log("drag: dx = " + dx + "; cueDragCX = " + cueDragCX + "; hch = " + hch + "; wc-hch = " + (wc - hch) +  "; x0 = " + x0);
                 cueDragXM = x1;
                 svgCueC.attr("cx", x1);
+                var time = cueDragCalcTime();
+                if (svgElapsed) {
+                    self._updateTimer(svgElapsed, time);
+                }
+                if (svgRemaining) {
+                    var dur = model.duration();
+                    self._updateTimer(svgRemaining, dur - time, true);
+                }
                 e.preventDefault();
             }
         };
@@ -217,8 +238,7 @@ rc.AudioControls = function AudioControls(options) {
                 e.preventDefault();
                 dndPane.remove();
 
-                var dur     = model.duration();
-                var time    = ((cueDragXM - hch) / (wc - hc)) * dur;
+                var time = cueDragCalcTime();
                 if (time != cueTime) {
                     // console.log("dragged " + (cueDragX - cueDragStartX));
                     model.currentTime(time);
@@ -231,6 +251,13 @@ rc.AudioControls = function AudioControls(options) {
                 cueDragging = false;
                 dndPane.remove();
                 updateCue();
+                if (svgElapsed) {
+                    self._updateTimer(svgElapsed, cueTime);
+                }
+                if (svgRemaining) {
+                    var dur = model.duration();
+                    self._updateTimer(svgRemaining, dur - cueTime, true);
+                }
             }
         };
 
@@ -270,7 +297,7 @@ rc.AudioControls = function AudioControls(options) {
     if (optOpt.remaining) {
         //var divRemaining = $('<span class="rc-timer"></span>');
         //div.append(divRemaining);
-        var svgRemaining = $(".rc-remaining", svg);
+        svgRemaining = $(".rc-remaining", svg);
         hPad = Math.max(hPad, 4);
         currentX += hPad;
         svgRemaining.attr({x: currentX, y: 19});
@@ -278,9 +305,11 @@ rc.AudioControls = function AudioControls(options) {
         hPad = 4;
 
         var updateRemaining = function() {
-            var time = model.currentTime();
-            var dur  = model.duration();
-            self._updateTimer(svgRemaining, dur - time, true);
+            if (!cueDragging) {
+                var time = model.currentTime();
+                var dur  = model.duration();
+                self._updateTimer(svgRemaining, dur - time, true);
+            }
         };
 
         updateRemaining();
